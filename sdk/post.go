@@ -1,4 +1,4 @@
-package main
+package sdk
 
 type Post struct {
 	ID      int    `json:"id"`

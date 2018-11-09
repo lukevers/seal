@@ -3,6 +3,7 @@ package main
 import (
 	"encoding/json"
 	"fmt"
+	"github.com/lukevers/seal/sdk"
 	"github.com/lukevers/webview"
 	"log"
 )
@@ -92,14 +93,14 @@ func handleMessageLoad(message RequestMessage) {
 	sendMessageResponse(ResponseMessage{
 		w:  message.w,
 		ID: message.ID,
-		Data: []Post{
-			Post{
+		Data: []sdk.Post{
+			sdk.Post{
 				ID:      1,
 				Title:   "Testing test test",
 				Slug:    "testing-test-test",
 				Content: "LOL content here later",
 			},
-			Post{
+			sdk.Post{
 				ID:      2,
 				Title:   "Testing 2 test",
 				Slug:    "testing-2-test",
