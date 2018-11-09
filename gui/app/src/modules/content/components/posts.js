@@ -1,11 +1,18 @@
 /** @jsx jsx */
-import { jsx, css } from '@emotion/core'
+import { jsx, css } from '@emotion/core';
 import { Component } from 'react';
-import { connect } from 'react-redux'
+import { connect } from 'react-redux';
 import { BiGridWrapper, BiGridSidebar, BiGridContent } from '../../../components/BiGrid';
 import { Route, Link } from "react-router-dom";
 import { themes } from '../../../base/themes';
-import { fetchPostsIfNeeded } from '../actions/posts/';
+import * as Showdown from "showdown";
+import ReactMde from 'react-mde';
+import 'react-mde/lib/styles/css/react-mde-all.css';
+
+import {
+    fetchPostsIfNeeded,
+    postEdited,
+} from '../actions/posts/';
 
 import {
     getIsLoaded,
@@ -22,10 +29,35 @@ const SidebarItem = ({ post, match }) => (
 );
 
 class Content extends Component {
+    converter: Showdown.Converter;
+
+    constructor(props) {
+        super(props);
+
+        this.converter = new Showdown.Converter({
+            tables: true,
+            simplifiedAutoLink: true,
+            strikethrough: true,
+            tasklists: true
+        });
+    }
+
+    componentWillUpdate(props) {
+        const { dispatch } = props;
+
+        if (this.props.match.params.id !== props.match.params.id) {
+            dispatch(fetchPostsIfNeeded());
+        }
+    }
+
+    handleChange = (value) => {
+        const { dispatch } = this.props;
+        dispatch(postEdited(this.props.match.params.id, value));
+    }
+
     render() {
-        const { posts } = this.props;
         const id = parseInt(this.props.match.params.id);
-        const post = posts.posts.reduce((result, item) => {
+        const post = this.props.posts.items.reduce((result, item) => {
             if (id === item.id) {
                 result = item;
             }
@@ -33,15 +65,33 @@ class Content extends Component {
             return result;
         });
 
-        if (posts.error) {
-            return <div>Error!</div>;
-        } else if (post === null) {
+        if (post === null) {
             return <div>Could not find post!</div>;
-        } else if (!posts.loaded) {
-            return <div>Loading...</div>;
         } else {
+            let content = post.content;
+            if (typeof this.props.posts.edited[id] != 'undefined') {
+                content = this.props.posts.edited[id];
+            }
+
             return (
-                <div>{post.content}</div>
+                <div css={css`
+                    .react-mde, .mde-header {
+                        border-radius: 0;
+                    }
+
+                    .DraftEditor-root, .DraftEditor-editorContainer, .public-DraftEditor-content {
+                        height: 100%;
+                    }
+                `}>
+                    <input type="text" name="title" value={post.title}/>
+                    <ReactMde
+                        value={content}
+                        onChange={this.handleChange}
+                        generateMarkdownPreview={markdown =>
+                            Promise.resolve(this.converter.makeHtml(markdown))
+                        }
+                    />
+                </div>
             );
         }
     }
@@ -58,8 +108,6 @@ class Posts extends Component {
 
         if (posts.error) {
             return <div>Error!</div>;
-        } else if (!posts.loaded) {
-            return <div>Loading...</div>;
         } else {
             return (
                 <BiGridWrapper columns="200px auto">
@@ -83,15 +131,18 @@ class Posts extends Component {
                                 background-color: ${themes.standard.lighter.primary};
                             }
                         `}>
-                            {posts.posts.map(post => (
-                                <SidebarItem key={post.id} match={this.props.match} post={post} />
+                            {posts.items.map((post, index) => (
+                               <SidebarItem key={index} match={this.props.match} post={post} />
                             ))}
                         </div>
                     </BiGridSidebar>
                     <BiGridContent>
-                        <Route path={`${this.props.match.path}/:id`} render={(props, routeProps) => (
-                            <Content {...routeProps} {...this.props} {...props} />
-                        )} />
+                        {posts.loaded
+                            ? <Route path={`${this.props.match.path}/:id`} render={(props, routeProps) => (
+                                    <Content {...routeProps} {...this.props} {...props} />
+                                )} />
+                            : <div>{/*loading*/}</div>
+                        }
                     </BiGridContent>
                 </BiGridWrapper>
             );

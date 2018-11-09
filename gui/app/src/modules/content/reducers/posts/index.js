@@ -1,12 +1,14 @@
 import {
     REQUEST_POSTS,
     RECEIVE_POSTS,
+    EDITED_POST,
 } from '../../actions/posts';
 
 const initialState = {
     error: null,
-    posts: [],
+    items: [],
     loaded: false,
+    edited: {},
 };
 
 const reducer = (state = initialState, action) => {
@@ -21,8 +23,14 @@ const reducer = (state = initialState, action) => {
             return {
                 ...state,
                 loaded: true,
-                error: action.posts.error,
-                posts: action.posts.data,
+                error: action.error,
+                items: action.posts,
+            };
+        case EDITED_POST:
+            state.edited[action.id] = action.value;
+
+            return {
+                ...state,
             };
         default:
             return state;

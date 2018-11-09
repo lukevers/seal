@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { BrowserRouter as Router } from "react-router-dom";
+import { BrowserRouter as Router } from 'react-router-dom';
 import { BiGridWrapper, BiGridSidebar, BiGridContent } from './components/BiGrid';
 
 import Sidebar from './modules/sidebar';
