@@ -9,25 +9,34 @@ import (
 
 const (
 	development = true
-	height      = 800
-	resizable   = true
-	title       = "Seal"
-	width       = 1200
 )
 
 func main() {
-	if development {
-		launchLocal()
-	} else {
-		launchBuild()
+	settings := webview.Settings{
+		Title:                  "Seal",
+		Width:                  1200,
+		Height:                 800,
+		Resizable:              true,
+		Debug:                  development,
+		ExternalInvokeCallback: handleMessage,
 	}
+
+	var w webview.WebView
+	if development {
+		w = initializeLocal(settings)
+	} else {
+		w = initializeBuild(settings)
+	}
+
+	w.Run()
 }
 
-func launchLocal() {
-	webview.Open(title, "http://localhost:3000", width, height, resizable)
+func initializeLocal(settings webview.Settings) webview.WebView {
+	settings.URL = "http://localhost:3000"
+	return webview.New(settings)
 }
 
-func launchBuild() {
+func initializeBuild(settings webview.Settings) webview.WebView {
 	ln, err := net.Listen("tcp", "127.0.0.1:0")
 	if err != nil {
 		log.Fatal(err)
@@ -39,5 +48,6 @@ func launchBuild() {
 		log.Fatal(http.Serve(ln, nil))
 	}()
 
-	webview.Open(title, "http://"+ln.Addr().String(), width, height, resizable)
+	settings.URL = "http://" + ln.Addr().String()
+	return webview.New(settings)
 }

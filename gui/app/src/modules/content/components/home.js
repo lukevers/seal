@@ -2,7 +2,6 @@
 import { jsx, css } from '@emotion/core'
 import logo from '../../../base/logo.png';
 
-
 export default () => (
     <div css={css`
         height: 100%;
