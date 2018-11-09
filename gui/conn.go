@@ -2,8 +2,8 @@ package main
 
 import (
 	"encoding/json"
+	"errors"
 	"fmt"
-	"github.com/lukevers/seal/sdk"
 	"github.com/lukevers/webview"
 	"log"
 )
@@ -32,7 +32,7 @@ type ResponseMessage struct {
 func handleMessage(w webview.WebView, data string) {
 	var message RequestMessage
 	if err := json.Unmarshal([]byte(data), &message); err != nil {
-		log.Println("Could not decode JSON")
+		log.Println("could not decode JSON")
 		log.Println(err)
 		return
 	}
@@ -52,13 +52,13 @@ func handleMessage(w webview.WebView, data string) {
 func sendMessageResponse(message ResponseMessage) {
 	data, err := json.Marshal(message)
 	if err != nil {
-		log.Println("Could not encode JSON")
+		log.Println("could not encode JSON")
 
 		// Generate a string by hand if we can't marshal
 		data = []byte(fmt.Sprintf(
 			`{ "id": %s, "data": null, "error": %s }`,
 			message.ID,
-			"Could not encode message to JSON",
+			"could not encode message to JSON",
 		))
 	}
 
@@ -75,7 +75,7 @@ func handleMessageNotSupported(message RequestMessage) {
 	sendMessageResponse(ResponseMessage{
 		w:     message.w,
 		ID:    message.ID,
-		Error: fmt.Sprintf("Message type %s not supported", message.FN),
+		Error: fmt.Sprintf("message type %s not supported", message.FN),
 	})
 }
 
@@ -88,24 +88,45 @@ func handleMessagePing(message RequestMessage) {
 }
 
 func handleMessageLoad(message RequestMessage) {
-	log.Println(message)
+	var what, how interface{}
+	var exists bool
+
+	if what, exists = message.Data["what"]; !exists {
+		sendMessageResponse(ResponseMessage{
+			w:     message.w,
+			ID:    message.ID,
+			Data:  nil,
+			Error: errors.New("no `what` to load defined in data"),
+		})
+
+		return
+	}
+
+	if how, exists = message.Data["how"]; !exists {
+		sendMessageResponse(ResponseMessage{
+			w:     message.w,
+			ID:    message.ID,
+			Data:  nil,
+			Error: errors.New("no `how` to load defined in data"),
+		})
+
+		return
+	}
+
+	var data []interface{}
+	var err error
+
+	switch what.(string) {
+	case LoadWhatPosts:
+		data, err = fetchPosts(how.(string))
+	default:
+		err = errors.New("the given `what` is not supported")
+	}
 
 	sendMessageResponse(ResponseMessage{
-		w:  message.w,
-		ID: message.ID,
-		Data: []sdk.Post{
-			sdk.Post{
-				ID:      1,
-				Title:   "Testing test test",
-				Slug:    "testing-test-test",
-				Content: "LOL content here later",
-			},
-			sdk.Post{
-				ID:      2,
-				Title:   "Testing 2 test",
-				Slug:    "testing-2-test",
-				Content: "2 !! test here later",
-			},
-		},
+		w:     message.w,
+		ID:    message.ID,
+		Data:  data,
+		Error: err,
 	})
 }
