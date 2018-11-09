@@ -14,11 +14,11 @@ import {
 } from '../reducers/posts/';
 
 const SidebarItem = ({ post, match }) => (
-    <div>
-        <Link to={`${match.url}/${post.id}`}>
-            <div>{post.title}</div>
-        </Link>
-    </div>
+    <Link to={`${match.url}/${post.id}`}>
+        <div>
+            {post.title}
+        </div>
+    </Link>
 );
 
 class Content extends Component {
@@ -67,6 +67,21 @@ class Posts extends Component {
                         <div css={css`
                             border-right: 1px solid ${themes.standard.lightgray};
                             height: 100%;
+
+                            a {
+                                padding: .5em;
+                                text-decoration: none;
+                                display: block;
+                                color: ${themes.standard.black};
+                            }
+
+                            a:nth-of-type(odd) {
+                                background-color: ${themes.standard.lightestgray};
+                            }
+
+                            a:hover {
+                                background-color: ${themes.standard.lighter.primary};
+                            }
                         `}>
                             {posts.posts.map(post => (
                                 <SidebarItem key={post.id} match={this.props.match} post={post} />
