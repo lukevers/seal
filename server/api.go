@@ -1,9 +1,13 @@
 package main
 
 import (
+	"context"
 	"encoding/base64"
 	"errors"
 	"github.com/go-chi/render"
+	"github.com/lukevers/seal/server/models"
+	"github.com/volatiletech/sqlboiler/queries/qm"
+	"golang.org/x/crypto/bcrypt"
 	"net/http"
 	"strings"
 )
@@ -42,6 +46,20 @@ func AuthenticateRequest(next http.Handler) http.Handler {
 
 		// TODO: check if email exists
 		// TODO: check password against hash
+
+		user, err := models.Users(
+			qm.Where("email = ?", parts[0]),
+		).One(context.TODO(), db)
+		if err != nil {
+			render.Render(w, r, ErrRender(errors.New("Could not file user by email")))
+			return
+		}
+
+		err = bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(parts[1]))
+		if err != nil {
+			render.Render(w, r, ErrRender(errors.New("Invalid credentials")))
+			return
+		}
 
 		next.ServeHTTP(w, r)
 	})
