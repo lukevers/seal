@@ -12,6 +12,7 @@ import 'react-mde/lib/styles/css/react-mde-all.css';
 import {
     fetchPostsIfNeeded,
     postEdited,
+    postSave,
 } from '../actions/posts/';
 
 import {
@@ -50,14 +51,19 @@ class Content extends Component {
         }
     }
 
-    handleChange = (value) => {
+    handleContentChange = (value) => {
         const { dispatch } = this.props;
-        dispatch(postEdited(this.props.match.params.id, value));
+        dispatch(postEdited(this.getPost(), 'markdown', value));
     }
 
-    render() {
+    savePost = () => {
+        const { dispatch } = this.props;
+        dispatch(postSave(this.getPost()));
+    }
+
+    getPost = () => {
         const id = parseInt(this.props.match.params.id);
-        const post = this.props.posts.items.reduce((result, item) => {
+        let post = this.props.posts.items.reduce((result, item) => {
             if (id === item.id) {
                 result = item;
             }
@@ -65,14 +71,19 @@ class Content extends Component {
             return result;
         });
 
+        if (typeof this.props.posts.edited[id] != 'undefined') {
+            post = this.props.posts.edited[id];
+        }
+
+        return post;
+    }
+
+    render() {
+        const post = this.getPost();
+
         if (post === null) {
             return <div>Could not find post!</div>;
         } else {
-            let content = post.content;
-            if (typeof this.props.posts.edited[id] != 'undefined') {
-                content = this.props.posts.edited[id];
-            }
-
             return (
                 <div css={css`
                     .react-mde, .mde-header {
@@ -83,10 +94,11 @@ class Content extends Component {
                         height: 100%;
                     }
                 `}>
+                    <button onClick={this.savePost}>Save</button>
                     <input type="text" name="title" value={post.title}/>
                     <ReactMde
-                        value={content}
-                        onChange={this.handleChange}
+                        value={post.markdown}
+                        onChange={this.handleContentChange}
                         generateMarkdownPreview={markdown =>
                             Promise.resolve(this.converter.makeHtml(markdown))
                         }

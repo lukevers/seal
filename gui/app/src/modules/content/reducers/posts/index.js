@@ -27,7 +27,7 @@ const reducer = (state = initialState, action) => {
                 items: action.posts,
             };
         case EDITED_POST:
-            state.edited[action.id] = action.value;
+            state.edited[action.post.id] = action.post;
 
             return {
                 ...state,

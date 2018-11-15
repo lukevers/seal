@@ -32,10 +32,17 @@ export function fetchPostsIfNeeded() {
     }
 }
 
-export function postEdited(id, value) {
+export function postEdited(post, key, value) {
+    post[key] = value;
+
     return {
         type: EDITED_POST,
-        id,
-        value
+        post
+    }
+}
+
+export function postSave(post) {
+    return async (dispatch) => {
+        await Conn.sync('post', post);
     }
 }

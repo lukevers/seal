@@ -39,11 +39,15 @@ func handleMessage(w webview.WebView, data string) {
 
 	message.w = w
 
+	log.Println(message)
+
 	switch message.FN {
 	case "ping":
 		handleMessagePing(message)
 	case "load":
 		handleMessageLoad(message)
+	case "sync":
+		handleMessageSync(message)
 	default:
 		handleMessageNotSupported(message)
 	}
@@ -117,8 +121,52 @@ func handleMessageLoad(message RequestMessage) {
 	var err error
 
 	switch what.(string) {
-	case LoadWhatPosts:
+	case WhatPosts:
 		data, err = fetchPosts(how.(string))
+	default:
+		err = errors.New("the given `what` is not supported")
+	}
+
+	sendMessageResponse(ResponseMessage{
+		w:     message.w,
+		ID:    message.ID,
+		Data:  data,
+		Error: err,
+	})
+}
+
+func handleMessageSync(message RequestMessage) {
+	var what, how interface{}
+	var exists bool
+
+	if what, exists = message.Data["what"]; !exists {
+		sendMessageResponse(ResponseMessage{
+			w:     message.w,
+			ID:    message.ID,
+			Data:  nil,
+			Error: errors.New("no `what` to load defined in data"),
+		})
+
+		return
+	}
+
+	if how, exists = message.Data["how"]; !exists {
+		sendMessageResponse(ResponseMessage{
+			w:     message.w,
+			ID:    message.ID,
+			Data:  nil,
+			Error: errors.New("no `how` to load defined in data"),
+		})
+
+		return
+	}
+
+	var data []interface{}
+	var err error
+
+	switch what.(string) {
+	case WhatPost:
+		data, err = updatePost(how.(string))
 	default:
 		err = errors.New("the given `what` is not supported")
 	}
