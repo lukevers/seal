@@ -10,23 +10,18 @@ import (
 	"path/filepath"
 )
 
-const (
-	development = true
-	service     = "seal"
-)
-
 func main() {
 	settings := webview.Settings{
 		Title:                  "Seal",
 		Width:                  1200,
 		Height:                 800,
 		Resizable:              true,
-		Debug:                  true,
+		Debug:                  *flagDebug,
 		ExternalInvokeCallback: handleMessage,
 	}
 
 	var w webview.WebView
-	if development {
+	if *flagDevelopment {
 		w = initializeLocal(settings)
 	} else {
 		w = initializeBuild(settings)

@@ -6,6 +6,7 @@ import (
 	"log"
 )
 
+// Setting represents the structure of a key/value setting.
 type Setting struct {
 	Key   string `json:"key"`
 	Value string `json:"value"`
@@ -20,7 +21,7 @@ func updateSettings(settings string) ([]interface{}, error) {
 	}
 
 	for _, v := range s {
-		err = keyring.Set(service, v.Key, v.Value)
+		err = keyring.Set(*flagKeychainService, v.Key, v.Value)
 		if err != nil {
 			log.Println(err)
 			return nil, err
@@ -39,7 +40,7 @@ func fetchSettings(settings string) ([]interface{}, error) {
 
 	var settingmap []interface{}
 	for _, setting := range s {
-		v, _ := keyring.Get(service, setting.Key)
+		v, _ := keyring.Get(*flagKeychainService, setting.Key)
 		settingmap = append(settingmap, Setting{setting.Key, v})
 	}
 
@@ -47,6 +48,6 @@ func fetchSettings(settings string) ([]interface{}, error) {
 }
 
 func getSettingValue(setting string) string {
-	value, _ := keyring.Get(service, setting)
+	value, _ := keyring.Get(*flagKeychainService, setting)
 	return value
 }

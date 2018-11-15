@@ -6,21 +6,25 @@ import (
 	"github.com/go-chi/render"
 	"github.com/lukevers/seal/server/models"
 	"github.com/volatiletech/sqlboiler/boil"
-	. "github.com/volatiletech/sqlboiler/queries/qm"
+	"github.com/volatiletech/sqlboiler/queries/qm"
 	"io/ioutil"
 	"net/http"
 )
 
+// PostListResponse is a renderable response type wrapper for multiple posts
+type PostListResponse []*PostResponse
+
+// PostResponse is a renderable response type wrapper for a post
 type PostResponse struct {
 	*models.Post
 }
 
-type PostListResponse []*PostResponse
-
+// Render is the renderable interface function for the PostResponse struct
 func (e *PostResponse) Render(w http.ResponseWriter, r *http.Request) error {
 	return nil
 }
 
+// NewPostListResponse wraps multiple posts in a renderable response
 func NewPostListResponse(ps models.PostSlice) []render.Renderer {
 	list := []render.Renderer{}
 	for _, post := range ps {
@@ -30,9 +34,10 @@ func NewPostListResponse(ps models.PostSlice) []render.Renderer {
 	return list
 }
 
+// ListPosts gets posts for the requested user.
 func ListPosts(w http.ResponseWriter, r *http.Request) {
 	posts, err := models.Posts(
-		Where("owned_by_id = ?", 1), // TODO
+		qm.Where("owned_by_id = ?", 1), // TODO
 	).All(context.TODO(), db)
 
 	if err != nil {
@@ -45,6 +50,7 @@ func ListPosts(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
+// UpdatePost updates a specific post.
 func UpdatePost(w http.ResponseWriter, r *http.Request) {
 	defer r.Body.Close()
 	body, err := ioutil.ReadAll(r.Body)
