@@ -1,0 +1,40 @@
+{
+    "name": "Seal",
+    "id": "luke.evers.seal",
+    "version": "1.0",
+    "build-number": 4243,
+    "icon": "logo.png",
+    "dev-region": "en",
+    "deployment-target": "10.12",
+    "copyright": "Copyright © 2018 Luke Evers. All rights reserved",
+    "role": "Editor",
+    "category": "public.app-category.productivity",
+    "sandbox": true,
+    "capabilities": {
+        "network": {
+            "in": false,
+            "out": true
+        },
+        "hardware": {
+            "camera": false,
+            "microphone": false,
+            "usb": false,
+            "printing": false,
+            "bluetooth": false
+        },
+        "app-data": {
+            "contacts": false,
+            "location": false,
+            "calendar": false
+        },
+        "file-access": {
+            "user-selected": "",
+            "downloads": "",
+            "pictures": "",
+            "music": "",
+            "movies": ""
+        }
+    },
+    "app-store": false,
+    "supported-files": []
+}

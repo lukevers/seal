@@ -1,14 +1,17 @@
 package main
 
 import (
+	"fmt"
 	"github.com/lukevers/webview"
 	"log"
 	"net"
 	"net/http"
+	"os"
+	"path/filepath"
 )
 
 const (
-	development = true
+	development = false
 )
 
 func main() {
@@ -17,7 +20,7 @@ func main() {
 		Width:                  1200,
 		Height:                 800,
 		Resizable:              true,
-		Debug:                  development,
+		Debug:                  true,
 		ExternalInvokeCallback: handleMessage,
 	}
 
@@ -42,9 +45,18 @@ func initializeBuild(settings webview.Settings) webview.WebView {
 		log.Fatal(err)
 	}
 
-	defer ln.Close()
 	go func() {
-		http.Handle("/", http.FileServer(http.Dir("app/build")))
+		ex, err := os.Executable()
+		if err != nil {
+			panic(err)
+		}
+
+		path := fmt.Sprintf(
+			"%s/../Resources/",
+			filepath.Dir(ex),
+		)
+
+		http.Handle("/", http.FileServer(http.Dir(path)))
 		log.Fatal(http.Serve(ln, nil))
 	}()
 

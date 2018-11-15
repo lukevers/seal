@@ -1,0 +1,13 @@
+#!/bin/bash
+
+go build
+
+pushd ./app
+npm run build
+popd
+
+rm -rf ./resources
+cp -r ./app/build ./resources
+cp ./app/src/base/logo.png ./resources/logo.png
+
+macpack build
