@@ -1,6 +1,7 @@
 package main
 
 import (
+	"encoding/base64"
 	"fmt"
 	"io"
 	"net/http"
@@ -8,8 +9,9 @@ import (
 
 // SDK represents how we communicate to the server.
 type SDK struct {
-	URL    string
-	APIKey string
+	URL      string
+	Email    string
+	Password string
 }
 
 // Get sends a GET request to the server through the SDK.
@@ -17,7 +19,7 @@ func (s *SDK) Get(path string) (*http.Response, error) {
 	req, err := http.NewRequest(
 		"GET",
 		fmt.Sprintf(
-			"%s%s",
+			"%s/api/%s",
 			s.URL,
 			path,
 		),
@@ -28,7 +30,17 @@ func (s *SDK) Get(path string) (*http.Response, error) {
 		return nil, err
 	}
 
-	req.Header.Add("X-API-KEY", s.APIKey)
+	encoded := base64.StdEncoding.EncodeToString(
+		[]byte(
+			fmt.Sprintf(
+				"%s:%s",
+				s.Email,
+				s.Password,
+			),
+		),
+	)
+
+	req.Header.Add("Authorization", fmt.Sprintf("Basic %s", encoded))
 	return (&http.Client{}).Do(req)
 }
 
@@ -37,7 +49,7 @@ func (s *SDK) Patch(path string, body io.Reader) (*http.Response, error) {
 	req, err := http.NewRequest(
 		"PATCH",
 		fmt.Sprintf(
-			"%s%s",
+			"%s/api/%s",
 			s.URL,
 			path,
 		),
@@ -48,6 +60,16 @@ func (s *SDK) Patch(path string, body io.Reader) (*http.Response, error) {
 		return nil, err
 	}
 
-	req.Header.Add("X-API-KEY", s.APIKey)
+	encoded := base64.StdEncoding.EncodeToString(
+		[]byte(
+			fmt.Sprintf(
+				"Basic %s:%s",
+				s.Email,
+				s.Password,
+			),
+		),
+	)
+
+	req.Header.Add("Authorization", fmt.Sprintf("Basic %s", encoded))
 	return (&http.Client{}).Do(req)
 }

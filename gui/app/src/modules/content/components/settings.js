@@ -53,17 +53,28 @@ class Settings extends Component {
             <div>
                 <button onClick={this.saveSettings}>Save</button>
 
+                url:
                 <input
                     type="text"
                     name="url"
                     value={setting.url}
                     onChange={(e) => this.handleChange(e.target.value, 'url')}
                 />
+
+                email:
                 <input
                     type="text"
-                    name="api_key"
-                    value={setting.api_key}
-                    onChange={(e) => this.handleChange(e.target.value, 'api_key')}
+                    name="email"
+                    value={setting.email}
+                    onChange={(e) => this.handleChange(e.target.value, 'email')}
+                />
+
+                password:
+                <input
+                    type="password"
+                    name="password"
+                    value={setting.password}
+                    onChange={(e) => this.handleChange(e.target.value, 'password')}
                 />
             </div>
         );

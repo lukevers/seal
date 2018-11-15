@@ -66,6 +66,9 @@ func UpdatePost(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	// TODO:
+	// - check to see if the user has access to this post
+
 	_, err = post.Update(context.TODO(), db, boil.Infer())
 	if err != nil {
 		render.Render(w, r, ErrRender(err))

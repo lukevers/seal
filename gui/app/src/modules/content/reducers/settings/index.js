@@ -12,7 +12,11 @@ export const initialState = {
             value: "",
         },
         {
-            key: "api_key",
+            key: "email",
+            value: "",
+        },
+        {
+            key: "password",
             value: "",
         },
     ],

@@ -2,7 +2,7 @@
     "name": "Seal",
     "id": "luke.evers.seal",
     "version": "1.0",
-    "build-number": 4243,
+    "build-number": 1,
     "icon": "logo.png",
     "dev-region": "en",
     "deployment-target": "10.12",
