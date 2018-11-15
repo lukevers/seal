@@ -11,7 +11,8 @@ import (
 )
 
 const (
-	development = false
+	development = true
+	service     = "seal"
 )
 
 func main() {

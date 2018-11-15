@@ -54,6 +54,10 @@ func handleMessage(w webview.WebView, data string) {
 }
 
 func sendMessageResponse(message ResponseMessage) {
+	if message.Error != nil {
+		message.Error = message.Error.(error).Error()
+	}
+
 	data, err := json.Marshal(message)
 	if err != nil {
 		log.Println("could not encode JSON")
@@ -123,6 +127,8 @@ func handleMessageLoad(message RequestMessage) {
 	switch what.(string) {
 	case WhatPosts:
 		data, err = fetchPosts(how.(string))
+	case WhatSettings:
+		data, err = fetchSettings(how.(string))
 	default:
 		err = errors.New("the given `what` is not supported")
 	}
@@ -167,6 +173,8 @@ func handleMessageSync(message RequestMessage) {
 	switch what.(string) {
 	case WhatPost:
 		data, err = updatePost(how.(string))
+	case WhatSettings:
+		data, err = updateSettings(how.(string))
 	default:
 		err = errors.New("the given `what` is not supported")
 	}

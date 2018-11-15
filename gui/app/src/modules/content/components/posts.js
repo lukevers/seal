@@ -123,8 +123,12 @@ class Posts extends Component {
     render() {
         const { posts } = this.props;
 
-        if (posts.error) {
-            return <div>Error!</div>;
+        if (posts.error || !posts.items) {
+            return (
+                <pre>
+                    <code>{posts.error}</code>
+                </pre>
+            );
         } else {
             return (
                 <BiGridWrapper columns="200px auto">

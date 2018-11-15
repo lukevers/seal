@@ -10,10 +10,15 @@ import (
 
 func fetchPosts(flags string) ([]interface{}, error) {
 	s := &SDK{
-		URL: "http://localhost:3333",
+		URL:    getSettingValue("url"),
+		APIKey: getSettingValue("api_key"),
 	}
 
 	resp, err := s.Get("/posts")
+	if err != nil {
+		return nil, err
+	}
+
 	defer resp.Body.Close()
 	body, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
@@ -33,11 +38,16 @@ func fetchPosts(flags string) ([]interface{}, error) {
 
 func updatePost(post string) ([]interface{}, error) {
 	s := &SDK{
-		URL: "http://localhost:3333",
+		URL:    getSettingValue("url"),
+		APIKey: getSettingValue("api_key"),
 	}
 
 	reader := strings.NewReader(post)
 	resp, err := s.Patch("/posts", reader)
+	if err != nil {
+		return nil, err
+	}
+
 	defer resp.Body.Close()
 	body, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
