@@ -51,9 +51,9 @@ class Content extends Component {
         }
     }
 
-    handleContentChange = (value) => {
+    handleChange = (value, key) => {
         const { dispatch } = this.props;
-        dispatch(postEdited(this.getPost(), 'markdown', value));
+        dispatch(postEdited(this.getPost(), key, value));
     }
 
     savePost = () => {
@@ -95,10 +95,15 @@ class Content extends Component {
                     }
                 `}>
                     <button onClick={this.savePost}>Save</button>
-                    <input type="text" name="title" value={post.title}/>
+                    <input
+                        type="text"
+                        name="title"
+                        value={post.title}
+                        onChange={(e) => this.handleChange(e.target.value, 'title')}
+                    />
                     <ReactMde
                         value={post.markdown}
-                        onChange={this.handleContentChange}
+                        onChange={(e) => this.handleChange(e, 'markdown')}
                         generateMarkdownPreview={markdown =>
                             Promise.resolve(this.converter.makeHtml(markdown))
                         }
