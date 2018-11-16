@@ -63,7 +63,7 @@ func (s *SDK) Patch(path string, body io.Reader) (*http.Response, error) {
 	encoded := base64.StdEncoding.EncodeToString(
 		[]byte(
 			fmt.Sprintf(
-				"Basic %s:%s",
+				"%s:%s",
 				s.Email,
 				s.Password,
 			),

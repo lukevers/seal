@@ -3,6 +3,7 @@ package main
 import (
 	"context"
 	"encoding/json"
+	"errors"
 	"github.com/go-chi/render"
 	"github.com/lukevers/seal/server/models"
 	"github.com/volatiletech/sqlboiler/boil"
@@ -36,8 +37,19 @@ func NewPostListResponse(ps models.PostSlice) []render.Renderer {
 
 // ListPosts gets posts for the requested user.
 func ListPosts(w http.ResponseWriter, r *http.Request) {
+	ctx := r.Context()
+	user, ok := ctx.Value("user").(*models.User)
+	if !ok {
+		render.Render(w, r, ErrRender(errors.New("Could not revive context")))
+		return
+	}
+
 	posts, err := models.Posts(
-		qm.Where("owned_by_id = ?", 1), // TODO
+		qm.InnerJoin("teams as t on t.id = posts.owned_by_id"),
+		qm.InnerJoin("team_members as tm on tm.team_id = t.id"),
+		qm.InnerJoin("users as u on u.id = tm.user_id"),
+		qm.Where("u.id = ?", user.ID),
+		qm.Where("tm.status = ?", "active"),
 	).All(context.TODO(), db)
 
 	if err != nil {
@@ -52,6 +64,13 @@ func ListPosts(w http.ResponseWriter, r *http.Request) {
 
 // UpdatePost updates a specific post.
 func UpdatePost(w http.ResponseWriter, r *http.Request) {
+	ctx := r.Context()
+	user, ok := ctx.Value("user").(*models.User)
+	if !ok {
+		render.Render(w, r, ErrRender(errors.New("Could not revive context")))
+		return
+	}
+
 	defer r.Body.Close()
 	body, err := ioutil.ReadAll(r.Body)
 	if err != nil {
@@ -66,8 +85,17 @@ func UpdatePost(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// TODO:
-	// - check to see if the user has access to this post
+	if p, err := models.Posts(
+		qm.InnerJoin("teams as t on t.id = posts.owned_by_id"),
+		qm.InnerJoin("team_members as tm on tm.team_id = t.id"),
+		qm.InnerJoin("users as u on u.id = tm.user_id"),
+		qm.Where("u.id = ?", user.ID),
+		qm.Where("tm.status = ?", "active"),
+		qm.Where("posts.id = ?", post.ID),
+	).One(context.TODO(), db); err != nil || p == nil {
+		render.Render(w, r, ErrRender(errors.New("Could not find post user can edit")))
+		return
+	}
 
 	_, err = post.Update(context.TODO(), db, boil.Infer())
 	if err != nil {
