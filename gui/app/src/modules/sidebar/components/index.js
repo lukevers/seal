@@ -1,9 +1,14 @@
 /** @jsx jsx */
-import { jsx, css } from '@emotion/core'
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faChartPie, faHashtag, faPen, faSlidersH } from '@fortawesome/free-solid-svg-icons'
-import ReactTooltip from 'react-tooltip'
+import { jsx, css } from '@emotion/core';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import ReactTooltip from 'react-tooltip';
 import { Link } from "react-router-dom";
+
+import {
+    faChartPie,
+    faPen,
+    faSlidersH
+} from '@fortawesome/free-solid-svg-icons';
 
 import { themes } from '../../../base/themes';
 import logo from '../../../base/logo.png';
@@ -51,11 +56,6 @@ export default () => (
         <Link to="/posts">
             <SidebarItem tooltip="Posts">
                 <FontAwesomeIcon icon={faPen} />
-            </SidebarItem>
-        </Link>
-        <Link to="/tags">
-            <SidebarItem tooltip="Tags">
-                <FontAwesomeIcon icon={faHashtag} />
             </SidebarItem>
         </Link>
         <Link to="/settings">
