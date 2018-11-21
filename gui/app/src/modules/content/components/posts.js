@@ -193,6 +193,7 @@ class Posts extends Component {
                                         color: ${themes.standard.black};
                                         border-bottom: 1px solid ${themes.standard.lightestgray};
                                         border-left: 3px solid transparent;
+                                        line-height: 1.25em;
 
                                         &:hover {
                                             background-color: ${themes.standard.lightestgray};
