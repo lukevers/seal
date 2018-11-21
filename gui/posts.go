@@ -1,22 +1,22 @@
 package main
 
 import (
-	// "flag"
 	"encoding/json"
 	"errors"
+	"fmt"
 	"github.com/lukevers/seal/server/models"
 	"io/ioutil"
 	"strings"
 )
 
-func fetchPosts(flags string) ([]interface{}, error) {
+func fetchPosts(how string) ([]interface{}, error) {
 	s := &SDK{
 		URL:      getSettingValue("url"),
 		Email:    getSettingValue("email"),
 		Password: getSettingValue("password"),
 	}
 
-	resp, err := s.Get("posts")
+	resp, err := s.Get(fmt.Sprintf("posts?filter=%s", how))
 	if err != nil {
 		return nil, err
 	}

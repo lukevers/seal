@@ -1,7 +1,7 @@
 /** @jsx jsx */
 import { jsx, css } from '@emotion/core'
 
-const BiGridWrapper = ({ children, columns }) => (
+const BiGridHorizontalWrapper = ({ children, columns }) => (
     <div css={css`
         display: grid;
         grid-gap: 0;
@@ -17,7 +17,7 @@ const BiGridWrapper = ({ children, columns }) => (
     </div>
 );
 
-const BiGridSidebar = ({ children }) => (
+const BiGridHorizontalSidebar = ({ children }) => (
     <div css={css`
         grid-area: sidebar;
         height: 100%;
@@ -26,7 +26,42 @@ const BiGridSidebar = ({ children }) => (
     </div>
 );
 
-const BiGridContent = ({ children }) => (
+const BiGridHorizontalContent = ({ children }) => (
+    <div css={css`
+        grid-area: content;
+        max-height: 100%;
+        overflow-y: auto;
+    `}>
+        {children}
+    </div>
+);
+
+const BiGridVerticalWrapper = ({ children }) => (
+    <div css={css`
+        display: grid;
+        grid-gap: 0;
+        grid-template-columns: auto;
+        grid-template-rows: 50px auto;
+        grid-template-areas:
+        "header"
+        "content";
+        height: 100%;
+        width: 100%;
+    `}>
+        {children}
+    </div>
+);
+
+const BiGridVerticalHeader = ({ children }) => (
+    <div css={css`
+        grid-area: header;
+        height: 100%;
+    `}>
+        {children}
+    </div>
+);
+
+const BiGridVerticalContent = ({ children }) => (
     <div css={css`
         grid-area: content;
         max-height: 100%;
@@ -37,7 +72,10 @@ const BiGridContent = ({ children }) => (
 );
 
 export {
-    BiGridWrapper,
-    BiGridSidebar,
-    BiGridContent,
+    BiGridHorizontalWrapper,
+    BiGridHorizontalSidebar,
+    BiGridHorizontalContent,
+    BiGridVerticalWrapper,
+    BiGridVerticalHeader,
+    BiGridVerticalContent,
 };

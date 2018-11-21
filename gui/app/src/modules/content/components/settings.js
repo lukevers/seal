@@ -60,18 +60,24 @@ class Settings extends Component {
 
                 .form-group {
                     margin: .5em 0;
-                    border-bottom: 1px solid ${themes.standard.lighter.primary};
-                    width: 300px;
+                    border-bottom: 1px solid ${themes.standard.lightestgray};
+                    width: 80%;
                     display: flex;
 
                     label {
                         padding: .5em 0;
+                        width: 75px;
+                        text-transform: uppercase;
+                        font-size: .5em;
+                        line-height: 2em;
+                        letter-spaxcing 1px;
                     }
 
                     input {
                         padding: .5em 1em;
                         border: 0;
                         width: 100%;
+                        background: transparent;
                     }
 
                     input:focus{
@@ -80,12 +86,13 @@ class Settings extends Component {
                 }
 
                 button {
-                    width: 300px;
                     border: 0;
                     padding: 1em;
                     background-color: ${themes.standard.primary};
                     color: ${themes.standard.white};
                     cursor: pointer;
+                    margin-right: auto;
+                    margin-left: 10%;
 
                     &:hover {
                         background-color: ${themes.standard.darker.primary};

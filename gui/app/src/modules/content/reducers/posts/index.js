@@ -2,6 +2,7 @@ import {
     REQUEST_POSTS,
     RECEIVE_POSTS,
     EDITED_POST,
+    SWITCH_TAB,
 } from '../../actions/posts';
 
 const initialState = {
@@ -9,6 +10,7 @@ const initialState = {
     items: [],
     loaded: false,
     edited: {},
+    tab: 'all',
 };
 
 const reducer = (state = initialState, action) => {
@@ -31,6 +33,11 @@ const reducer = (state = initialState, action) => {
 
             return {
                 ...state,
+            };
+        case SWITCH_TAB:
+            return {
+                ...state,
+                tab: action.tab,
             };
         default:
             return state;

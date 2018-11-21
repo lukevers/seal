@@ -1,67 +1,74 @@
 /** @jsx jsx */
 import { jsx, css } from '@emotion/core';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import ReactTooltip from 'react-tooltip';
-import { Link } from "react-router-dom";
+import { NavLink } from "react-router-dom";
 
 import {
     faChartPie,
     faPen,
-    faSlidersH
 } from '@fortawesome/free-solid-svg-icons';
 
 import { themes } from '../../../base/themes';
-import logo from '../../../base/logo.png';
 
-const SidebarItem = ({ children, tooltip }) => (
+const SidebarItem = ({ children }) => (
     <li css={css`
         cursor: pointer;
         padding: 1em;
-        color: ${themes.standard.black};
-        text-align: center;
+        color: ${themes.standard.gray};
+        display: flex;
+        align-items: center;
+        font-size: .75em;
+        text-transform: uppercase;
+        letter-spacing: 1px;
 
         &:hover {
-            color: ${themes.standard.primary};
+            color: ${themes.standard.white};
         }
 
         img {
             max-width: 100%;
             padding: 1em 0;
         }
-    `}
-    data-tip={tooltip}
-    data-place="right"
-    data-effect="solid"
-    data-delay-show="500">
+    `}>
         {children}
-        <ReactTooltip />
     </li>
 );
 
 export default () => (
     <ul css={css`
         height: 100%;
-        background-color: ${themes.standard.lightgray};
+        background-color: ${themes.standard.secondary};
+
+        a {
+            text-decoration: none;
+            display: block;
+            border-left: 5px solid transparent;
+
+            &.active {
+                border-left: 5px solid ${themes.standard.primary};
+
+                li {
+                    color: ${themes.standard.white};
+                }
+            }
+        }
+
+        label {
+            padding-left: 1em;
+            cursor: pointer;
+        }
     `}>
-        <Link to="/">
+        <NavLink to="/dashboard" activeClassName="active">
             <SidebarItem>
-                <img src={logo} alt="Seal"/>
-            </SidebarItem>
-        </Link>
-        <Link to="/dashboard">
-            <SidebarItem tooltip="Dashboard">
                 <FontAwesomeIcon icon={faChartPie} />
+                <label>Dashboard</label>
             </SidebarItem>
-        </Link>
-        <Link to="/posts">
-            <SidebarItem tooltip="Posts">
+        </NavLink>
+        <NavLink to="/posts" activeClassName="active">
+            <SidebarItem>
                 <FontAwesomeIcon icon={faPen} />
+                <label>Posts</label>
             </SidebarItem>
-        </Link>
-        <Link to="/settings">
-            <SidebarItem tooltip="Settings">
-                <FontAwesomeIcon icon={faSlidersH} />
-            </SidebarItem>
-        </Link>
+        </NavLink>
     </ul>
 );

@@ -1,7 +1,8 @@
 import React, { Component } from 'react';
 import { BrowserRouter as Router } from 'react-router-dom';
-import { BiGridWrapper, BiGridSidebar, BiGridContent } from './components/BiGrid';
+import { TriGridWrapper, TriGridHeader, TriGridSidebar, TriGridContent } from './components/TriGrid';
 
+import Header from './modules/header';
 import Sidebar from './modules/sidebar';
 import Content from './modules/content';
 
@@ -15,14 +16,17 @@ export default class App extends Component {
   render() {
     return (
         <Router>
-            <BiGridWrapper columns="3.5em auto">
-                <BiGridSidebar>
+            <TriGridWrapper columns="3.5em auto">
+                <TriGridHeader>
+                    <Header/>
+                </TriGridHeader>
+                <TriGridSidebar>
                     <Sidebar/>
-                </BiGridSidebar>
-                <BiGridContent>
+                </TriGridSidebar>
+                <TriGridContent>
                     <Content/>
-                </BiGridContent>
-            </BiGridWrapper>
+                </TriGridContent>
+            </TriGridWrapper>
         </Router>
     );
   }

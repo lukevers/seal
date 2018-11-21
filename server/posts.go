@@ -44,14 +44,29 @@ func ListPosts(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	posts, err := models.Posts(
+	if err := r.ParseForm(); err != nil {
+		render.Render(w, r, ErrRender(err))
+		return
+	}
+
+	var mods []qm.QueryMod = []qm.QueryMod{
 		qm.InnerJoin("teams as t on t.id = posts.owned_by_id"),
 		qm.InnerJoin("team_members as tm on tm.team_id = t.id"),
 		qm.InnerJoin("users as u on u.id = tm.user_id"),
 		qm.Where("u.id = ?", user.ID),
 		qm.Where("tm.status = ?", "active"),
-	).All(context.TODO(), db)
+	}
 
+	switch r.Form.Get("filter") {
+	case "published":
+		mods = append(mods, qm.Where("posts.status = ?", "published"))
+	case "drafts":
+		mods = append(mods, qm.Where("posts.status = ?", "draft"))
+	case "archived":
+		mods = append(mods, qm.Where("posts.status = ?", "deleted"))
+	}
+
+	posts, err := models.Posts(mods...).All(context.TODO(), db)
 	if err != nil {
 		render.Render(w, r, ErrRender(err))
 	} else {

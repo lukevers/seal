@@ -1,20 +1,23 @@
 const themes = {
     standard: {
         primary: '#B77985',
+        secondary: '#434558',
 
-        white: '#FFFFFF',
+        white: '#F3F3F5',
         lightestgray: '#FAFAFA',
         lightgray: '#EFEFEF',
         black: '#333333',
 
+        gray: '#C3C6D7',
+
         darker: {
             primary: '#5E4348',
-            black: '#111111',
+            secondary: '#37394C',
         },
 
         lighter: {
-            primary: '#F4EBED',
-        },
+            secondary: '#656778',
+        }
     },
 };
 
