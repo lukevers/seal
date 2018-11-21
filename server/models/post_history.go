@@ -29,6 +29,7 @@ type PostHistory struct {
 	ID          uint        `boil:"id" json:"id" toml:"id" yaml:"id"`
 	Title       null.String `boil:"title" json:"title,omitempty" toml:"title" yaml:"title,omitempty"`
 	Slug        null.String `boil:"slug" json:"slug,omitempty" toml:"slug" yaml:"slug,omitempty"`
+	Content     null.String `boil:"content" json:"content,omitempty" toml:"content" yaml:"content,omitempty"`
 	Markdown    null.String `boil:"markdown" json:"markdown,omitempty" toml:"markdown" yaml:"markdown,omitempty"`
 	HTML        null.String `boil:"html" json:"html,omitempty" toml:"html" yaml:"html,omitempty"`
 	Status      string      `boil:"status" json:"status" toml:"status" yaml:"status"`
@@ -52,6 +53,7 @@ var PostHistoryColumns = struct {
 	ID          string
 	Title       string
 	Slug        string
+	Content     string
 	Markdown    string
 	HTML        string
 	Status      string
@@ -70,6 +72,7 @@ var PostHistoryColumns = struct {
 	ID:          "id",
 	Title:       "title",
 	Slug:        "slug",
+	Content:     "content",
 	Markdown:    "markdown",
 	HTML:        "html",
 	Status:      "status",
@@ -100,8 +103,8 @@ func (*postHistoryR) NewStruct() *postHistoryR {
 type postHistoryL struct{}
 
 var (
-	postHistoryColumns               = []string{"action", "revision", "revised_at", "id", "title", "slug", "markdown", "html", "status", "published_at", "created_at", "updated_at", "deleted_at", "owned_by_id", "created_by_id", "updated_by_id", "deleted_by_id"}
-	postHistoryColumnsWithoutDefault = []string{"revision", "id", "title", "slug", "markdown", "html", "published_at", "deleted_at", "owned_by_id", "created_by_id", "updated_by_id", "deleted_by_id"}
+	postHistoryColumns               = []string{"action", "revision", "revised_at", "id", "title", "slug", "content", "markdown", "html", "status", "published_at", "created_at", "updated_at", "deleted_at", "owned_by_id", "created_by_id", "updated_by_id", "deleted_by_id"}
+	postHistoryColumnsWithoutDefault = []string{"revision", "id", "title", "slug", "content", "markdown", "html", "published_at", "deleted_at", "owned_by_id", "created_by_id", "updated_by_id", "deleted_by_id"}
 	postHistoryColumnsWithDefault    = []string{"action", "revised_at", "status", "created_at", "updated_at"}
 	postHistoryPrimaryKeyColumns     = []string{"id", "revision"}
 )

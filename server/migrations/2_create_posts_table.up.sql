@@ -2,6 +2,7 @@ CREATE TABLE `posts` (
     `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
     `title` varchar(255) DEFAULT NULL,
     `slug` varchar(255) DEFAULT NULL,
+    `content` mediumtext,
     `markdown` mediumtext,
     `html` mediumtext,
     `status` ENUM('draft', 'published', 'deleted') NOT NULL DEFAULT 'draft',

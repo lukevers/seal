@@ -4,9 +4,8 @@ import { Component } from 'react';
 import { connect } from 'react-redux';
 import { Route, NavLink } from "react-router-dom";
 import { themes } from '../../../base/themes';
-import * as Showdown from "showdown";
-import ReactMde from 'react-mde';
-import 'react-mde/lib/styles/css/react-mde-all.css';
+
+import PostEditor from './posts/editor';
 
 import {
     BiGridHorizontalWrapper,
@@ -39,19 +38,6 @@ const SidebarItem = ({ post, match }) => (
 );
 
 class Content extends Component {
-    converter: Showdown.Converter;
-
-    constructor(props) {
-        super(props);
-
-        this.converter = new Showdown.Converter({
-            tables: true,
-            simplifiedAutoLink: true,
-            strikethrough: true,
-            tasklists: true
-        });
-    }
-
     componentWillUpdate(props) {
         const { dispatch } = props;
 
@@ -95,13 +81,7 @@ class Content extends Component {
         } else {
             return (
                 <div css={css`
-                    .react-mde, .mde-header {
-                        border-radius: 0;
-                    }
-
-                    .DraftEditor-root, .DraftEditor-editorContainer, .public-DraftEditor-content {
-                        height: 100%;
-                    }
+                    padding: 1em;
                 `}>
                     <button onClick={this.savePost}>Save</button>
                     <input
@@ -110,12 +90,10 @@ class Content extends Component {
                         value={post.title}
                         onChange={(e) => this.handleChange(e.target.value, 'title')}
                     />
-                    <ReactMde
-                        value={post.markdown}
-                        onChange={(e) => this.handleChange(e, 'markdown')}
-                        generateMarkdownPreview={markdown =>
-                            Promise.resolve(this.converter.makeHtml(markdown))
-                        }
+                    <hr/>
+                    <PostEditor
+                        value={JSON.parse(post.content)}
+                        onChange={(value) => this.handleChange(value, 'content')}
                     />
                 </div>
             );
