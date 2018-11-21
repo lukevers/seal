@@ -82,19 +82,47 @@ class Content extends Component {
             return (
                 <div css={css`
                     padding: 1em;
+
+                    button {
+                        margin-top: 1.5em;
+                        border: 0;
+                        padding: 1em;
+                        background-color: ${themes.standard.primary};
+                        color: ${themes.standard.white};
+                        cursor: pointer;
+
+                        &:hover {
+                            background-color: ${themes.standard.darker.primary};
+                        }
+                    }
+
                 `}>
+                    <div css={css`
+                        font-size: 1.5em;
+                        color: ${themes.standard.secondary};
+                        margin-bottom: .75em;
+                        line-height: 1.25em;
+                    `}>
+                        <PostEditor
+                            value={post.title}
+                            plaintext
+                            onChange={(value) => this.handleChange(value, 'title')}
+                        />
+                    </div>
+
+                    <div css={css`
+                        padding: 1em;
+                        padding-top: .5em;
+                        border: 1px solid ${themes.standard.lightgray};
+                    `}>
+                        <PostEditor
+                            toolbar
+                            value={JSON.parse(post.content)}
+                            onChange={(value) => this.handleChange(value, 'content')}
+                        />
+                    </div>
+
                     <button onClick={this.savePost}>Save</button>
-                    <input
-                        type="text"
-                        name="title"
-                        value={post.title}
-                        onChange={(e) => this.handleChange(e.target.value, 'title')}
-                    />
-                    <hr/>
-                    <PostEditor
-                        value={JSON.parse(post.content)}
-                        onChange={(value) => this.handleChange(value, 'content')}
-                    />
                 </div>
             );
         }

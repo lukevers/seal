@@ -3,6 +3,8 @@ import { jsx, css } from '@emotion/core';
 import { Component } from 'react';
 import { Editor } from 'slate-react';
 import { Value } from 'slate';
+import Plain from 'slate-plain-serializer';
+import { isKeyHotkey } from 'is-hotkey';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
     faBold,
@@ -11,16 +13,13 @@ import {
     faCode,
 } from '@fortawesome/free-solid-svg-icons';
 
-import { isKeyHotkey } from 'is-hotkey';
-
-const isBoldHotkey = isKeyHotkey('mod+b')
-const isItalicHotkey = isKeyHotkey('mod+i')
-const isUnderlinedHotkey = isKeyHotkey('mod+u')
-const isCodeHotkey = isKeyHotkey('mod+`')
+const isBoldHotkey = isKeyHotkey('mod+b');
+const isItalicHotkey = isKeyHotkey('mod+i');
+const isUnderlinedHotkey = isKeyHotkey('mod+u');
+const isCodeHotkey = isKeyHotkey('mod+`');
 
 const Toolbar = ({ children }) => (
     <div css={css`
-        padding: 1em 0;
         margin-bottom: 1em;
 
         & > * {
@@ -40,6 +39,7 @@ const Button = ({ children, active, onMouseDown }) => (
         cursor: pointer;
         color: ${active ? '#000' : '#aaa'};
         padding: .25em;
+        font-size: .75em;
     `} onMouseDown={onMouseDown}>
         {children}
     </span>
@@ -47,21 +47,28 @@ const Button = ({ children, active, onMouseDown }) => (
 
 export default class PostEditor extends Component {
     state = {
-        value: Value.fromJSON(this.props.value),
+        value: (this.props.plaintext ?
+            Plain.deserialize(this.props.value) :
+            Value.fromJSON(this.props.value)),
     }
 
     onChange = ({ value }) => {
-        this.props.onChange(JSON.stringify(value));
+        if (this.props.plaintext) {
+            this.props.onChange(Plain.serialize(value));
+        } else {
+            this.props.onChange(JSON.stringify(value));
+        }
+
         this.setState({ value });
     }
 
     hasMark = type => {
-        const { value } = this.state
-        return value.activeMarks.some(mark => mark.type === type)
+        const { value } = this.state;
+        return value.activeMarks.some(mark => mark.type === type);
     }
 
     renderMark = (props, editor, next) => {
-        const { children, mark, attributes } = props
+        const { children, mark, attributes } = props;
 
         switch (mark.type) {
             case 'bold':
@@ -73,17 +80,17 @@ export default class PostEditor extends Component {
             case 'underlined':
                 return <u {...attributes}>{children}</u>
             default:
-                return next()
+                return next();
         }
     }
 
     onClickMark = (event, type) => {
-        event.preventDefault()
-        this.editor.toggleMark(type)
+        event.preventDefault();
+        this.editor.toggleMark(type);
     }
 
     renderMarkButton = (type, icon) => {
-        const isActive = this.hasMark(type)
+        const isActive = this.hasMark(type);
 
         return (
             <Button
@@ -96,22 +103,26 @@ export default class PostEditor extends Component {
     }
 
     onKeyDown = (event, editor, next) => {
-        let mark
-
-        if (isBoldHotkey(event)) {
-            mark = 'bold'
-        } else if (isItalicHotkey(event)) {
-            mark = 'italic'
-        } else if (isUnderlinedHotkey(event)) {
-            mark = 'underlined'
-        } else if (isCodeHotkey(event)) {
-            mark = 'code'
-        } else {
-            return next()
+        if (this.props.plaintext) {
+            return next();
         }
 
-        event.preventDefault()
-        editor.toggleMark(mark)
+        let mark;
+
+        if (isBoldHotkey(event)) {
+            mark = 'bold';
+        } else if (isItalicHotkey(event)) {
+            mark = 'italic';
+        } else if (isUnderlinedHotkey(event)) {
+            mark = 'underlined';
+        } else if (isCodeHotkey(event)) {
+            mark = 'code';
+        } else {
+            return next();
+        }
+
+        event.preventDefault();
+        editor.toggleMark(mark);
     }
 
     ref = editor => {
@@ -119,6 +130,15 @@ export default class PostEditor extends Component {
     }
 
     render() {
+        const toolbar = this.props.toolbar ? (
+            <Toolbar>
+                {this.renderMarkButton('bold', faBold)}
+                {this.renderMarkButton('italic', faItalic)}
+                {this.renderMarkButton('underlined', faUnderline)}
+                {this.renderMarkButton('code', faCode)}
+            </Toolbar>
+        ) : '';
+
         return (
             <div css={css`
                 strong {
@@ -137,14 +157,8 @@ export default class PostEditor extends Component {
                     font-family: monospace;
                 }
             `}>
-                <Toolbar>
-                    {this.renderMarkButton('bold', faBold)}
-                    {this.renderMarkButton('italic', faItalic)}
-                    {this.renderMarkButton('underlined', faUnderline)}
-                    {this.renderMarkButton('code', faCode)}
-                </Toolbar>
+                {toolbar}
                 <Editor
-                    placeholder="Enter some rich text..."
                     ref={this.ref}
                     onChange={this.onChange}
                     onKeyDown={this.onKeyDown}
