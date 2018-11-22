@@ -226,15 +226,138 @@ export default class PostEditor extends Component {
         } else if (isCodeHotkey(event)) {
             mark = 'code';
         } else {
-            return next();
+            switch (event.key) {
+                case ' ':
+                    return this.onSpace(event, editor, next);
+                case 'Backspace':
+                    return this.onBackspace(event, editor, next);
+                case 'Enter':
+                    return this.onEnter(event, editor, next);
+                default:
+                    return next();
+            }
         }
 
         event.preventDefault();
         editor.toggleMark(mark);
     }
 
+    onSpace = (event, editor, next) => {
+        const { value } = editor;
+        const { selection } = value;
+
+        if (selection.isExpanded) {
+            return next();
+        }
+
+        const { startBlock } = value;
+        const { start } = selection;
+        const chars = startBlock.text.slice(0, start.offset).replace(/\s*/g, '');
+        const type = this.getType(chars);
+
+        if (!type) {
+            return next();
+        }
+
+        if (type === 'list-item' && startBlock.type === 'list-item') {
+            return next();
+        }
+
+        event.preventDefault();
+        editor.setBlocks(type);
+
+        if (type === 'list-item') {
+            editor.wrapBlock('bulleted-list');
+        }
+
+        editor.moveFocusToStartOfNode(startBlock).delete();
+    }
+
+    onBackspace = (event, editor, next) => {
+        const { value } = editor;
+        const { selection } = value;
+        if (selection.isExpanded) {
+            return next();
+        }
+
+        if (selection.start.offset !== 0) {
+            return next();
+        }
+
+        const { startBlock } = value;
+        if (startBlock.type === 'paragraph') {
+            return next();
+        }
+
+        event.preventDefault();
+        editor.setBlocks('paragraph');
+
+        if (startBlock.type === 'list-item') {
+            editor.unwrapBlock('bulleted-list');
+        }
+    }
+
+    onEnter = (event, editor, next) => {
+        const { value } = editor;
+        const { selection } = value;
+        const { start, end, isExpanded } = selection;
+
+        if (isExpanded) {
+            return next();
+        }
+
+        const { startBlock } = value;
+        if (start.offset === 0 && startBlock.text.length === 0) {
+            return this.onBackspace(event, editor, next);
+        }
+
+        if (end.offset !== startBlock.text.length) {
+            return next();
+        }
+
+        if (
+            startBlock.type !== 'heading-one' &&
+            startBlock.type !== 'heading-two' &&
+            startBlock.type !== 'heading-three' &&
+            startBlock.type !== 'heading-four' &&
+            startBlock.type !== 'heading-five' &&
+            startBlock.type !== 'heading-six' &&
+            startBlock.type !== 'block-quote'
+        ) {
+            return next();
+        }
+
+        event.preventDefault();
+        editor.splitBlock().setBlocks('paragraph');
+    }
+
     ref = editor => {
         this.editor = editor;
+    }
+
+    getType = chars => {
+        switch (chars) {
+            case '*':
+            case '-':
+            case '+':
+                return 'list-item';
+            case '>':
+                return 'block-quote';
+            case '#':
+                return 'heading-one';
+            case '##':
+                return 'heading-two';
+            case '###':
+                return 'heading-three';
+            case '####':
+                return 'heading-four';
+            case '#####':
+                return 'heading-five';
+            case '######':
+                return 'heading-six';
+            default:
+                return null;
+        }
     }
 
     render() {
