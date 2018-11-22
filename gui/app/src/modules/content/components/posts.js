@@ -111,6 +111,7 @@ class Content extends Component {
                     </div>
 
                     <div css={css`
+                        color: ${themes.standard.black};
                         padding: 1em;
                         padding-top: .5em;
                         border: 1px solid ${themes.standard.lightgray};
