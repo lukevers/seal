@@ -2,6 +2,7 @@ import {
     REQUEST_SETTINGS,
     RECEIVE_SETTINGS,
     EDITED_SETTING,
+    SWITCH_TAB,
 } from '../../actions/settings';
 
 export const initialState = {
@@ -22,6 +23,7 @@ export const initialState = {
     ],
     loaded: false,
     edited: {},
+    tab: 'general',
 };
 
 const reducer = (state = initialState, action) => {
@@ -44,6 +46,11 @@ const reducer = (state = initialState, action) => {
 
             return {
                 ...state,
+            };
+        case SWITCH_TAB:
+            return {
+                ...state,
+                tab: action.tab,
             };
         default:
             return state;

@@ -4,6 +4,7 @@ import { initialState } from '../../reducers/settings';
 export const REQUEST_SETTINGS = 'REQUEST_SETTINGS';
 export const RECEIVE_SETTINGS = 'RECEIVE_SETTINGS';
 export const EDITED_SETTING = 'EDITED_SETTING';
+export const SWITCH_TAB = 'SWITCH_TAB';
 
 function requestSettings() {
     return {
@@ -62,5 +63,12 @@ export function settingsSave(settings) {
         });
 
         await Conn.sync('settings', update);
+    }
+}
+
+export function switchTab(tab) {
+    return {
+        type: SWITCH_TAB,
+        tab: tab,
     }
 }

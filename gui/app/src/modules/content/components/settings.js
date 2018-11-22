@@ -5,9 +5,16 @@ import { connect } from 'react-redux';
 import { themes } from '../../../base/themes';
 
 import {
+    BiGridVerticalWrapper,
+    BiGridVerticalHeader,
+    BiGridVerticalContent,
+} from '../../../components/BiGrid';
+
+import {
     fetchSettingsIfNeeded,
     settingEdited,
     settingsSave,
+    switchTab,
 } from '../actions/settings/';
 
 import {
@@ -16,17 +23,7 @@ import {
     getSettings,
 } from '../reducers/settings/';
 
-class Settings extends Component {
-    componentDidMount() {
-        const { dispatch } = this.props;
-        dispatch(fetchSettingsIfNeeded());
-    }
-
-    handleChange = (value, key) => {
-        const { dispatch } = this.props;
-        dispatch(settingEdited(key, value));
-    }
-
+class Content extends Component {
     getSettings = () => {
         let settings = {};
         this.props.settings.items.map((k) => {
@@ -42,12 +39,17 @@ class Settings extends Component {
         return settings;
     }
 
+    handleChange = (value, key) => {
+        const { dispatch } = this.props;
+        dispatch(settingEdited(key, value));
+    }
+
     saveSettings = () => {
         const { dispatch } = this.props;
         dispatch(settingsSave(this.getSettings()));
     }
 
-    render() {
+    general = () => {
         const setting = this.getSettings();
 
         return (
@@ -99,8 +101,8 @@ class Settings extends Component {
                     }
                 }
             `}>
-                <div class="form-group">
-                    <label for="url">URL</label>
+                <div className="form-group">
+                    <label>URL</label>
                     <input
                         type="text"
                         name="url"
@@ -109,8 +111,8 @@ class Settings extends Component {
                     />
                 </div>
 
-                <div class="form-group">
-                    <label for="email">Email</label>
+                <div className="form-group">
+                    <label>Email</label>
                     <input
                         type="text"
                         name="email"
@@ -119,8 +121,8 @@ class Settings extends Component {
                     />
                 </div>
 
-                <div class="form-group">
-                    <label for="password">Password</label>
+                <div className="form-group">
+                    <label>Password</label>
                     <input
                         type="password"
                         name="password"
@@ -131,6 +133,75 @@ class Settings extends Component {
 
                 <button onClick={this.saveSettings}>Save</button>
             </div>
+        );
+    }
+
+    teams = () => {
+        return (
+            <div>teams</div>
+        );
+    }
+
+    render() {
+        switch (this.props.settings.tab) {
+            case 'general':
+                return this.general();
+            case 'teams':
+                return this.teams();
+            default:
+                return <div></div>;
+        }
+    }
+}
+
+class Settings extends Component {
+    componentDidMount() {
+        const { dispatch } = this.props;
+        dispatch(fetchSettingsIfNeeded());
+    }
+
+    changeSettingsTab = (e) => {
+        const { dispatch, settings } = this.props;
+        const tab = e.target.dataset.tab;
+
+        if (settings.tab !== tab) {
+            dispatch(switchTab(tab));
+        }
+    }
+
+    render() {
+        const { settings } = this.props;
+
+        return (
+            <BiGridVerticalWrapper>
+                <BiGridVerticalHeader>
+                    <ul css={css`
+                        height: 100%;
+                        background-color: ${themes.standard.white};
+                        font-size: .75em;
+                        text-transform: uppercase;
+                        letter-spacing: 1px;
+                        display: flex;
+                        align-items: center;
+
+                        li {
+                            padding: 1em;
+                            color: ${themes.standard.gray};
+                            cursor: pointer;
+
+                            &.active {
+                                color: ${themes.standard.black};
+                            }
+                        }
+                    `}>
+                        <li className={settings.tab === 'general' ? 'active' : ''} data-tab="general" onClick={this.changeSettingsTab}>General</li>
+                        <li className={settings.tab === 'teams' ? 'active' : ''} data-tab="teams" onClick={this.changeSettingsTab}>Teams</li>
+                    </ul>
+                </BiGridVerticalHeader>
+                <BiGridVerticalContent>
+                    <Content {...this.props} />
+                </BiGridVerticalContent>
+            </BiGridVerticalWrapper>
         );
     }
 }
