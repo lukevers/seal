@@ -5,7 +5,7 @@ import { Editor } from 'slate-react';
 import { Value } from 'slate';
 import Plain from 'slate-plain-serializer';
 import { isKeyHotkey } from 'is-hotkey';
-import { themes } from '../../../../base/themes';
+import { themes } from '../base/themes';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
     faBold,
@@ -61,7 +61,7 @@ const Button = ({ children, active, onMouseDown }) => (
     </span>
 );
 
-export default class PostEditor extends Component {
+export default class TextEditor extends Component {
     state = {
         value: (this.props.plaintext ?
             Plain.deserialize(this.props.value) :

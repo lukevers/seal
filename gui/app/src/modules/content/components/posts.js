@@ -5,7 +5,7 @@ import { connect } from 'react-redux';
 import { Route, NavLink } from "react-router-dom";
 import { themes } from '../../../base/themes';
 
-import PostEditor from './posts/editor';
+import TextEditor from '../../../components/TextEditor';
 
 import {
     BiGridHorizontalWrapper,
@@ -103,7 +103,7 @@ class Content extends Component {
                         margin-bottom: .75em;
                         line-height: 1.25em;
                     `}>
-                        <PostEditor
+                        <TextEditor
                             value={post.title}
                             plaintext
                             onChange={(value) => this.handleChange(value, 'title')}
@@ -116,7 +116,7 @@ class Content extends Component {
                         padding-top: .5em;
                         border: 1px solid ${themes.standard.lightgray};
                     `}>
-                        <PostEditor
+                        <TextEditor
                             toolbar
                             value={JSON.parse(post.content)}
                             onChange={(value) => this.handleChange(value, 'content')}
