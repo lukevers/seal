@@ -1,6 +1,6 @@
 /** @jsx jsx */
 import { jsx, css } from '@emotion/core'
-import logo from '../../../base/logo-white.png';
+import logo from '../../../base/logo.png';
 import { themes } from '../../../base/themes';
 
 export default () => (
@@ -10,8 +10,7 @@ export default () => (
         align-items: center;
         justify-content: center;
         flex-direction: column;
-        background-color: ${themes.standard.lighter.secondary};
-        color: ${themes.standard.gray};
+        color: ${themes.standard.secondary};
         text-transform: uppercase;
         letter-spacing: 1px;
 
@@ -27,7 +26,7 @@ export default () => (
         h1 {
             padding-top: 3em;
             font-size: 1.5em;
-            color: ${themes.standard.white};
+            color: ${themes.standard.darker.secondary};
         }
 
         h2 {
