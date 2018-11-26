@@ -4,12 +4,13 @@ import (
 	"context"
 	"encoding/base64"
 	"errors"
+	"net/http"
+	"strings"
+
 	"github.com/go-chi/render"
 	"github.com/lukevers/seal/server/models"
 	"github.com/volatiletech/sqlboiler/queries/qm"
 	"golang.org/x/crypto/bcrypt"
-	"net/http"
-	"strings"
 )
 
 // AuthenticateRequest is a middleware that just checks to see if the request
@@ -62,6 +63,13 @@ func AuthenticateRequest(next http.Handler) http.Handler {
 		}
 
 		ctx := context.WithValue(r.Context(), "user", user)
+		next.ServeHTTP(w, r.WithContext(ctx))
+	})
+}
+
+func BoostAPI(next http.Handler) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		ctx := context.WithValue(r.Context(), "api", strings.Index(r.URL.Path, "/api") == 0)
 		next.ServeHTTP(w, r.WithContext(ctx))
 	})
 }

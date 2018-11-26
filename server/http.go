@@ -1,8 +1,9 @@
 package main
 
 import (
-	"github.com/go-chi/render"
 	"net/http"
+
+	"github.com/go-chi/render"
 )
 
 // ErrResponse is a renderable struct for generic errors

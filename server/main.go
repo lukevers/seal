@@ -2,10 +2,11 @@ package main
 
 import (
 	"fmt"
+	"net/http"
+
 	"github.com/go-chi/chi"
 	"github.com/go-chi/chi/middleware"
 	"github.com/go-chi/render"
-	"net/http"
 )
 
 func main() {
@@ -15,6 +16,9 @@ func main() {
 	r.Use(middleware.Logger)
 	r.Use(middleware.Recoverer)
 	r.Use(middleware.URLFormat)
+
+	r.Use(BoostAPI)
+	r.Use(MapHostToTeam)
 
 	r.Route("/api/posts", func(r chi.Router) {
 		r.Use(render.SetContentType(render.ContentTypeJSON))

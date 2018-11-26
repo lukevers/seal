@@ -2,10 +2,11 @@ package main
 
 import (
 	"database/sql"
+	"log"
+
 	_ "github.com/go-sql-driver/mysql"
 	"github.com/lukevers/seal/server/dbconfig"
 	"github.com/volatiletech/sqlboiler/boil"
-	"log"
 )
 
 var db *sql.DB

@@ -4,12 +4,13 @@ import (
 	"context"
 	"encoding/json"
 	"errors"
+	"io/ioutil"
+	"net/http"
+
 	"github.com/go-chi/render"
 	"github.com/lukevers/seal/server/models"
 	"github.com/volatiletech/sqlboiler/boil"
 	"github.com/volatiletech/sqlboiler/queries/qm"
-	"io/ioutil"
-	"net/http"
 )
 
 // PostListResponse is a renderable response type wrapper for multiple posts
