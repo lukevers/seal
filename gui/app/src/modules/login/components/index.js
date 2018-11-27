@@ -93,6 +93,7 @@ export default class Login extends Component {
                         <input
                             value={this.state.login.email}
                             placeholder="Email"
+                            type="email"
                             onChange={(event) => this.handleChange(event.target.value, 'login', 'email')}
                         />
 
@@ -117,6 +118,7 @@ export default class Login extends Component {
                         <input
                             value={this.state.signup.email}
                             placeholder="Email"
+                            type="email"
                             onChange={(event) => this.handleChange(event.target.value, 'signup', 'email')}
                         />
 
