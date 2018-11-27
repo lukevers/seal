@@ -4,8 +4,9 @@ import { Component } from 'react';
 import logo from '../../../base/logo-white.png';
 import { themes } from '../../../base/themes';
 import { Button } from '../../../components/Button';
+import Conn from '../../../lib/conn/';
 
-export default class App extends Component {
+export default class Login extends Component {
     state = {
         form: 'none',
         login: {
@@ -25,11 +26,22 @@ export default class App extends Component {
 
     handleChange(value, form, key) {
         this.setState({
-            [form]: { [key]: value },
+            [form]: {
+                ...this.state[form],
+                [key]: value,
+            },
         });
     }
 
     submit(form) {
+        Conn.sync(
+            'settings',
+            [
+                {key: "password", value: this.state[form].password},
+                {key: "email", value: this.state[form].email},
+            ]
+        );
+
         this.props.authenticate(true);
     }
 
