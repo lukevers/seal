@@ -8,6 +8,20 @@ CREATE TABLE `users` (
     PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
+CREATE TABLE `user_create_codes` (
+    `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+    `code` varchar(36) DEFAULT NULL UNIQUE,
+    `user_id` int(10) unsigned DEFAULT NULL,
+    `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    `redeemed_at` datetime DEFAULT NULL,
+    KEY `user_create_codes_team_id_foreign_key` (`user_id`),
+    CONSTRAINT `user_create_codes_team_id_foreign_key` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE RESTRICT,
+    PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+CREATE TRIGGER `user_create_codes_trigger_insert` BEFORE INSERT ON `user_create_codes` FOR EACH ROW
+	SET new.code = LEFT(UUID(), 36);
+
 CREATE TABLE `teams` (
     `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
     `name` varchar(255) NOT NULL,

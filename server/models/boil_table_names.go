@@ -4,15 +4,17 @@
 package models
 
 var TableNames = struct {
-	PostHistory string
-	Posts       string
-	TeamMembers string
-	Teams       string
-	Users       string
+	PostHistory     string
+	Posts           string
+	TeamMembers     string
+	Teams           string
+	UserCreateCodes string
+	Users           string
 }{
-	PostHistory: "post_history",
-	Posts:       "posts",
-	TeamMembers: "team_members",
-	Teams:       "teams",
-	Users:       "users",
+	PostHistory:     "post_history",
+	Posts:           "posts",
+	TeamMembers:     "team_members",
+	Teams:           "teams",
+	UserCreateCodes: "user_create_codes",
+	Users:           "users",
 }

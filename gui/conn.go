@@ -4,8 +4,9 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	"github.com/lukevers/webview"
 	"log"
+
+	"github.com/lukevers/webview"
 )
 
 // RequestMessage is a JSON encoded message passed from the application from
@@ -39,7 +40,9 @@ func handleMessage(w webview.WebView, data string) {
 
 	message.w = w
 
-	log.Println(message)
+	if *flagDebug {
+		log.Println(message)
+	}
 
 	switch message.FN {
 	case "ping":

@@ -45,9 +45,6 @@ func AuthenticateRequest(next http.Handler) http.Handler {
 			return
 		}
 
-		// TODO: check if email exists
-		// TODO: check password against hash
-
 		user, err := models.Users(
 			qm.Where("email = ?", parts[0]),
 		).One(context.TODO(), db)

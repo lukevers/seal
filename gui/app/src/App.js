@@ -23,8 +23,6 @@ export default class App extends Component {
         super(props);
 
         Conn.load('settings', JSON.stringify([{"key": "authenticated", "value": ""}]), (data) => {
-            console.log(data);
-
             this.setState({
                 loading: false,
                 authenticated: data.data[0].value === "true",

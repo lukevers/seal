@@ -52,23 +52,26 @@ var UserColumns = struct {
 
 // UserRels is where relationship names are stored.
 var UserRels = struct {
-	CreatedByPosts string
-	DeletedByPosts string
-	UpdatedByPosts string
-	TeamMembers    string
+	CreatedByPosts  string
+	DeletedByPosts  string
+	UpdatedByPosts  string
+	TeamMembers     string
+	UserCreateCodes string
 }{
-	CreatedByPosts: "CreatedByPosts",
-	DeletedByPosts: "DeletedByPosts",
-	UpdatedByPosts: "UpdatedByPosts",
-	TeamMembers:    "TeamMembers",
+	CreatedByPosts:  "CreatedByPosts",
+	DeletedByPosts:  "DeletedByPosts",
+	UpdatedByPosts:  "UpdatedByPosts",
+	TeamMembers:     "TeamMembers",
+	UserCreateCodes: "UserCreateCodes",
 }
 
 // userR is where relationships are stored.
 type userR struct {
-	CreatedByPosts PostSlice
-	DeletedByPosts PostSlice
-	UpdatedByPosts PostSlice
-	TeamMembers    TeamMemberSlice
+	CreatedByPosts  PostSlice
+	DeletedByPosts  PostSlice
+	UpdatedByPosts  PostSlice
+	TeamMembers     TeamMemberSlice
+	UserCreateCodes UserCreateCodeSlice
 }
 
 // NewStruct creates a new relationship struct
@@ -401,6 +404,27 @@ func (o *User) TeamMembers(mods ...qm.QueryMod) teamMemberQuery {
 
 	if len(queries.GetSelect(query.Query)) == 0 {
 		queries.SetSelect(query.Query, []string{"`team_members`.*"})
+	}
+
+	return query
+}
+
+// UserCreateCodes retrieves all the user_create_code's UserCreateCodes with an executor.
+func (o *User) UserCreateCodes(mods ...qm.QueryMod) userCreateCodeQuery {
+	var queryMods []qm.QueryMod
+	if len(mods) != 0 {
+		queryMods = append(queryMods, mods...)
+	}
+
+	queryMods = append(queryMods,
+		qm.Where("`user_create_codes`.`user_id`=?", o.ID),
+	)
+
+	query := UserCreateCodes(queryMods...)
+	queries.SetFrom(query.Query, "`user_create_codes`")
+
+	if len(queries.GetSelect(query.Query)) == 0 {
+		queries.SetSelect(query.Query, []string{"`user_create_codes`.*"})
 	}
 
 	return query
@@ -770,6 +794,97 @@ func (userL) LoadTeamMembers(ctx context.Context, e boil.ContextExecutor, singul
 	return nil
 }
 
+// LoadUserCreateCodes allows an eager lookup of values, cached into the
+// loaded structs of the objects. This is for a 1-M or N-M relationship.
+func (userL) LoadUserCreateCodes(ctx context.Context, e boil.ContextExecutor, singular bool, maybeUser interface{}, mods queries.Applicator) error {
+	var slice []*User
+	var object *User
+
+	if singular {
+		object = maybeUser.(*User)
+	} else {
+		slice = *maybeUser.(*[]*User)
+	}
+
+	args := make([]interface{}, 0, 1)
+	if singular {
+		if object.R == nil {
+			object.R = &userR{}
+		}
+		args = append(args, object.ID)
+	} else {
+	Outer:
+		for _, obj := range slice {
+			if obj.R == nil {
+				obj.R = &userR{}
+			}
+
+			for _, a := range args {
+				if queries.Equal(a, obj.ID) {
+					continue Outer
+				}
+			}
+
+			args = append(args, obj.ID)
+		}
+	}
+
+	query := NewQuery(qm.From(`user_create_codes`), qm.WhereIn(`user_id in ?`, args...))
+	if mods != nil {
+		mods.Apply(query)
+	}
+
+	results, err := query.QueryContext(ctx, e)
+	if err != nil {
+		return errors.Wrap(err, "failed to eager load user_create_codes")
+	}
+
+	var resultSlice []*UserCreateCode
+	if err = queries.Bind(results, &resultSlice); err != nil {
+		return errors.Wrap(err, "failed to bind eager loaded slice user_create_codes")
+	}
+
+	if err = results.Close(); err != nil {
+		return errors.Wrap(err, "failed to close results in eager load on user_create_codes")
+	}
+	if err = results.Err(); err != nil {
+		return errors.Wrap(err, "error occurred during iteration of eager loaded relations for user_create_codes")
+	}
+
+	if len(userCreateCodeAfterSelectHooks) != 0 {
+		for _, obj := range resultSlice {
+			if err := obj.doAfterSelectHooks(ctx, e); err != nil {
+				return err
+			}
+		}
+	}
+	if singular {
+		object.R.UserCreateCodes = resultSlice
+		for _, foreign := range resultSlice {
+			if foreign.R == nil {
+				foreign.R = &userCreateCodeR{}
+			}
+			foreign.R.User = object
+		}
+		return nil
+	}
+
+	for _, foreign := range resultSlice {
+		for _, local := range slice {
+			if queries.Equal(local.ID, foreign.UserID) {
+				local.R.UserCreateCodes = append(local.R.UserCreateCodes, foreign)
+				if foreign.R == nil {
+					foreign.R = &userCreateCodeR{}
+				}
+				foreign.R.User = local
+				break
+			}
+		}
+	}
+
+	return nil
+}
+
 // AddCreatedByPosts adds the given related objects to the existing relationships
 // of the user, optionally inserting them as new records.
 // Appends related to o.R.CreatedByPosts.
@@ -1049,6 +1164,129 @@ func (o *User) AddTeamMembers(ctx context.Context, exec boil.ContextExecutor, in
 			rel.R.User = o
 		}
 	}
+	return nil
+}
+
+// AddUserCreateCodes adds the given related objects to the existing relationships
+// of the user, optionally inserting them as new records.
+// Appends related to o.R.UserCreateCodes.
+// Sets related.R.User appropriately.
+func (o *User) AddUserCreateCodes(ctx context.Context, exec boil.ContextExecutor, insert bool, related ...*UserCreateCode) error {
+	var err error
+	for _, rel := range related {
+		if insert {
+			queries.Assign(&rel.UserID, o.ID)
+			if err = rel.Insert(ctx, exec, boil.Infer()); err != nil {
+				return errors.Wrap(err, "failed to insert into foreign table")
+			}
+		} else {
+			updateQuery := fmt.Sprintf(
+				"UPDATE `user_create_codes` SET %s WHERE %s",
+				strmangle.SetParamNames("`", "`", 0, []string{"user_id"}),
+				strmangle.WhereClause("`", "`", 0, userCreateCodePrimaryKeyColumns),
+			)
+			values := []interface{}{o.ID, rel.ID}
+
+			if boil.DebugMode {
+				fmt.Fprintln(boil.DebugWriter, updateQuery)
+				fmt.Fprintln(boil.DebugWriter, values)
+			}
+
+			if _, err = exec.ExecContext(ctx, updateQuery, values...); err != nil {
+				return errors.Wrap(err, "failed to update foreign table")
+			}
+
+			queries.Assign(&rel.UserID, o.ID)
+		}
+	}
+
+	if o.R == nil {
+		o.R = &userR{
+			UserCreateCodes: related,
+		}
+	} else {
+		o.R.UserCreateCodes = append(o.R.UserCreateCodes, related...)
+	}
+
+	for _, rel := range related {
+		if rel.R == nil {
+			rel.R = &userCreateCodeR{
+				User: o,
+			}
+		} else {
+			rel.R.User = o
+		}
+	}
+	return nil
+}
+
+// SetUserCreateCodes removes all previously related items of the
+// user replacing them completely with the passed
+// in related items, optionally inserting them as new records.
+// Sets o.R.User's UserCreateCodes accordingly.
+// Replaces o.R.UserCreateCodes with related.
+// Sets related.R.User's UserCreateCodes accordingly.
+func (o *User) SetUserCreateCodes(ctx context.Context, exec boil.ContextExecutor, insert bool, related ...*UserCreateCode) error {
+	query := "update `user_create_codes` set `user_id` = null where `user_id` = ?"
+	values := []interface{}{o.ID}
+	if boil.DebugMode {
+		fmt.Fprintln(boil.DebugWriter, query)
+		fmt.Fprintln(boil.DebugWriter, values)
+	}
+
+	_, err := exec.ExecContext(ctx, query, values...)
+	if err != nil {
+		return errors.Wrap(err, "failed to remove relationships before set")
+	}
+
+	if o.R != nil {
+		for _, rel := range o.R.UserCreateCodes {
+			queries.SetScanner(&rel.UserID, nil)
+			if rel.R == nil {
+				continue
+			}
+
+			rel.R.User = nil
+		}
+
+		o.R.UserCreateCodes = nil
+	}
+	return o.AddUserCreateCodes(ctx, exec, insert, related...)
+}
+
+// RemoveUserCreateCodes relationships from objects passed in.
+// Removes related items from R.UserCreateCodes (uses pointer comparison, removal does not keep order)
+// Sets related.R.User.
+func (o *User) RemoveUserCreateCodes(ctx context.Context, exec boil.ContextExecutor, related ...*UserCreateCode) error {
+	var err error
+	for _, rel := range related {
+		queries.SetScanner(&rel.UserID, nil)
+		if rel.R != nil {
+			rel.R.User = nil
+		}
+		if _, err = rel.Update(ctx, exec, boil.Whitelist("user_id")); err != nil {
+			return err
+		}
+	}
+	if o.R == nil {
+		return nil
+	}
+
+	for _, rel := range related {
+		for i, ri := range o.R.UserCreateCodes {
+			if rel != ri {
+				continue
+			}
+
+			ln := len(o.R.UserCreateCodes)
+			if ln > 1 && i < ln-1 {
+				o.R.UserCreateCodes[i] = o.R.UserCreateCodes[ln-1]
+			}
+			o.R.UserCreateCodes = o.R.UserCreateCodes[:ln-1]
+			break
+		}
+	}
+
 	return nil
 }
 

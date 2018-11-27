@@ -33,8 +33,33 @@ export default class Login extends Component {
         });
     }
 
-    submit(form) {
-        Conn.sync(
+    async submit(form) {
+        if (form === 'signup') {
+            const data = await Conn.load(
+                'settings',
+                JSON.stringify([{key: "url", value: ""}]),
+            );
+
+            const url = data.data[0].value;
+
+            await fetch(
+                `${url}/api/create-user`,
+                {
+                    method: 'POST',
+                    headers: {
+                        'Accept': 'application/json',
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        code: this.state[form].code,
+                        email: this.state[form].email,
+                        password: this.state[form].password,
+                    }),
+                }
+            );
+        }
+
+        await Conn.sync(
             'settings',
             [
                 {key: "password", value: this.state[form].password},

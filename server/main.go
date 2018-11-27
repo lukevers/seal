@@ -6,6 +6,7 @@ import (
 
 	"github.com/go-chi/chi"
 	"github.com/go-chi/chi/middleware"
+	"github.com/go-chi/cors"
 	"github.com/go-chi/render"
 )
 
@@ -19,6 +20,17 @@ func main() {
 
 	r.Use(BoostAPI)
 	r.Use(MapHostToTeam)
+
+	r.Route("/api/create-user", func(r chi.Router) {
+		r.Use(render.SetContentType(render.ContentTypeJSON))
+		r.Use((cors.New(cors.Options{
+			AllowedOrigins: []string{"*"},
+			AllowedMethods: []string{"POST", "OPTIONS"},
+		})).Handler)
+
+		r.Options("/", func(w http.ResponseWriter, r *http.Request) {})
+		r.Post("/", CreateUser)
+	})
 
 	r.Route("/api/posts", func(r chi.Router) {
 		r.Use(render.SetContentType(render.ContentTypeJSON))
