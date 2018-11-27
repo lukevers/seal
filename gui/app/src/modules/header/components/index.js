@@ -39,12 +39,13 @@ const HeaderLeft = () => (
     </div>
 );
 
-const HeaderRight = () => (
+const HeaderRight = ({ authenticate }) => (
     <div>
         <div css={css`
             position: absolute;
             right: 0;
             top: 5px;
+            display: flex;
 
             a {
                 height: 45px;
@@ -65,6 +66,9 @@ const HeaderRight = () => (
             <NavLink to="/settings" activeClassName="active">
                 <HeaderItem>Settings</HeaderItem>
             </NavLink>
+            <a href="#/" onClick={() => authenticate(false)}>
+                <HeaderItem>Log Out</HeaderItem>
+            </a>
         </div>
         {/*
             <div css={css`
@@ -85,7 +89,7 @@ const HeaderRight = () => (
     </div>
 );
 
-export default () => (
+export default ({ authenticate }) => (
     <ul css={css`
         background-color: ${themes.standard.darker.secondary};
         color: ${themes.standard.gray};
@@ -93,6 +97,6 @@ export default () => (
         display: flex;
     `}>
         <HeaderLeft/>
-        <HeaderRight/>
+        <HeaderRight authenticate={authenticate}/>
     </ul>
 );

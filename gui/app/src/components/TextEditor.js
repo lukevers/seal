@@ -427,6 +427,7 @@ export default class TextEditor extends Component {
                     value={this.state.value}
                     renderNode={this.renderNode}
                     renderMark={this.renderMark}
+                    placeholder={this.props.placeholder}
                 />
             </div>
         )
