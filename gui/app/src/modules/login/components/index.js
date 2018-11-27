@@ -8,6 +8,7 @@ import Conn from '../../../lib/conn/';
 
 export default class Login extends Component {
     state = {
+        error: null,
         form: 'none',
         login: {
             email: '',
@@ -41,8 +42,7 @@ export default class Login extends Component {
             );
 
             const url = data.data[0].value;
-
-            await fetch(
+            const resp = await fetch(
                 `${url}/api/create-user`,
                 {
                     method: 'POST',
@@ -57,6 +57,12 @@ export default class Login extends Component {
                     }),
                 }
             );
+
+            const error = (await resp.json()).error;
+            if (error !== null) {
+                this.setState({ error });
+                return;
+            }
         }
 
         await Conn.sync(
@@ -114,6 +120,11 @@ export default class Login extends Component {
             content = (
                 <div>
                     <img src={logo} alt="Seal"/>
+                    {this.state.error === null ? '' : (
+                        <span>
+                            <p className="error">{this.state.error}</p>
+                        </span>
+                    )}
                     <span>
                         <input
                             value={this.state.signup.email}
@@ -199,6 +210,15 @@ export default class Login extends Component {
                     &[name="code"] {
                         width: calc(400px + 1em);
                     }
+                }
+
+                .error {
+                    background-color: ${themes.standard.primary};
+                    color: ${themes.standard.white};
+                    padding: 1em;
+                    position: absolute;
+                    top: 1em;
+                    right: 1em;
                 }
             `}>
                 {content}
