@@ -35,15 +35,16 @@ export default class Login extends Component {
     }
 
     async submit(form) {
-        if (form === 'signup') {
-            const data = await Conn.load(
-                'settings',
-                JSON.stringify([{key: "url", value: ""}]),
-            );
+        const data = await Conn.load(
+            'settings',
+            JSON.stringify([{key: "url", value: ""}]),
+        );
 
-            const url = data.data[0].value;
+        const url = data.data[0].value;
+
+        if (form === 'signup') {
             const resp = await fetch(
-                `${url}/api/create-user`,
+                `${url}/api/user/create`,
                 {
                     method: 'POST',
                     headers: {
@@ -58,9 +59,30 @@ export default class Login extends Component {
                 }
             );
 
-            const error = (await resp.json()).error;
-            if (error !== null) {
-                this.setState({ error });
+            const response = (await resp.json());
+            if (response.error && response.error !== null) {
+                this.setState({ error: response.error });
+                return;
+            }
+        } else if (form === 'login') {
+            const resp = await fetch(
+                `${url}/api/user/authenticate`,
+                {
+                    method: 'POST',
+                    headers: {
+                        'Accept': 'application/json',
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        email: this.state[form].email,
+                        password: this.state[form].password,
+                    }),
+                }
+            );
+
+            const response = (await resp.json());
+            if (response.error && response.error !== null) {
+                this.setState({ error: response.error });
                 return;
             }
         }
@@ -95,6 +117,11 @@ export default class Login extends Component {
             content = (
                 <div>
                     <img src={logo} alt="Seal"/>
+                    {this.state.error === null ? '' : (
+                        <span>
+                            <p className="error">{this.state.error}</p>
+                        </span>
+                    )}
                     <span>
                         <input
                             value={this.state.login.email}

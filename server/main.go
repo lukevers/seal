@@ -21,15 +21,18 @@ func main() {
 	r.Use(BoostAPI)
 	r.Use(MapHostToTeam)
 
-	r.Route("/api/create-user", func(r chi.Router) {
+	r.Route("/api/user", func(r chi.Router) {
 		r.Use(render.SetContentType(render.ContentTypeJSON))
 		r.Use((cors.New(cors.Options{
 			AllowedOrigins: []string{"*"},
 			AllowedMethods: []string{"POST", "OPTIONS"},
 		})).Handler)
 
-		r.Options("/", func(w http.ResponseWriter, r *http.Request) {})
-		r.Post("/", CreateUser)
+		r.Options("/create", func(w http.ResponseWriter, r *http.Request) {})
+		r.Post("/create", UserCreate)
+
+		r.Options("/authenticate", func(w http.ResponseWriter, r *http.Request) {})
+		r.Post("/authenticate", UserAuthenticate)
 	})
 
 	r.Route("/api/posts", func(r chi.Router) {

@@ -2,12 +2,13 @@ package main
 
 import (
 	"fmt"
-	"github.com/lukevers/webview"
 	"log"
 	"net"
 	"net/http"
 	"os"
 	"path/filepath"
+
+	"github.com/lukevers/webview"
 )
 
 func main() {

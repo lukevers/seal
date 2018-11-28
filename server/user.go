@@ -5,7 +5,6 @@ import (
 	"encoding/json"
 	"errors"
 	"io/ioutil"
-	"log"
 	"net/http"
 	"time"
 
@@ -24,8 +23,12 @@ type UserCreateForm struct {
 	Code     string `json:"code"`
 }
 
-// UpdatePost updates a specific post.
-func CreateUser(w http.ResponseWriter, r *http.Request) {
+type UserAuthenticateForm struct {
+	Email    string `json:"email"`
+	Password string `json:"password"`
+}
+
+func UserCreate(w http.ResponseWriter, r *http.Request) {
 	defer r.Body.Close()
 	body, err := ioutil.ReadAll(r.Body)
 	if err != nil {
@@ -54,8 +57,6 @@ func CreateUser(w http.ResponseWriter, r *http.Request) {
 		render.Render(w, r, ErrRender(errors.New("Code is required")))
 		return
 	}
-
-	log.Println(form)
 
 	code, err := models.UserCreateCodes(
 		qm.Where("code = ?", form.Code),
@@ -90,4 +91,49 @@ func CreateUser(w http.ResponseWriter, r *http.Request) {
 		render.Render(w, r, ErrRender(err))
 		return
 	}
+
+	render.Render(w, r, &SuccessResponse{})
+}
+
+func UserAuthenticate(w http.ResponseWriter, r *http.Request) {
+	defer r.Body.Close()
+	body, err := ioutil.ReadAll(r.Body)
+	if err != nil {
+		render.Render(w, r, ErrRender(err))
+		return
+	}
+
+	var form UserAuthenticateForm
+	err = json.Unmarshal(body, &form)
+	if err != nil {
+		render.Render(w, r, ErrRender(err))
+		return
+	}
+
+	if form.Email == "" {
+		render.Render(w, r, ErrRender(errors.New("Email is required")))
+		return
+	}
+
+	if form.Password == "" {
+		render.Render(w, r, ErrRender(errors.New("Password is required")))
+		return
+	}
+
+	user, err := models.Users(
+		qm.Where("email = ?", form.Email),
+		qm.Where("deleted_at IS NULL"),
+	).One(context.TODO(), db)
+	if err != nil {
+		render.Render(w, r, ErrRender(errors.New("Could not find active user")))
+		return
+	}
+
+	err = bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(form.Password))
+	if err != nil {
+		render.Render(w, r, ErrRender(errors.New("Could not authenticate user")))
+		return
+	}
+
+	render.Render(w, r, &SuccessResponse{})
 }
