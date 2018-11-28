@@ -40,7 +40,8 @@ export default class Login extends Component {
             JSON.stringify([{key: "url", value: ""}]),
         );
 
-        const url = data.data[0].value;
+        // TODO: replace localhost with domain
+        const url = data.data[0].value || 'http://localhost:3333';
 
         if (form === 'signup') {
             const resp = await fetch(
@@ -92,6 +93,7 @@ export default class Login extends Component {
             [
                 {key: "password", value: this.state[form].password},
                 {key: "email", value: this.state[form].email},
+                {key: "url", value: url},
             ]
         );
 
