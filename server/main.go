@@ -41,6 +41,7 @@ func main() {
 
 		r.Get("/", ListPosts)
 		r.Patch("/", UpdatePost)
+		r.Post("/", CreatePost)
 	})
 
 	http.ListenAndServe(

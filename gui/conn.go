@@ -50,7 +50,9 @@ func handleMessage(w webview.WebView, data string) {
 	case "load":
 		handleMessageLoad(message)
 	case "sync":
-		handleMessageSync(message)
+		handleMessageSync(message, false)
+	case "post":
+		handleMessageSync(message, true)
 	default:
 		handleMessageNotSupported(message)
 	}
@@ -144,7 +146,7 @@ func handleMessageLoad(message RequestMessage) {
 	})
 }
 
-func handleMessageSync(message RequestMessage) {
+func handleMessageSync(message RequestMessage, new bool) {
 	var what, how interface{}
 	var exists bool
 
@@ -175,7 +177,11 @@ func handleMessageSync(message RequestMessage) {
 
 	switch what.(string) {
 	case WhatPost:
-		data, err = updatePost(how.(string))
+		if new {
+			data, err = createPost(how.(string))
+		} else {
+			data, err = updatePost(how.(string))
+		}
 	case WhatSettings:
 		data, err = updateSettings(how.(string))
 	default:

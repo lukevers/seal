@@ -21,6 +21,7 @@ import {
     postEdited,
     postSave,
     switchTab,
+    clearNewPostData,
 } from '../actions/posts/';
 
 const SidebarItem = ({ post, match }) => (
@@ -46,19 +47,31 @@ class Content extends Component {
     }
 
     savePost = () => {
-        const { dispatch } = this.props;
+        const { dispatch, history } = this.props;
         dispatch(postSave(this.getPost()));
+        dispatch(clearNewPostData());
+
+        if (this.props.new) {
+            this.props.dispatch(switchTab('all'));
+            history.push('/posts');
+            dispatch(fetchPostsIfNeeded());
+        }
     }
 
     getPost = () => {
-        const id = parseInt(this.props.match.params.id);
-        let post = this.props.items.reduce((result, item) => {
-            if (id === item.id) {
-                result = item;
-            }
+        let id = 'new';
+        let post;
 
-            return result;
-        });
+        if (!this.props.new) {
+            id = parseInt(this.props.match.params.id);
+            post = this.props.items.reduce((result, item) => {
+                if (id === item.id) {
+                    result = item;
+                }
+
+                return result;
+            });
+        }
 
         if (typeof this.props.edited[id] != 'undefined') {
             post = this.props.edited[id];
@@ -181,7 +194,7 @@ class Posts extends Component {
                         </ul>
                     </BiGridVerticalHeader>
                     <BiGridVerticalContent>
-                        <BiGridHorizontalWrapper columns="200px auto">
+                        <BiGridHorizontalWrapper columns={tab === 'new' ? '0px auto' : '200px auto'}>
                             <BiGridHorizontalSidebar>
                                 <div css={css`
                                     border-right: 1px solid ${themes.standard.lightgray};
@@ -212,7 +225,9 @@ class Posts extends Component {
                             </BiGridHorizontalSidebar>
                             <BiGridHorizontalContent>
                                 {loaded
-                                    ? <Route path={`${this.props.match.path}/:id`} render={(props, routeProps) => (
+                                    ?
+                                        tab === 'new' ? <Content {...this.props} new={true}/> :
+                                        <Route path={`${this.props.match.path}/:id`} render={(props, routeProps) => (
                                             <Content {...routeProps} {...this.props} {...props} />
                                         )} />
                                     : <div>{/*loading*/}</div>

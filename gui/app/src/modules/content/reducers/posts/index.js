@@ -1,15 +1,27 @@
 import {
+    CLEAR_NEW_POST_DATA,
     REQUEST_POSTS,
     RECEIVE_POSTS,
     EDITED_POST,
     SWITCH_TAB,
 } from '../../actions/posts';
 
+import Html from 'slate-html-serializer';
+
+const getNewPost = () => {
+    return {
+        title: 'New Post',
+        content: JSON.stringify((new Html()).deserialize('<p>Content</p>', {toJSON: true})),
+    };
+}
+
 const initialState = {
     error: null,
     items: [],
     loaded: false,
-    edited: {},
+    edited: {
+        new: getNewPost(),
+    },
     tab: 'all',
 };
 
@@ -38,6 +50,12 @@ const reducer = (state = initialState, action) => {
             return {
                 ...state,
                 tab: action.tab,
+            };
+        case CLEAR_NEW_POST_DATA:
+            state.edited['new'] = getNewPost();
+
+            return {
+                ...state,
             };
         default:
             return state;

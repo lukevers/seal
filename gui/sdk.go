@@ -73,3 +73,33 @@ func (s *SDK) Patch(path string, body io.Reader) (*http.Response, error) {
 	req.Header.Add("Authorization", fmt.Sprintf("Basic %s", encoded))
 	return (&http.Client{}).Do(req)
 }
+
+// Post sends a POST request to the server through the SDK.
+func (s *SDK) Post(path string, body io.Reader) (*http.Response, error) {
+	req, err := http.NewRequest(
+		"POST",
+		fmt.Sprintf(
+			"%s/api/%s",
+			s.URL,
+			path,
+		),
+		body,
+	)
+
+	if err != nil {
+		return nil, err
+	}
+
+	encoded := base64.StdEncoding.EncodeToString(
+		[]byte(
+			fmt.Sprintf(
+				"%s:%s",
+				s.Email,
+				s.Password,
+			),
+		),
+	)
+
+	req.Header.Add("Authorization", fmt.Sprintf("Basic %s", encoded))
+	return (&http.Client{}).Do(req)
+}

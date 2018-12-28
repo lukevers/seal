@@ -119,3 +119,44 @@ func UpdatePost(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 }
+
+// CreatePost creates a new post.
+func CreatePost(w http.ResponseWriter, r *http.Request) {
+	ctx := r.Context()
+	user, ok := ctx.Value("user").(*models.User)
+	if !ok {
+		render.Render(w, r, ErrRender(errors.New("Could not revive context")))
+		return
+	}
+
+	defer r.Body.Close()
+	body, err := ioutil.ReadAll(r.Body)
+	if err != nil {
+		render.Render(w, r, ErrRender(err))
+		return
+	}
+
+	var post models.Post
+	err = json.Unmarshal(body, &post)
+	if err != nil {
+		render.Render(w, r, ErrRender(err))
+		return
+	}
+
+	p := &models.Post{
+		Title:       post.Title,
+		Slug:        post.Slug,
+		Content:     post.Content,
+		Markdown:    post.Markdown,
+		HTML:        post.HTML,
+		CreatedByID: user.ID,
+		UpdatedByID: user.ID,
+		OwnedByID:   post.OwnedByID,
+	}
+
+	err = p.Insert(context.TODO(), db, boil.Infer())
+	if err != nil {
+		render.Render(w, r, ErrRender(err))
+		return
+	}
+}

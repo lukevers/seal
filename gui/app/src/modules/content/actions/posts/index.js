@@ -5,6 +5,7 @@ import Conn from '../../../../lib/conn/';
 import Html from 'slate-html-serializer';
 import { Value } from 'slate';
 
+export const CLEAR_NEW_POST_DATA = 'POSTS_CLEAR_NEW_POST_DATA';
 export const REQUEST_POSTS = 'POSTS_REQUEST_POSTS';
 export const RECEIVE_POSTS = 'POSTS_RECEIVE_POSTS';
 export const EDITED_POST = 'POSTS_EDITED_POST';
@@ -112,8 +113,19 @@ export function postSave(post) {
         });
 
         post.html = html.serialize(Value.fromJSON(JSON.parse(post.content)));
-        await Conn.sync('post', post);
+        if (typeof post.id === 'undefined') {
+            // TODO: get active team from state
+            post.owned_by_id = 1;
+        }
+
+        await Conn.post('post', post);
     }
+}
+
+export function clearNewPostData() {
+    return {
+        type: CLEAR_NEW_POST_DATA,
+    };
 }
 
 export function switchTab(tab) {

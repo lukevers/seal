@@ -45,4 +45,5 @@ export default {
     ping: async (cb) => { return await send('ping', {}, cb); },
     load: async (what, how, cb) => { return await send('load', {what, how}, cb); },
     sync: async (what, how, cb) => { return await send('sync', {what, how: JSON.stringify(how)}, cb); },
+    post: async (what, how, cb) => { return await send('post', {what, how: JSON.stringify(how)}, cb); },
 };
