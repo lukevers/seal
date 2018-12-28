@@ -23,12 +23,6 @@ import {
     switchTab,
 } from '../actions/posts/';
 
-import {
-    getIsLoaded,
-    getError,
-    getPosts,
-} from '../reducers/posts/';
-
 const SidebarItem = ({ post, match }) => (
     <NavLink to={`${match.url}/${post.id}`} activeClassName="active">
         <div>
@@ -58,7 +52,7 @@ class Content extends Component {
 
     getPost = () => {
         const id = parseInt(this.props.match.params.id);
-        let post = this.props.posts.items.reduce((result, item) => {
+        let post = this.props.items.reduce((result, item) => {
             if (id === item.id) {
                 result = item;
             }
@@ -66,8 +60,8 @@ class Content extends Component {
             return result;
         });
 
-        if (typeof this.props.posts.edited[id] != 'undefined') {
-            post = this.props.posts.edited[id];
+        if (typeof this.props.edited[id] != 'undefined') {
+            post = this.props.edited[id];
         }
 
         return post;
@@ -137,23 +131,23 @@ class Posts extends Component {
     }
 
     changePostsTab = (e) => {
-        const { dispatch, posts, history } = this.props;
-        const tab = e.target.dataset.posts;
+        const { dispatch, tab, history } = this.props;
+        const tabTarget = e.target.dataset.posts;
 
-        if (posts.tab !== tab) {
-            dispatch(switchTab(tab));
+        if (tab !== tabTarget) {
+            dispatch(switchTab(tabTarget));
             history.push('/posts');
             dispatch(fetchPostsIfNeeded());
         }
     }
 
     render() {
-        const { posts } = this.props;
+        const { items, tab, error, loaded } = this.props;
 
-        if (posts.error) {
+        if (error) {
             return (
                 <pre>
-                    <code>{posts.error}</code>
+                    <code>{error}</code>
                 </pre>
             );
         } else {
@@ -179,11 +173,11 @@ class Posts extends Component {
                                 }
                             }
                         `}>
-                            <li className={posts.tab === 'all' ? 'active' : ''} data-posts="all" onClick={this.changePostsTab}>All Posts</li>
-                            <li className={posts.tab === 'published' ? 'active' : ''}  data-posts="published" onClick={this.changePostsTab}>Published</li>
-                            <li className={posts.tab === 'drafts' ? 'active' : ''} data-posts="drafts" onClick={this.changePostsTab}>Drafts</li>
-                            <li className={posts.tab === 'archived' ? 'active' : ''} data-posts="archived" onClick={this.changePostsTab}>Archived</li>
-                            <li className={posts.tab === 'new' ? 'active' : ''} data-posts="new" onClick={this.changePostsTab}>Add New</li>
+                            <li className={tab === 'all' ? 'active' : ''} data-posts="all" onClick={this.changePostsTab}>All Posts</li>
+                            <li className={tab === 'published' ? 'active' : ''}  data-posts="published" onClick={this.changePostsTab}>Published</li>
+                            <li className={tab === 'drafts' ? 'active' : ''} data-posts="drafts" onClick={this.changePostsTab}>Drafts</li>
+                            <li className={tab === 'archived' ? 'active' : ''} data-posts="archived" onClick={this.changePostsTab}>Archived</li>
+                            <li className={tab === 'new' ? 'active' : ''} data-posts="new" onClick={this.changePostsTab}>Add New</li>
                         </ul>
                     </BiGridVerticalHeader>
                     <BiGridVerticalContent>
@@ -211,13 +205,13 @@ class Posts extends Component {
                                         }
                                     }
                                 `}>
-                                    {posts.items.map((post, index) => (
+                                    {items.map((post, index) => (
                                        <SidebarItem key={index} match={this.props.match} post={post} />
                                     ))}
                                 </div>
                             </BiGridHorizontalSidebar>
                             <BiGridHorizontalContent>
-                                {posts.loaded
+                                {loaded
                                     ? <Route path={`${this.props.match.path}/:id`} render={(props, routeProps) => (
                                             <Content {...routeProps} {...this.props} {...props} />
                                         )} />
@@ -233,9 +227,11 @@ class Posts extends Component {
 }
 
 const mapStateToProps = state => ({
-    loaded: getIsLoaded(state),
-    error: getError(state),
-    posts: getPosts(state),
+    loaded: state.posts.loaded,
+    error: state.posts.error,
+    items: state.posts.items,
+    tab: state.posts.tab,
+    edited: state.posts.edited,
 });
 
 export default connect(mapStateToProps)(Posts);

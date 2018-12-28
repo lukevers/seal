@@ -45,7 +45,3 @@ const reducer = (state = initialState, action) => {
 };
 
 export default reducer;
-
-export const getIsLoaded = state => state.loaded;
-export const getError = state => state.error;
-export const getPosts = state => state.posts;

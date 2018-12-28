@@ -5,10 +5,10 @@ import Conn from '../../../../lib/conn/';
 import Html from 'slate-html-serializer';
 import { Value } from 'slate';
 
-export const REQUEST_POSTS = 'REQUEST_POSTS';
-export const RECEIVE_POSTS = 'RECEIVE_POSTS';
-export const EDITED_POST = 'EDITED_POST';
-export const SWITCH_TAB = 'SWITCH_TAB';
+export const REQUEST_POSTS = 'POSTS_REQUEST_POSTS';
+export const RECEIVE_POSTS = 'POSTS_RECEIVE_POSTS';
+export const EDITED_POST = 'POSTS_EDITED_POST';
+export const SWITCH_TAB = 'POSTS_SWITCH_TAB';
 
 function requestPosts() {
     return {

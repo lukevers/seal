@@ -1,10 +1,10 @@
 import Conn from '../../../../lib/conn/';
 import { initialState } from '../../reducers/settings';
 
-export const REQUEST_SETTINGS = 'REQUEST_SETTINGS';
-export const RECEIVE_SETTINGS = 'RECEIVE_SETTINGS';
-export const EDITED_SETTING = 'EDITED_SETTING';
-export const SWITCH_TAB = 'SWITCH_TAB';
+export const REQUEST_SETTINGS = 'SETTINGS_REQUEST_SETTINGS';
+export const RECEIVE_SETTINGS = 'SETTINGS_RECEIVE_SETTINGS';
+export const EDITED_SETTING = 'SETTINGS_EDITED_SETTING';
+export const SWITCH_TAB = 'SETTINGS_SWITCH_TAB';
 
 function requestSettings() {
     return {

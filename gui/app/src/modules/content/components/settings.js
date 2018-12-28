@@ -17,24 +17,20 @@ import {
     switchTab,
 } from '../actions/settings/';
 
-import {
-    getIsLoaded,
-    getError,
-    getSettings,
-} from '../reducers/settings/';
 
 class Content extends Component {
     getSettings = () => {
         let settings = {};
-        this.props.settings.items.map((k) => {
+        this.props.items.map((k) => {
             settings[k.key] = k.value;
 
-            if (typeof this.props.settings.edited[k.key] != 'undefined') {
-                settings[k.key] = this.props.settings.edited[k.key];
+            if (typeof this.props.edited[k.key] != 'undefined') {
+                settings[k.key] = this.props.edited[k.key];
             }
 
             return k;
         });
+
 
         return settings;
     }
@@ -143,7 +139,7 @@ class Content extends Component {
     }
 
     render() {
-        switch (this.props.settings.tab) {
+        switch (this.props.tab) {
             case 'general':
                 return this.general();
             case 'teams':
@@ -161,16 +157,16 @@ class Settings extends Component {
     }
 
     changeSettingsTab = (e) => {
-        const { dispatch, settings } = this.props;
-        const tab = e.target.dataset.tab;
+        const { dispatch, tab } = this.props;
+        const tabTarget = e.target.dataset.tab;
 
-        if (settings.tab !== tab) {
-            dispatch(switchTab(tab));
+        if (tab !== tabTarget) {
+            dispatch(switchTab(tabTarget));
         }
     }
 
     render() {
-        const { settings } = this.props;
+        const { tab } = this.props;
 
         return (
             <BiGridVerticalWrapper>
@@ -194,8 +190,8 @@ class Settings extends Component {
                             }
                         }
                     `}>
-                        <li className={settings.tab === 'general' ? 'active' : ''} data-tab="general" onClick={this.changeSettingsTab}>General</li>
-                        <li className={settings.tab === 'teams' ? 'active' : ''} data-tab="teams" onClick={this.changeSettingsTab}>Teams</li>
+                        <li className={tab === 'general' ? 'active' : ''} data-tab="general" onClick={this.changeSettingsTab}>General</li>
+                        <li className={tab === 'teams' ? 'active' : ''} data-tab="teams" onClick={this.changeSettingsTab}>Teams</li>
                     </ul>
                 </BiGridVerticalHeader>
                 <BiGridVerticalContent>
@@ -207,9 +203,11 @@ class Settings extends Component {
 }
 
 const mapStateToProps = state => ({
-    loaded: getIsLoaded(state),
-    error: getError(state),
-    settings: getSettings(state),
+    loaded: state.settings.loaded,
+    error: state.settings.error,
+    tab: state.settings.tab,
+    items: state.settings.items,
+    edited: state.settings.edited,
 });
 
 export default connect(mapStateToProps)(Settings);
