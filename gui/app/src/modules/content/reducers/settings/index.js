@@ -3,6 +3,8 @@ import {
     RECEIVE_SETTINGS,
     EDITED_SETTING,
     SWITCH_TAB,
+    REQUEST_TEAMS,
+    RECEIVE_TEAMS,
 } from '../../actions/settings';
 
 export const initialState = {
@@ -20,10 +22,15 @@ export const initialState = {
             key: "password",
             value: "",
         },
+        {
+            key: "teamid",
+            value: '0',
+        },
     ],
     loaded: false,
     edited: {},
     tab: 'general',
+    teams: [],
 };
 
 const reducer = (state = initialState, action) => {
@@ -51,6 +58,17 @@ const reducer = (state = initialState, action) => {
             return {
                 ...state,
                 tab: action.tab,
+            };
+        case REQUEST_TEAMS:
+            return {
+                ...state,
+                error: null,
+                loaded: false,
+            };
+        case RECEIVE_TEAMS:
+            return {
+                ...state,
+                // TODO
             };
         default:
             return state;

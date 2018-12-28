@@ -44,6 +44,13 @@ func main() {
 		r.Post("/", CreatePost)
 	})
 
+	r.Route("/api/meta", func(r chi.Router) {
+		r.Use(render.SetContentType(render.ContentTypeJSON))
+		r.Use(AuthenticateRequest)
+
+		r.Get("/teams", MetaListTeams)
+	})
+
 	http.ListenAndServe(
 		fmt.Sprintf(
 			"%s:%d",

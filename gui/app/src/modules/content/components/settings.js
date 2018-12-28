@@ -15,8 +15,8 @@ import {
     settingEdited,
     settingsSave,
     switchTab,
+    getTeamsIfNeeded,
 } from '../actions/settings/';
-
 
 class Content extends Component {
     getSettings = () => {
@@ -30,7 +30,6 @@ class Content extends Component {
 
             return k;
         });
-
 
         return settings;
     }
@@ -161,6 +160,14 @@ class Settings extends Component {
         const tabTarget = e.target.dataset.tab;
 
         if (tab !== tabTarget) {
+            switch (tabTarget) {
+                case 'teams':
+                    dispatch(getTeamsIfNeeded());
+                    break;
+                default:
+                    break;
+            }
+
             dispatch(switchTab(tabTarget));
         }
     }

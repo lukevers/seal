@@ -5,6 +5,8 @@ export const REQUEST_SETTINGS = 'SETTINGS_REQUEST_SETTINGS';
 export const RECEIVE_SETTINGS = 'SETTINGS_RECEIVE_SETTINGS';
 export const EDITED_SETTING = 'SETTINGS_EDITED_SETTING';
 export const SWITCH_TAB = 'SETTINGS_SWITCH_TAB';
+export const REQUEST_TEAMS = 'SETTINGS_REQUEST_TEAMS';
+export const RECEIVE_TEAMS = 'SETTINGS_RECEIVE_TEAMS';
 
 function requestSettings() {
     return {
@@ -16,6 +18,20 @@ function receiveSettings(data) {
     return {
         type: RECEIVE_SETTINGS,
         settings: data.data,
+        error: data.error,
+    }
+}
+
+function requestTeams() {
+    return {
+        type: REQUEST_TEAMS,
+    }
+}
+
+function receiveTeams(data) {
+    return {
+        type: RECEIVE_TEAMS,
+        teams: data.data,
         error: data.error,
     }
 }
@@ -65,6 +81,21 @@ export function settingsSave(settings) {
         await Conn.sync('settings', update);
     }
 }
+
+function getTeams() {
+    return async (dispatch) => {
+        dispatch(requestTeams());
+        const data = await Conn.load('teams', 'all');
+        dispatch(receiveTeams(data));
+    }
+}
+
+export function getTeamsIfNeeded() {
+    return (dispatch, getState) => {
+        return dispatch(getTeams());
+    }
+}
+
 
 export function switchTab(tab) {
     return {
