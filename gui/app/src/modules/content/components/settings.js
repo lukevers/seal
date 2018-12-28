@@ -34,9 +34,14 @@ class Content extends Component {
         return settings;
     }
 
-    handleChange = (value, key) => {
+    handleChange = (value, key, save = false) => {
         const { dispatch } = this.props;
         dispatch(settingEdited(key, value));
+
+        if (save) {
+            this.saveSettings();
+            dispatch(fetchSettingsIfNeeded());
+        }
     }
 
     saveSettings = () => {
@@ -133,13 +138,22 @@ class Content extends Component {
 
     teams = () => {
         const { teams, loaded } = this.props;
+        const teamId = this.getSettings()['teamid'] || 0;
 
         if (!loaded) {
             return <div/>;
         }
 
         return (
-            <div>{JSON.stringify(teams)}</div>
+            <div>
+                <select value={teamId} onChange={(e) => this.handleChange(e.target.value, 'teamid', true) }>
+                    <option value={0}>Select a Team</option>
+                    <option value='-' disabled>――――</option>
+                    {teams.map((team, index) => (
+                        <option key={index} value={team.id}>{team.name} &mdash; {team.domain}</option>
+                    ))}
+                </select>
+            </div>
         );
     }
 
