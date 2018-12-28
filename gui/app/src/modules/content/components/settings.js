@@ -132,8 +132,14 @@ class Content extends Component {
     }
 
     teams = () => {
+        const { teams, loaded } = this.props;
+
+        if (!loaded) {
+            return <div/>;
+        }
+
         return (
-            <div>teams</div>
+            <div>{JSON.stringify(teams)}</div>
         );
     }
 
@@ -215,6 +221,7 @@ const mapStateToProps = state => ({
     tab: state.settings.tab,
     items: state.settings.items,
     edited: state.settings.edited,
+    teams: state.settings.teams,
 });
 
 export default connect(mapStateToProps)(Settings);

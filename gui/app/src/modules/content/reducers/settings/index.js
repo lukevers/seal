@@ -68,7 +68,9 @@ const reducer = (state = initialState, action) => {
         case RECEIVE_TEAMS:
             return {
                 ...state,
-                // TODO
+                teams: action.teams,
+                error: action.error,
+                loaded: true,
             };
         default:
             return state;
