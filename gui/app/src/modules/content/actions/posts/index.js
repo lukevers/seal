@@ -5,6 +5,10 @@ import Conn from '../../../../lib/conn/';
 import Html from 'slate-html-serializer';
 import { Value } from 'slate';
 
+import {
+    fetchSettingsIfNeeded,
+} from '../settings';
+
 export const CLEAR_NEW_POST_DATA = 'POSTS_CLEAR_NEW_POST_DATA';
 export const REQUEST_POSTS = 'POSTS_REQUEST_POSTS';
 export const RECEIVE_POSTS = 'POSTS_RECEIVE_POSTS';
@@ -27,8 +31,9 @@ function receivePosts(data) {
 
 function fetchPosts() {
     return async (dispatch, getState) => {
-        const state = getState();
+        dispatch(fetchSettingsIfNeeded());
 
+        const state = getState();
         if (state.posts.tab !== 'new') {
             dispatch(requestPosts());
             const data = await Conn.load('posts', state.posts.tab);
@@ -56,7 +61,7 @@ export function postEdited(post, key, value) {
 }
 
 export function postSave(post) {
-    return async (dispatch) => {
+    return async (dispatch, getState) => {
         const html = new Html({
             rules: [
                 {
@@ -112,13 +117,20 @@ export function postSave(post) {
             ],
         });
 
+        // Generate HTML
         post.html = html.serialize(Value.fromJSON(JSON.parse(post.content)));
-        if (typeof post.id === 'undefined') {
-            // TODO: get active team from state
-            post.owned_by_id = 1;
-        }
 
-        await Conn.post('post', post);
+        // Create or update the post
+        if (typeof post.id === 'undefined') {
+            const state = getState();
+            let teamid = state.settings.items.filter(item => item.key === 'teamid')[0].value;
+            teamid = parseInt(teamid, 10);
+
+            post.owned_by_id = teamid;
+            await Conn.post('post', post);
+        } else {
+            await Conn.sync('post', post);
+        }
     }
 }
 
