@@ -5,13 +5,61 @@ import (
 	"encoding/json"
 	"errors"
 	"io/ioutil"
+	"log"
 	"net/http"
+	"sync"
 
 	"github.com/go-chi/render"
 	"github.com/lukevers/seal/server/models"
 	"github.com/volatiletech/sqlboiler/boil"
 	"github.com/volatiletech/sqlboiler/queries/qm"
 )
+
+// TeamIDToPostsMap contains a cached mapping of team id to all posts related to it.
+var TeamIDToPostsMap *sync.Map
+
+func init() {
+	models.AddPostHook(boil.AfterUpsertHook, initPost)
+	models.AddPostHook(boil.AfterUpdateHook, initPost)
+	models.AddPostHook(boil.AfterInsertHook, initPost)
+	models.AddPostHook(boil.AfterDeleteHook, initPost)
+}
+
+func initPosts(ctx context.Context, exe boil.ContextExecutor, team *models.Team) error {
+	var mods []qm.QueryMod = []qm.QueryMod{
+		qm.Where("posts.deleted_at IS NULL"),
+	}
+
+	if team != nil {
+		mods = append(mods, qm.Where("posts.owned_by_id = ?", team.ID))
+	}
+
+	posts, err := models.Posts(mods...).All(context.TODO(), db)
+	if err != nil {
+		return err
+	}
+
+	var newmap sync.Map = sync.Map{}
+	for _, post := range posts {
+		innerMap, _ := newmap.LoadOrStore(post.OwnedByID, &sync.Map{})
+		innerMap.(*sync.Map).Store(post.Slug.String, post)
+	}
+
+	TeamIDToPostsMap = &newmap
+	log.Println("Successfully re-initialized team/post map")
+
+	return nil
+}
+
+func initPost(ctx context.Context, exe boil.ContextExecutor, post *models.Post) error {
+	// If post is nil, re-init everything, otherwise only update this one post
+	if post == nil {
+		return initPosts(ctx, exe, nil)
+	}
+
+	// For now, let's re-init everything. TODO: improve
+	return initPosts(ctx, exe, nil)
+}
 
 // PostListResponse is a renderable response type wrapper for multiple posts
 type PostListResponse []*PostResponse

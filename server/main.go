@@ -20,6 +20,7 @@ func main() {
 
 	r.Use(BoostAPI)
 	r.Use(MapHostToTeam)
+	r.Use(RenderHost)
 
 	r.Route("/api/user", func(r chi.Router) {
 		r.Use(render.SetContentType(render.ContentTypeJSON))

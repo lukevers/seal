@@ -27,7 +27,7 @@ func init() {
 	models.AddTeamHook(boil.AfterDeleteHook, initTeams)
 }
 
-func initTeams(context.Context, boil.ContextExecutor, *models.Team) error {
+func initTeams(ctx context.Context, exe boil.ContextExecutor, team *models.Team) error {
 	var mods []qm.QueryMod = []qm.QueryMod{
 		qm.Where("teams.deleted_at IS NULL"),
 	}
@@ -45,6 +45,7 @@ func initTeams(context.Context, boil.ContextExecutor, *models.Team) error {
 	HostToTeamMap = &newmap
 	log.Println("Successfully re-initialized host/team map")
 
+	initPosts(ctx, exe, team)
 	return nil
 }
 
@@ -61,6 +62,29 @@ func MapHostToTeam(next http.Handler) http.Handler {
 		} else {
 			ctx := context.WithValue(r.Context(), "team", team)
 			next.ServeHTTP(w, r.WithContext(ctx))
+		}
+	})
+}
+
+func RenderHost(next http.Handler) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		if r.Context().Value("api").(bool) {
+			next.ServeHTTP(w, r)
+			return
+		}
+
+		team := r.Context().Value("team").(*models.Team)
+		if posts, exists := TeamIDToPostsMap.Load(team.ID); !exists {
+			render.Render(w, r, ErrRender(errors.New("Could not find team related to host")))
+			return
+		} else {
+			if post, pexists := posts.(*sync.Map).Load(r.URL.Path); !pexists {
+				// TODO: 404 page per team
+				render.Render(w, r, ErrRender(errors.New("404")))
+				return
+			} else {
+				w.Write([]byte(post.(*models.Post).HTML.String))
+			}
 		}
 	})
 }
