@@ -25,7 +25,7 @@ import (
 type Post struct {
 	ID          uint        `boil:"id" json:"id" toml:"id" yaml:"id"`
 	Title       null.String `boil:"title" json:"title,omitempty" toml:"title" yaml:"title,omitempty"`
-	Slug        null.String `boil:"slug" json:"slug,omitempty" toml:"slug" yaml:"slug,omitempty"`
+	Route       string      `boil:"route" json:"route" toml:"route" yaml:"route"`
 	Content     null.String `boil:"content" json:"content,omitempty" toml:"content" yaml:"content,omitempty"`
 	Markdown    null.String `boil:"markdown" json:"markdown,omitempty" toml:"markdown" yaml:"markdown,omitempty"`
 	HTML        null.String `boil:"html" json:"html,omitempty" toml:"html" yaml:"html,omitempty"`
@@ -46,7 +46,7 @@ type Post struct {
 var PostColumns = struct {
 	ID          string
 	Title       string
-	Slug        string
+	Route       string
 	Content     string
 	Markdown    string
 	HTML        string
@@ -62,7 +62,7 @@ var PostColumns = struct {
 }{
 	ID:          "id",
 	Title:       "title",
-	Slug:        "slug",
+	Route:       "route",
 	Content:     "content",
 	Markdown:    "markdown",
 	HTML:        "html",
@@ -107,8 +107,8 @@ func (*postR) NewStruct() *postR {
 type postL struct{}
 
 var (
-	postColumns               = []string{"id", "title", "slug", "content", "markdown", "html", "status", "published_at", "created_at", "updated_at", "deleted_at", "owned_by_id", "created_by_id", "updated_by_id", "deleted_by_id"}
-	postColumnsWithoutDefault = []string{"title", "slug", "content", "markdown", "html", "published_at", "deleted_at", "owned_by_id", "created_by_id", "updated_by_id", "deleted_by_id"}
+	postColumns               = []string{"id", "title", "route", "content", "markdown", "html", "status", "published_at", "created_at", "updated_at", "deleted_at", "owned_by_id", "created_by_id", "updated_by_id", "deleted_by_id"}
+	postColumnsWithoutDefault = []string{"title", "route", "content", "markdown", "html", "published_at", "deleted_at", "owned_by_id", "created_by_id", "updated_by_id", "deleted_by_id"}
 	postColumnsWithDefault    = []string{"id", "status", "created_at", "updated_at"}
 	postPrimaryKeyColumns     = []string{"id"}
 )
@@ -1296,7 +1296,6 @@ func (o PostSlice) UpdateAll(ctx context.Context, exec boil.ContextExecutor, col
 
 var mySQLPostUniqueColumns = []string{
 	"id",
-	"slug",
 }
 
 // Upsert attempts an insert using an executor, and does an update or ignore on conflict.

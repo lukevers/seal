@@ -42,7 +42,7 @@ func initPosts(ctx context.Context, exe boil.ContextExecutor, team *models.Team)
 	var newmap sync.Map = sync.Map{}
 	for _, post := range posts {
 		innerMap, _ := newmap.LoadOrStore(post.OwnedByID, &sync.Map{})
-		innerMap.(*sync.Map).Store(post.Slug.String, post)
+		innerMap.(*sync.Map).Store(post.Route, post)
 	}
 
 	TeamIDToPostsMap = &newmap
@@ -200,7 +200,7 @@ func CreatePost(w http.ResponseWriter, r *http.Request) {
 
 	p := &models.Post{
 		Title:       post.Title,
-		Slug:        post.Slug,
+		Route:       post.Route,
 		Content:     post.Content,
 		Markdown:    post.Markdown,
 		HTML:        post.HTML,

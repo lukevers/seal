@@ -1,7 +1,7 @@
 CREATE TABLE `posts` (
     `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
     `title` varchar(255) DEFAULT NULL,
-    `slug` varchar(255) DEFAULT NULL,
+    `route` varchar(255) NOT NULL,
     `content` mediumtext,
     `markdown` mediumtext,
     `html` mediumtext,
@@ -22,6 +22,7 @@ CREATE TABLE `posts` (
     CONSTRAINT `posts_created_by_foreign_key` FOREIGN KEY (`created_by_id`) REFERENCES `users` (`id`) ON DELETE RESTRICT,
     CONSTRAINT `posts_updated_by_foreign_key` FOREIGN KEY (`updated_by_id`) REFERENCES `users` (`id`) ON DELETE RESTRICT,
     CONSTRAINT `posts_deleted_by_foreign_key` FOREIGN KEY (`deleted_by_id`) REFERENCES `users` (`id`) ON DELETE RESTRICT,
+    UNIQUE KEY `posts_unique_route_owned_by_id` (`owned_by_id`, `route`),
     PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
@@ -31,6 +32,7 @@ ALTER TABLE `post_history` ADD COLUMN `action` ENUM ('insert', 'update', 'delete
 ALTER TABLE `post_history` ADD COLUMN `revision` INT(6) NOT NULL AFTER `action`;
 ALTER TABLE `post_history` ADD COLUMN `revised_at` timestamp NOT NULL AFTER `revision`;
 ALTER TABLE `post_history` ADD PRIMARY KEY (`id`, `revision`);
+ALTER TABLE `post_history` DROP INDEX `posts_unique_route_owned_by_id`;
 
 CREATE TRIGGER `posts_history_trigger_insert` AFTER INSERT ON `posts` FOR EACH ROW
     INSERT INTO `post_history` SELECT 'insert', (SELECT IFNULL(COUNT(revision)+1, 1) FROM `post_history` as h WHERE h.id = p.id), NOW(), p.* FROM `posts` AS p WHERE p.id = NEW.id;

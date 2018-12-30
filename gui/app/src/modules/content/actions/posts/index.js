@@ -127,11 +127,16 @@ export function postSave(post) {
         post.html = html.serialize(Value.fromJSON(JSON.parse(post.content)));
 
         // Create or update the post
+        let response;
         if (typeof post.id === 'undefined') {
             post.owned_by_id = getTeamId(getState());
-            await Conn.post('post', post);
+             response = await Conn.post('post', post);
         } else {
-            await Conn.sync('post', post);
+            response = await Conn.sync('post', post);
+        }
+
+        if (response.error) {
+            console.log(response.error)
         }
     }
 }

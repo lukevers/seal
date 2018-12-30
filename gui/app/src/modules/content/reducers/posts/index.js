@@ -11,6 +11,7 @@ import Html from 'slate-html-serializer';
 const getNewPost = () => {
     return {
         title: 'New Post',
+        route: '/new-post',
         content: JSON.stringify((new Html()).deserialize('<p>Content</p>', {toJSON: true})),
     };
 }

@@ -60,17 +60,20 @@ class Content extends Component {
 
     getPost = () => {
         let id = 'new';
-        let post;
+        let post = null;
 
         if (!this.props.new) {
             id = parseInt(this.props.match.params.id);
-            post = this.props.items.reduce((result, item) => {
-                if (id === item.id) {
-                    result = item;
-                }
 
-                return result;
-            });
+            if (this.props.items.length > 0) {
+                post = this.props.items.reduce((result, item) => {
+                    if (id === item.id) {
+                        result = item;
+                    }
+
+                    return result;
+                });
+            }
         }
 
         if (typeof this.props.edited[id] != 'undefined') {
@@ -129,6 +132,20 @@ class Content extends Component {
                             onChange={(value) => this.handleChange(value, 'content')}
                         />
                     </div>
+
+                    <div css={css`
+                        color: ${themes.standard.secondary};
+                        margin: 1em 0;
+                        line-height: 1.25em;
+                    `}>
+                        <label>Route:</label>
+                        <TextEditor
+                            value={post.route}
+                            plaintext
+                            onChange={(value) => this.handleChange(value, 'route')}
+                        />
+                    </div>
+
 
                     <button onClick={this.savePost}>Save</button>
                 </div>
