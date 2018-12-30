@@ -50,12 +50,19 @@ func ListPosts(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	teamid := r.Form.Get("team")
+	if teamid == "" {
+		render.Render(w, r, ErrRender(errors.New("Missing query parameter `team`")))
+		return
+	}
+
 	var mods []qm.QueryMod = []qm.QueryMod{
 		qm.InnerJoin("teams as t on t.id = posts.owned_by_id"),
 		qm.InnerJoin("team_members as tm on tm.team_id = t.id"),
 		qm.InnerJoin("users as u on u.id = tm.user_id"),
 		qm.Where("u.id = ?", user.ID),
 		qm.Where("tm.status = ?", "active"),
+		qm.Where("t.id = ?", teamid),
 	}
 
 	switch r.Form.Get("filter") {

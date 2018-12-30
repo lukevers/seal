@@ -29,6 +29,12 @@ function receivePosts(data) {
     }
 }
 
+function getTeamId(state) {
+    let teamid = state.settings.items.filter(item => item.key === 'teamid')[0].value;
+    teamid = parseInt(teamid, 10);
+    return teamid;
+}
+
 function fetchPosts() {
     return async (dispatch, getState) => {
         dispatch(fetchSettingsIfNeeded());
@@ -36,7 +42,7 @@ function fetchPosts() {
         const state = getState();
         if (state.posts.tab !== 'new') {
             dispatch(requestPosts());
-            const data = await Conn.load('posts', state.posts.tab);
+            const data = await Conn.load('posts', `${state.posts.tab}&team=${getTeamId(state)}`);
             dispatch(receivePosts(data));
         } else {
             dispatch(requestPosts());
@@ -122,11 +128,7 @@ export function postSave(post) {
 
         // Create or update the post
         if (typeof post.id === 'undefined') {
-            const state = getState();
-            let teamid = state.settings.items.filter(item => item.key === 'teamid')[0].value;
-            teamid = parseInt(teamid, 10);
-
-            post.owned_by_id = teamid;
+            post.owned_by_id = getTeamId(getState());
             await Conn.post('post', post);
         } else {
             await Conn.sync('post', post);
