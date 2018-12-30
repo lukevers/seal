@@ -45,12 +45,32 @@ func ErrInvalidRequest(err error) render.Renderer {
 	}
 }
 
+// ErrMissingRender is a shortcut renderable response for 404
+func ErrMissingRender(err error) render.Renderer {
+	return &ErrResponse{
+		Err:            err,
+		HTTPStatusCode: 404,
+		StatusText:     "Not found.",
+		ErrorText:      err.Error(),
+	}
+}
+
 // ErrRender is a shortcut renderable response for 422
 func ErrRender(err error) render.Renderer {
 	return &ErrResponse{
 		Err:            err,
 		HTTPStatusCode: 422,
 		StatusText:     "Error rendering response.",
+		ErrorText:      err.Error(),
+	}
+}
+
+// ErrInternalRender is a shortcut renderable response for 500
+func ErrInternalRender(err error) render.Renderer {
+	return &ErrResponse{
+		Err:            err,
+		HTTPStatusCode: 500,
+		StatusText:     "Internal server error.",
 		ErrorText:      err.Error(),
 	}
 }

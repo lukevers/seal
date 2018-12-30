@@ -75,12 +75,12 @@ func RenderHost(next http.Handler) http.Handler {
 
 		team := r.Context().Value("team").(*models.Team)
 		if posts, exists := TeamIDToPostsMap.Load(team.ID); !exists {
-			render.Render(w, r, ErrRender(errors.New("Could not find team related to host")))
+			render.Render(w, r, ErrInternalRender(errors.New("Could not find team related to host")))
 			return
 		} else {
 			if post, pexists := posts.(*sync.Map).Load(r.URL.Path); !pexists {
 				// TODO: 404 page per team
-				render.Render(w, r, ErrRender(errors.New("404")))
+				render.Render(w, r, ErrMissingRender(errors.New("Missing")))
 				return
 			} else {
 				w.Write([]byte(post.(*models.Post).HTML.String))
