@@ -146,7 +146,6 @@ class Content extends Component {
                         />
                     </div>
 
-
                     <button onClick={this.savePost}>Save</button>
                 </div>
             );

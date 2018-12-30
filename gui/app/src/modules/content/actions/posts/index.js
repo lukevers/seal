@@ -136,7 +136,10 @@ export function postSave(post) {
         }
 
         if (response.error) {
+            // TODO: error feedback
             console.log(response.error)
+        } else {
+            // TODO: success feedback
         }
     }
 }
