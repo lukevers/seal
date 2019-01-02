@@ -33,6 +33,8 @@ const SidebarItem = ({ post, match }) => (
 );
 
 class Content extends Component {
+    static post = null;
+
     componentWillUpdate(props) {
         const { dispatch } = props;
 
@@ -43,7 +45,9 @@ class Content extends Component {
 
     handleChange = (value, key) => {
         const { dispatch } = this.props;
+        this.post[key] = value;
         dispatch(postEdited(this.getPost(), key, value));
+        this.setState({});
     }
 
     savePost = () => {
@@ -59,6 +63,10 @@ class Content extends Component {
     }
 
     getPost = () => {
+        if (this.post) {
+            return this.post;
+        }
+
         let id = 'new';
         let post = null;
 
@@ -80,7 +88,8 @@ class Content extends Component {
             post = this.props.edited[id];
         }
 
-        return post;
+        this.post = post;
+        return this.post;
     }
 
     render() {
@@ -145,6 +154,12 @@ class Content extends Component {
                             onChange={(value) => this.handleChange(value, 'route')}
                         />
                     </div>
+
+                    <select value={post.status} onChange={(e) => this.handleChange(e.target.value, 'status') }>
+                        <option value={'draft'}>Draft</option>
+                        <option value={'published'}>Published</option>
+                        <option value={'deleted'}>Deleted</option>
+                    </select>
 
                     <button onClick={this.savePost}>Save</button>
                 </div>
