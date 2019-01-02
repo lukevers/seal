@@ -3,8 +3,11 @@ import { jsx, css } from '@emotion/core';
 import { Component } from 'react';
 import { connect } from 'react-redux';
 import { Route, NavLink } from "react-router-dom";
-import { themes } from '../../../base/themes';
+import Datetime from 'react-datetime';
+import moment from 'moment';
 
+import '../../../../node_modules/react-datetime/css/react-datetime.css';
+import { themes } from '../../../base/themes';
 import TextEditor from '../../../components/TextEditor';
 
 import {
@@ -160,6 +163,10 @@ class Content extends Component {
                         <option value={'published'}>Published</option>
                         <option value={'deleted'}>Deleted</option>
                     </select>
+
+                    <Datetime
+                        value={moment(post.published_at).format('MM/DD/YYYY HH:mm a')}
+                        onChange={(e) => this.handleChange(e.format('YYYY-MM-DDTHH:mm:ssZ'), 'published_at') }/>
 
                     <button onClick={this.savePost}>Save</button>
                 </div>

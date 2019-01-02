@@ -207,6 +207,7 @@ func CreatePost(w http.ResponseWriter, r *http.Request) {
 		CreatedByID: user.ID,
 		UpdatedByID: user.ID,
 		OwnedByID:   post.OwnedByID,
+		PublishedAt: post.PublishedAt,
 	}
 
 	err = p.Insert(context.TODO(), db, boil.Infer())
