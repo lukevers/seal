@@ -37,7 +37,7 @@ function getTeamId(state) {
 
 function fetchPosts() {
     return async (dispatch, getState) => {
-        dispatch(fetchSettingsIfNeeded());
+        await dispatch(fetchSettingsIfNeeded());
 
         const state = getState();
         if (state.posts.tab !== 'new') {
