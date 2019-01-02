@@ -83,7 +83,15 @@ func RenderHost(next http.Handler) http.Handler {
 				render.Render(w, r, ErrMissingRender(errors.New("Missing")))
 				return
 			} else {
-				w.Write([]byte(post.(*models.Post).HTML.String))
+				p := post.(*models.Post)
+				if p.Status != "published" {
+					// TODO: preview drafts for author
+					// TODO: 404 page per team
+					render.Render(w, r, ErrMissingRender(errors.New("Not published, aka missing")))
+					return
+				}
+
+				w.Write([]byte(p.HTML.String))
 			}
 		}
 	})
