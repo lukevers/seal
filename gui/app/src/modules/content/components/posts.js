@@ -217,7 +217,17 @@ class Posts extends Component {
     render() {
         const { items, tab, error, loaded, edited } = this.props;
 
+        let tabCount = {
+            'all': 0,
+            'draft': 0,
+            'published': 0,
+            'deleted': 0,
+        };
+
         let posts = items.map((post) => {
+            tabCount['all']++;
+            tabCount[post.status]++;
+
             if (edited[post.id]) {
                 edited[post.id].edited = true;
                 return edited[post.id];
@@ -236,8 +246,6 @@ class Posts extends Component {
         posts = posts.sort((a, b) => {
             return a[sortBy] > b[sortBy];
         });
-
-        console.log(posts);
 
         if (error) {
             return (
@@ -263,15 +271,27 @@ class Posts extends Component {
                                 color: ${themes.standard.gray};
                                 cursor: pointer;
 
+                                .badge {
+                                    color: ${themes.standard.gray};
+                                    background-color: #FFF;
+                                    padding: 1px 3px;
+                                    border-radius: 3px;
+                                    letter-spacing: 0;
+                                }
+
                                 &.active {
-                                    color: ${themes.standard.black};
+                                    color: ${themes.standard.secondary};
+
+                                    .badge {
+                                        color: ${themes.standard.secondary};
+                                    }
                                 }
                             }
                         `}>
-                            <li className={tab === 'all' ? 'active' : ''} data-posts="all" onClick={this.changePostsTab}>All Posts</li>
-                            <li className={tab === 'published' ? 'active' : ''}  data-posts="published" onClick={this.changePostsTab}>Published</li>
-                            <li className={tab === 'draft' ? 'active' : ''} data-posts="draft" onClick={this.changePostsTab}>Drafts</li>
-                            <li className={tab === 'deleted' ? 'active' : ''} data-posts="deleted" onClick={this.changePostsTab}>Archived</li>
+                            <li className={tab === 'all' ? 'active' : ''} data-posts="all" onClick={this.changePostsTab}>All Posts <span className="badge">{tabCount['all']}</span></li>
+                            <li className={tab === 'published' ? 'active' : ''}  data-posts="published" onClick={this.changePostsTab}>Published <span className="badge">{tabCount['published']}</span></li>
+                            <li className={tab === 'draft' ? 'active' : ''} data-posts="draft" onClick={this.changePostsTab}>Drafts <span className="badge">{tabCount['draft']}</span></li>
+                            <li className={tab === 'deleted' ? 'active' : ''} data-posts="deleted" onClick={this.changePostsTab}>Archived <span className="badge">{tabCount['deleted']}</span></li>
                             <li className={tab === 'new' ? 'active' : ''} data-posts="new" onClick={this.changePostsTab}>Add New</li>
                         </ul>
                     </BiGridVerticalHeader>
