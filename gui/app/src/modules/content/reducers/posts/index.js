@@ -1,4 +1,5 @@
 import {
+    CLEAR_EDITED_POST,
     CLEAR_NEW_POST_DATA,
     REQUEST_POSTS,
     RECEIVE_POSTS,
@@ -59,6 +60,12 @@ const reducer = (state = initialState, action) => {
             return {
                 ...state,
             };
+        case CLEAR_EDITED_POST:
+            delete state.edited[action.id];
+
+            return {
+                ...state,
+            }
         default:
             return state;
     }

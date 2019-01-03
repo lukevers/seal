@@ -66,18 +66,7 @@ func createPost(post string) ([]interface{}, error) {
 		return nil, errors.New(string(body))
 	}
 
-	var ps models.PostSlice
-	var posts []interface{}
-	err = json.Unmarshal(body, &ps)
-	if err != nil {
-		return nil, err
-	}
-
-	for _, post := range ps {
-		posts = append(posts, post)
-	}
-
-	return posts, err
+	return nil, err
 }
 
 func updatePost(post string) ([]interface{}, error) {
@@ -103,16 +92,5 @@ func updatePost(post string) ([]interface{}, error) {
 		return nil, errors.New(string(body))
 	}
 
-	var ps models.PostSlice
-	var posts []interface{}
-	err = json.Unmarshal(body, &ps)
-	if err != nil {
-		return nil, err
-	}
-
-	for _, post := range ps {
-		posts = append(posts, post)
-	}
-
-	return posts, err
+	return nil, err
 }

@@ -29,8 +29,22 @@ import {
 
 const SidebarItem = ({ post, match }) => (
     <NavLink to={`${match.url}/${post.id}`} activeClassName="active">
-        <div>
+        <div css={css`
+            padding: .5em;
+            background: ${!post.edited ? 'auto' :
+                `repeating-linear-gradient(135deg, #FFF, #FFF 10px, ${themes.standard.white} 10px, ${themes.standard.white} 20px)`};
+        `}>
             {post.title}
+
+            <div css={css`
+                font-size: .5em;
+                color: ${themes.standard.gray};
+            `}>
+                {post.status === 'published' ?
+                    moment(post.published_at).format('MM/DD/YYYY HH:mm a') :
+                    post.status
+                }
+            </div>
         </div>
     </NavLink>
 );
@@ -42,26 +56,30 @@ class Content extends Component {
         const { dispatch } = props;
 
         if (this.props.match.params.id !== props.match.params.id) {
-            dispatch(fetchPostsIfNeeded());
+            dispatch(fetchPostsIfNeeded(true));
         }
     }
 
     handleChange = (value, key) => {
-        const { dispatch } = this.props;
+        const { dispatch, updateParentWithChange } = this.props;
         this.post[key] = value;
         dispatch(postEdited(this.getPost(), key, value));
         this.setState({});
+
+        if (!this.props.new) {
+            updateParentWithChange();
+        }
     }
 
     savePost = () => {
-        const { dispatch, history } = this.props;
-        dispatch(postSave(this.getPost()));
+        const { dispatch, history, updateParentWithChange } = this.props;
+        dispatch(postSave(this.getPost(), updateParentWithChange));
         dispatch(clearNewPostData());
 
         if (this.props.new) {
             this.props.dispatch(switchTab('all'));
             history.push('/posts');
-            dispatch(fetchPostsIfNeeded());
+            dispatch(fetchPostsIfNeeded(true));
         }
     }
 
@@ -165,8 +183,8 @@ class Content extends Component {
                     </select>
 
                     <Datetime
-                        value={moment(post.published_at).format('MM/DD/YYYY HH:mm a')}
-                        onChange={(e) => this.handleChange(e.format('YYYY-MM-DDTHH:mm:ssZ'), 'published_at') }/>
+                        value={post.published_at ? moment(post.published_at).format('MM/DD/YYYY HH:mm a') : null}
+                        onChange={(e) => this.handleChange(e ? e.format('YYYY-MM-DDTHH:mm:ssZ') : null, 'published_at') }/>
 
                     <button onClick={this.savePost}>Save</button>
                 </div>
@@ -192,8 +210,34 @@ class Posts extends Component {
         }
     }
 
+    updateParentWithChange = () => {
+        this.setState({state: this.state});
+    }
+
     render() {
-        const { items, tab, error, loaded } = this.props;
+        const { items, tab, error, loaded, edited } = this.props;
+
+        let posts = items.map((post) => {
+            if (edited[post.id]) {
+                edited[post.id].edited = true;
+                return edited[post.id];
+            } else {
+                post.edited = false;
+            }
+
+            return post;
+        });
+
+        if (tab !== 'all' && tab !== 'new') {
+            posts = posts.filter(post => post.status === tab);
+        }
+
+        const sortBy = 'id'; // TODO: sort by other things? in a prop, prob too
+        posts = posts.sort((a, b) => {
+            return a[sortBy] > b[sortBy];
+        });
+
+        console.log(posts);
 
         if (error) {
             return (
@@ -226,8 +270,8 @@ class Posts extends Component {
                         `}>
                             <li className={tab === 'all' ? 'active' : ''} data-posts="all" onClick={this.changePostsTab}>All Posts</li>
                             <li className={tab === 'published' ? 'active' : ''}  data-posts="published" onClick={this.changePostsTab}>Published</li>
-                            <li className={tab === 'drafts' ? 'active' : ''} data-posts="drafts" onClick={this.changePostsTab}>Drafts</li>
-                            <li className={tab === 'archived' ? 'active' : ''} data-posts="archived" onClick={this.changePostsTab}>Archived</li>
+                            <li className={tab === 'draft' ? 'active' : ''} data-posts="draft" onClick={this.changePostsTab}>Drafts</li>
+                            <li className={tab === 'deleted' ? 'active' : ''} data-posts="deleted" onClick={this.changePostsTab}>Archived</li>
                             <li className={tab === 'new' ? 'active' : ''} data-posts="new" onClick={this.changePostsTab}>Add New</li>
                         </ul>
                     </BiGridVerticalHeader>
@@ -237,12 +281,12 @@ class Posts extends Component {
                                 <div css={css`
                                     border-right: 1px solid ${themes.standard.lightgray};
                                     height: 100%;
+                                    display: ${tab === 'new' ? 'none' : 'auto'};
 
                                     a {
-                                        padding: 1em;
                                         text-decoration: none;
                                         display: block;
-                                        color: ${themes.standard.black};
+                                        color: ${themes.standard.secondary};
                                         border-bottom: 1px solid ${themes.standard.lightestgray};
                                         border-left: 3px solid transparent;
                                         line-height: 1.25em;
@@ -253,11 +297,12 @@ class Posts extends Component {
 
                                         &.active {
                                             border-left: 3px solid ${themes.standard.primary};
+                                            color: ${themes.standard.primary};
                                         }
                                     }
                                 `}>
-                                    {items.map((post, index) => (
-                                       <SidebarItem key={index} match={this.props.match} post={post} />
+                                    {posts.map((post, index) => (
+                                       <SidebarItem key={index} match={this.props.match} post={post} onClick={() => this.changePost(post)}/>
                                     ))}
                                 </div>
                             </BiGridHorizontalSidebar>
@@ -266,7 +311,8 @@ class Posts extends Component {
                                     ?
                                         tab === 'new' ? <Content {...this.props} new={true}/> :
                                         <Route path={`${this.props.match.path}/:id`} render={(props, routeProps) => (
-                                            <Content {...routeProps} {...this.props} {...props} />
+                                            <Content {...routeProps} {...this.props} {...props}
+                                                updateParentWithChange={this.updateParentWithChange} />
                                         )} />
                                     : <div>{/*loading*/}</div>
                                 }

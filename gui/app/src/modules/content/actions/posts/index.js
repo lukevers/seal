@@ -9,6 +9,7 @@ import {
     fetchSettingsIfNeeded,
 } from '../settings';
 
+export const CLEAR_EDITED_POST = 'POSTS_CLEAR_EDITED_POST';
 export const CLEAR_NEW_POST_DATA = 'POSTS_CLEAR_NEW_POST_DATA';
 export const REQUEST_POSTS = 'POSTS_REQUEST_POSTS';
 export const RECEIVE_POSTS = 'POSTS_RECEIVE_POSTS';
@@ -18,6 +19,13 @@ export const SWITCH_TAB = 'POSTS_SWITCH_TAB';
 function requestPosts() {
     return {
         type: REQUEST_POSTS,
+    }
+}
+
+function clearEditedPost(id) {
+    return {
+        type: CLEAR_EDITED_POST,
+        id: id,
     }
 }
 
@@ -42,7 +50,7 @@ function fetchPosts() {
         const state = getState();
         if (state.posts.tab !== 'new') {
             dispatch(requestPosts());
-            const data = await Conn.load('posts', `${state.posts.tab}&team=${getTeamId(state)}`);
+            const data = await Conn.load('posts', `all&team=${getTeamId(state)}`);
             dispatch(receivePosts(data));
         } else {
             dispatch(requestPosts());
@@ -51,9 +59,12 @@ function fetchPosts() {
     }
 }
 
-export function fetchPostsIfNeeded() {
+export function fetchPostsIfNeeded(force = false) {
     return (dispatch, getState) => {
-        return dispatch(fetchPosts());
+        const { posts } = getState();
+        if (force || !posts.loaded || posts.items.length < 1) {
+            return dispatch(fetchPosts());
+        }
     }
 }
 
@@ -66,7 +77,7 @@ export function postEdited(post, key, value) {
     }
 }
 
-export function postSave(post) {
+export function postSave(post, cb) {
     return async (dispatch, getState) => {
         const html = new Html({
             rules: [
@@ -130,7 +141,7 @@ export function postSave(post) {
         let response;
         if (typeof post.id === 'undefined') {
             post.owned_by_id = getTeamId(getState());
-             response = await Conn.post('post', post);
+            response = await Conn.post('post', post);
         } else {
             response = await Conn.sync('post', post);
         }
@@ -140,6 +151,8 @@ export function postSave(post) {
             console.log(response.error)
         } else {
             // TODO: success feedback
+            await dispatch(clearEditedPost(post.id));
+            cb();
         }
     }
 }

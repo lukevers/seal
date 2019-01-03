@@ -173,6 +173,8 @@ func UpdatePost(w http.ResponseWriter, r *http.Request) {
 		render.Render(w, r, ErrRender(err))
 		return
 	}
+
+	render.Render(w, r, &SuccessResponse{})
 }
 
 // CreatePost creates a new post.
@@ -215,4 +217,6 @@ func CreatePost(w http.ResponseWriter, r *http.Request) {
 		render.Render(w, r, ErrRender(err))
 		return
 	}
+
+	render.Render(w, r, &SuccessResponse{})
 }
