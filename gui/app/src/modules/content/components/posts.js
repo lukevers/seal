@@ -31,10 +31,13 @@ const SidebarItem = ({ post, match }) => (
     <NavLink to={`${match.url}/${post.id}`} activeClassName="active">
         <div css={css`
             padding: .5em;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
             background: ${!post.edited ? 'auto' :
                 `repeating-linear-gradient(135deg, #FFF, #FFF 10px, ${themes.standard.white} 10px, ${themes.standard.white} 20px)`};
         `}>
-            {post.title}
+            {post.title ? post.title : '[No Title]'}
 
             <div css={css`
                 font-size: .5em;
