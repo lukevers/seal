@@ -40,10 +40,8 @@ const SidebarItem = ({ post, match }) => (
                 font-size: .5em;
                 color: ${themes.standard.gray};
             `}>
-                {post.status === 'published' ?
-                    moment(post.published_at).format('MM/DD/YYYY HH:mm a') :
-                    post.status
-                }
+                {post.status}
+                {post.status === 'published' && post.published_at ? ` at ${moment(post.published_at).format('MM/DD/YYYY HH:mm a')}` : ''}
             </div>
         </div>
     </NavLink>
