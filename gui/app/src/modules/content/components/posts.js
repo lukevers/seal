@@ -8,6 +8,7 @@ import moment from 'moment';
 
 import '../../../../node_modules/react-datetime/css/react-datetime.css';
 import { themes } from '../../../base/themes';
+import { DropDown } from '../../../components/DropDown';
 import TextEditor from '../../../components/TextEditor';
 
 import {
@@ -52,6 +53,7 @@ const SidebarItem = ({ post, match }) => (
 
 class Content extends Component {
     static post = null;
+    static status = null;
 
     componentWillUpdate(props) {
         const { dispatch } = props;
@@ -116,6 +118,26 @@ class Content extends Component {
 
     render() {
         const post = this.getPost();
+        this.status = [
+            {
+                id: 'draft',
+                title: 'Draft',
+                selected: post.status === 'draft',
+                key: 'status',
+            },
+            {
+                id: 'deleted',
+                title: 'Deleted',
+                selected: post.status === 'deleted',
+                key: 'status',
+            },
+            {
+                id: 'published',
+                title: 'Published',
+                selected: post.status === 'published',
+                key: 'status',
+            }
+        ];
 
         if (post === null) {
             return <div>Could not find post!</div>;
@@ -177,11 +199,10 @@ class Content extends Component {
                         />
                     </div>
 
-                    <select value={post.status} onChange={(e) => this.handleChange(e.target.value, 'status') }>
-                        <option value={'draft'}>Draft</option>
-                        <option value={'published'}>Published</option>
-                        <option value={'deleted'}>Deleted</option>
-                    </select>
+                    <DropDown
+                        list={this.status}
+                        onChange={this.handleChange}
+                        title={post.status[0].toUpperCase() + post.status.slice(1)}/>
 
                     <Datetime
                         value={post.published_at ? moment(post.published_at).format('MM/DD/YYYY HH:mm a') : null}

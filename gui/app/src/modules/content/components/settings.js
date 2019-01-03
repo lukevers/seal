@@ -3,6 +3,7 @@ import { jsx, css } from '@emotion/core'
 import { Component } from 'react';
 import { connect } from 'react-redux';
 import { themes } from '../../../base/themes';
+import { DropDown } from '../../../components/DropDown';
 
 import {
     BiGridVerticalWrapper,
@@ -138,21 +139,44 @@ class Content extends Component {
 
     teams = () => {
         const { teams, loaded } = this.props;
-        const teamId = this.getSettings()['teamid'] || 0;
+        const teamId = parseInt(this.getSettings()['teamid'] || 0, 10);
 
-        if (!loaded) {
+        if (!loaded || teams === null) {
             return <div/>;
         }
 
+        let title = null;
+        let list = [];
+        teams.map(team => {
+            const t = {
+                id: team.id,
+                title: `${team.name} - ${team.domain}`,
+                selected: team.id === teamId,
+                key: 'teamid',
+            };
+
+            list.push(t);
+
+            if (team.id === teamId) {
+                title = t.title;
+            }
+
+            return team;
+        });
+
         return (
             <div>
-                <select value={teamId} onChange={(e) => this.handleChange(e.target.value, 'teamid', true) }>
-                    <option value={0}>Select a Team</option>
-                    <option value='-' disabled>――――</option>
-                    {teams.map((team, index) => (
-                        <option key={index} value={team.id}>{team.name} &mdash; {team.domain}</option>
-                    ))}
-                </select>
+                <DropDown
+                    list={list}
+                    onChange={(v, k) => this.handleChange(v.toString(), k, true)}
+                    title={title}
+                    styles={css`
+                        margin: 2em;
+
+                        .dd-wrapper {
+                            width: 500px;
+                        }
+                    `}/>
             </div>
         );
     }
