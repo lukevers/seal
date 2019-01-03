@@ -152,7 +152,10 @@ export function postSave(post, cb) {
         } else {
             // TODO: success feedback
             await dispatch(clearEditedPost(post.id));
-            cb();
+
+            if (cb) {
+                cb();
+            }
         }
     }
 }
