@@ -175,9 +175,13 @@ class Content extends Component {
 
                     <div css={css`
                         color: ${themes.standard.black};
-                        padding: 1em;
-                        padding-top: .5em;
+                        padding: .5em;
                         border: 1px solid ${themes.standard.lightgray};
+
+                        .te-editor {
+                            padding: .5em;
+                            padding-top: 0;
+                        }
                     `}>
                         <TextEditor
                             toolbar

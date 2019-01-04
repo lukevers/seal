@@ -6,17 +6,6 @@ import { Value } from 'slate';
 import Plain from 'slate-plain-serializer';
 import { isKeyHotkey } from 'is-hotkey';
 import { themes } from '../base/themes';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import {
-    faBold,
-    faItalic,
-    faUnderline,
-    faCode,
-    faHeading,
-    faQuoteRight,
-    faListUl,
-    faListOl,
-} from '@fortawesome/free-solid-svg-icons';
 
 const isBoldHotkey = isKeyHotkey('mod+b');
 const isItalicHotkey = isKeyHotkey('mod+i');
@@ -27,23 +16,21 @@ const Vertical = () => (
     <div css={css`
         background-color: ${themes.standard.lightgray};
         width: 1px;
-        height: 1em;
-        position: absolute;
-        margin-left: 7.5px;
+        height: 10px;
+        margin-left: 5px;
     `}/>
 );
 
 const Toolbar = ({ children }) => (
-    <div css={css`
+    <div className="te-toolbar" css={css`
         margin-bottom: 1em;
-
 
         & > * {
             display: inline-block;
         }
 
         & > * + * {
-            margin-left: 15px;
+            margin-left: 5px;
         }
     `}>
         {children}
@@ -51,7 +38,7 @@ const Toolbar = ({ children }) => (
 );
 
 const Button = ({ children, active, onMouseDown }) => (
-    <span css={css`
+    <span className="te-button" css={css`
         cursor: pointer;
         color: ${active ? themes.standard.secondary : themes.standard.gray};
         padding: .25em;
@@ -117,6 +104,14 @@ export default class TextEditor extends Component {
                 return <h1 {...attributes}>{children}</h1>
             case 'heading-two':
                 return <h2 {...attributes}>{children}</h2>
+            case 'heading-three':
+                return <h3 {...attributes}>{children}</h3>
+            case 'heading-four':
+                return <h4 {...attributes}>{children}</h4>
+            case 'heading-five':
+                return <h5 {...attributes}>{children}</h5>
+            case 'heading-six':
+                return <h6 {...attributes}>{children}</h6>
             case 'list-item':
                 return <li {...attributes}>{children}</li>
             case 'numbered-list':
@@ -131,7 +126,7 @@ export default class TextEditor extends Component {
         this.editor.toggleMark(type);
     }
 
-    renderMarkButton = (type, icon) => {
+    renderMarkButton = (type, char) => {
         const isActive = this.hasMark(type);
 
         return (
@@ -139,12 +134,19 @@ export default class TextEditor extends Component {
                 active={isActive}
                 onMouseDown={event => this.onClickMark(event, type) }
             >
-                <FontAwesomeIcon icon={icon} />
+                <span css={css`
+                    font-family: 'Avenir Next';
+                    font-weight: 400;
+                    line-height: 1em;
+                    font-size: 15px;
+                `}>
+                    {char}
+                </span>
             </Button>
         );
     }
 
-    renderBlockButton = (type, icon) => {
+    renderBlockButton = (type, char) => {
         let isActive = this.hasBlock(type);
 
         if (['numbered-list', 'bulleted-list'].includes(type)) {
@@ -161,7 +163,15 @@ export default class TextEditor extends Component {
                 active={isActive}
                 onMouseDown={event => this.onClickBlock(event, type)}
             >
-                <FontAwesomeIcon icon={icon} />
+                <span css={css`
+                    font-family: 'Avenir Next';
+                    font-weight: 400;
+                    line-height: 1em;
+                    font-size: 15px;
+                `}>
+                    {char}
+                </span>
+
             </Button>
         );
     }
@@ -363,17 +373,18 @@ export default class TextEditor extends Component {
     render() {
         const toolbar = this.props.toolbar ? (
             <Toolbar>
-                {this.renderMarkButton('bold', faBold)}
-                {this.renderMarkButton('italic', faItalic)}
-                {this.renderMarkButton('underlined', faUnderline)}
-                {this.renderMarkButton('code', faCode)}
+                {this.renderMarkButton('bold', 'B')}
+                {this.renderMarkButton('italic', 'I')}
+                {this.renderMarkButton('underlined', 'U')}
+                {this.renderMarkButton('code', '</>')}
                 <Vertical/>
-                {this.renderBlockButton('heading-one', faHeading)}
-                {this.renderBlockButton('heading-two', faHeading)}
-                {this.renderBlockButton('block-quote', faQuoteRight)}
+                {this.renderBlockButton('heading-one', 'H1')}
+                {this.renderBlockButton('heading-two', 'H2')}
+                {this.renderBlockButton('heading-three', 'H3')}
+                {this.renderBlockButton('block-quote', '“!“')}
                 <Vertical/>
-                {this.renderBlockButton('numbered-list', faListOl)}
-                {this.renderBlockButton('bulleted-list', faListUl)}
+                {this.renderBlockButton('numbered-list', 'OL')}
+                {this.renderBlockButton('bulleted-list', 'UL')}
             </Toolbar>
         ) : '';
 
@@ -384,6 +395,10 @@ export default class TextEditor extends Component {
                 }
 
                 h2 {
+                    font-size: 1.75em;
+                }
+
+                h3 {
                     font-size: 1.5em;
                 }
 
@@ -420,15 +435,18 @@ export default class TextEditor extends Component {
                 }
             `}>
                 {toolbar}
-                <Editor
-                    ref={this.ref}
-                    onChange={this.onChange}
-                    onKeyDown={this.onKeyDown}
-                    value={this.state.value}
-                    renderNode={this.renderNode}
-                    renderMark={this.renderMark}
-                    placeholder={this.props.placeholder}
-                />
+
+                <div className="te-editor">
+                    <Editor
+                        ref={this.ref}
+                        onChange={this.onChange}
+                        onKeyDown={this.onKeyDown}
+                        value={this.state.value}
+                        renderNode={this.renderNode}
+                        renderMark={this.renderMark}
+                        placeholder={this.props.placeholder}
+                    />
+                </div>
             </div>
         )
     }
