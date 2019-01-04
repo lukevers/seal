@@ -303,6 +303,8 @@ class Posts extends Component {
                                     padding: 1px 3px;
                                     border-radius: 3px;
                                     letter-spacing: 0;
+                                    font-size: 8px;
+                                    vertical-align: middle;
                                 }
 
                                 &.active {
