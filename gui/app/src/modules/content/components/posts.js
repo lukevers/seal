@@ -147,15 +147,17 @@ class Content extends Component {
                     padding: 1em;
 
                     button {
-                        margin-top: 1.5em;
-                        border: 0;
-                        padding: 1em;
+                        padding: .5em;
+                        font-size: 1em;
+                        line-height: 1em;
+                        border: 1px solid ${themes.standard.primary};
                         background-color: ${themes.standard.primary};
                         color: ${themes.standard.white};
                         cursor: pointer;
 
                         &:hover {
                             background-color: ${themes.standard.darker.primary};
+                            border-color: ${themes.standard.darker.primary};
                         }
                     }
 
@@ -163,7 +165,6 @@ class Content extends Component {
                     <div css={css`
                         font-size: 1.5em;
                         color: ${themes.standard.secondary};
-                        margin-bottom: .75em;
                         line-height: 1.25em;
                     `}>
                         <TextEditor
@@ -171,6 +172,75 @@ class Content extends Component {
                             plaintext
                             onChange={(value) => this.handleChange(value, 'title')}
                         />
+                    </div>
+
+                    <div css={css`
+                        color: ${themes.standard.secondary};
+                        margin-top: 1em;
+                        margin-bottom: .5em;
+                        font-size: .5em;
+
+                        label {
+                            display: inline-block;
+                            margin-right: 1em;
+                        }
+
+                        .te-wrapper {
+                            display: inline-block;
+                            font-weight: bold;
+                        }
+                    `}>
+                        <label>ROUTE:</label>
+                        <TextEditor
+                            value={post.route}
+                            plaintext
+                            onChange={(value) => this.handleChange(value, 'route')}
+                        />
+                    </div>
+
+                    <div css={css`
+                        font-size: .5em;
+                        color: ${themes.standard.secondary};
+                        margin-bottom: .5em;
+
+                        label {
+                            display: inline-block;
+                            margin-right: 1em;
+                        }
+
+                        .dt {
+                            display: inline-block;
+                        }
+
+                        input {
+                            border: 0;
+                            user-select: none;
+                            cursor: pointer;
+
+                            &:focus {
+                                outline: none;
+                            }
+                        }
+                    `}>
+                        <label>PUBLISHED AT:</label>
+                        <div className="dt">
+                            <Datetime
+                                value={post.published_at ? moment(post.published_at).format('MM/DD/YYYY HH:mm a') : null}
+                                onChange={(e) => this.handleChange(e ? e.format('YYYY-MM-DDTHH:mm:ssZ') : null, 'published_at') }/>
+                        </div>
+                    </div>
+
+                    <div css={css`
+                        font-size: .75em;
+                        display: flex;
+                        align-items: center;
+                        margin-bottom: .5em;
+                    `}>
+                        <DropDown
+                            list={this.status}
+                            onChange={this.handleChange}
+                            title={post.status[0].toUpperCase() + post.status.slice(1)}/>
+                        <button onClick={this.savePost}>Save</button>
                     </div>
 
                     <div css={css`
@@ -189,30 +259,6 @@ class Content extends Component {
                             onChange={(value) => this.handleChange(value, 'content')}
                         />
                     </div>
-
-                    <div css={css`
-                        color: ${themes.standard.secondary};
-                        margin: 1em 0;
-                        line-height: 1.25em;
-                    `}>
-                        <label>Route:</label>
-                        <TextEditor
-                            value={post.route}
-                            plaintext
-                            onChange={(value) => this.handleChange(value, 'route')}
-                        />
-                    </div>
-
-                    <DropDown
-                        list={this.status}
-                        onChange={this.handleChange}
-                        title={post.status[0].toUpperCase() + post.status.slice(1)}/>
-
-                    <Datetime
-                        value={post.published_at ? moment(post.published_at).format('MM/DD/YYYY HH:mm a') : null}
-                        onChange={(e) => this.handleChange(e ? e.format('YYYY-MM-DDTHH:mm:ssZ') : null, 'published_at') }/>
-
-                    <button onClick={this.savePost}>Save</button>
                 </div>
             );
         }

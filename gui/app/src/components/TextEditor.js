@@ -16,8 +16,7 @@ const Vertical = () => (
     <div css={css`
         background-color: ${themes.standard.lightgray};
         width: 1px;
-        height: 10px;
-        margin-left: 5px;
+        height: 7px;
     `}/>
 );
 
@@ -137,8 +136,7 @@ export default class TextEditor extends Component {
                 <span css={css`
                     font-family: 'Avenir Next';
                     font-weight: 400;
-                    line-height: 1em;
-                    font-size: 15px;
+                    font-size: 10px;
                 `}>
                     {char}
                 </span>
@@ -166,8 +164,7 @@ export default class TextEditor extends Component {
                 <span css={css`
                     font-family: 'Avenir Next';
                     font-weight: 400;
-                    line-height: 1em;
-                    font-size: 15px;
+                    font-size: 10px;
                 `}>
                     {char}
                 </span>
@@ -389,7 +386,7 @@ export default class TextEditor extends Component {
         ) : '';
 
         return (
-            <div css={css`
+            <div className="te-wrapper" css={css`
                 h1 {
                     font-size: 2em;
                 }
