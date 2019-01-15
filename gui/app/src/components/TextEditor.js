@@ -1,7 +1,7 @@
 /** @jsx jsx */
 import { jsx, css } from '@emotion/core';
 import { Component } from 'react';
-import { Editor } from 'slate-react';
+import { Editor, getEventRange, getEventTransfer } from 'slate-react';
 import { Value } from 'slate';
 import Plain from 'slate-plain-serializer';
 import { isKeyHotkey } from 'is-hotkey';
@@ -18,6 +18,10 @@ const Vertical = () => (
         width: 1px;
         height: 7px;
     `}/>
+);
+
+const Image = ({ src }) => (
+    <img alt="" src={src}/>
 );
 
 const Toolbar = ({ children }) => (
@@ -52,7 +56,15 @@ export default class TextEditor extends Component {
         value: (this.props.plaintext ?
             Plain.deserialize(this.props.value) :
             Value.fromJSON(this.props.value)),
-    }
+    };
+
+    schema = {
+        blocks: {
+            image: {
+                isVoid: true,
+            },
+        },
+    };
 
     onChange = ({ value }) => {
         if (this.props.plaintext) {
@@ -115,6 +127,9 @@ export default class TextEditor extends Component {
                 return <li {...attributes}>{children}</li>
             case 'numbered-list':
                 return <ol {...attributes}>{children}</ol>
+            case 'image':
+                const src = node.data.get('src');
+                return <Image src={src} {...attributes}/>
             default:
                 return next();
         }
@@ -280,6 +295,47 @@ export default class TextEditor extends Component {
         editor.moveFocusToStartOfNode(startBlock).delete();
     }
 
+    insertImage = (editor, src, target) => {
+        if (target) {
+            editor.select(target);
+        }
+
+        editor.insertBlock({
+            type: 'image',
+            data: { src },
+        });
+    }
+
+    onDropOrPaste = (event, editor, next) => {
+        const target = getEventRange(event, editor);
+        if (!target && event.type === 'drop') {
+            return next();
+        }
+
+        const transfer = getEventTransfer(event);
+        const { type, files } = transfer;
+
+        if (type === 'files') {
+            for (const file of files) {
+                const reader = new FileReader();
+                const [mime] = file.type.split('/');
+                if (mime !== 'image') {
+                    continue;
+                }
+
+                reader.addEventListener('load', () => {
+                    editor.command(this.insertImage, reader.result, target);
+                });
+
+                reader.readAsDataURL(file);
+            }
+
+            return;
+        }
+
+        next();
+    }
+
     onBackspace = (event, editor, next) => {
         const { value } = editor;
         const { selection } = value;
@@ -438,7 +494,9 @@ export default class TextEditor extends Component {
                         ref={this.ref}
                         onChange={this.onChange}
                         onKeyDown={this.onKeyDown}
+                        onDrop={this.onDropOrPaste}
                         value={this.state.value}
+                        schema={this.schema}
                         renderNode={this.renderNode}
                         renderMark={this.renderMark}
                         placeholder={this.props.placeholder}

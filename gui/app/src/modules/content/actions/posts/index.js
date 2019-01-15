@@ -107,6 +107,8 @@ export function postSave(post, cb) {
                                     return <h5>{children}</h5>
                                 case 'heading-six':
                                     return <h6>{children}</h6>
+                                case 'image':
+                                    return <img src={obj.data.get('src')} alt=""/>
                                 default:
                                     break;
                             }
