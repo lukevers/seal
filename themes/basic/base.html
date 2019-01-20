@@ -1,0 +1,14 @@
+{{ define "basic-base" -}}
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>{{ template "title" . }}</title>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">    
+        {{ template "meta" . }}
+    </head>
+    <body>
+        {{ template "content" . }}
+    </body>
+</html>
+{{- end }}

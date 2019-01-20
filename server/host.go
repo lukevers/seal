@@ -3,6 +3,7 @@ package main
 import (
 	"context"
 	"errors"
+	"html/template"
 	"log"
 	"net/http"
 	"sync"
@@ -91,7 +92,22 @@ func RenderHost(next http.Handler) http.Handler {
 					return
 				}
 
-				w.Write([]byte(p.HTML.String))
+				// TODO: pre-generate, optimize, etc
+				t, err := template.ParseGlob("../themes/**/*.html")
+				if err != nil {
+					log.Fatal(err)
+				}
+
+				t.Funcs(
+					template.FuncMap{
+						"html": func(text string) template.HTML { return template.HTML(text) },
+					},
+				)
+
+				err = t.ExecuteTemplate(w, "basic-post", p)
+				if err != nil {
+					log.Fatal(err)
+				}
 			}
 		}
 	})
