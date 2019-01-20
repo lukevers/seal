@@ -36,6 +36,6 @@ export default () => (
     `}>
         <img src={logo} alt="Seal"/>
         <h1>Seal</h1>
-        <h2>Version 1.0.0</h2>
+        <h2>Version {process.env.REACT_APP_VERSION}</h2>
     </div>
 );

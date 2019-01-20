@@ -1,9 +1,13 @@
 #!/bin/bash
 
+# Example:
+#   1.0 - 45014ca (build: 65)
+V="$(cat mac.json | jq --raw-output .version) - $(git rev-parse --short HEAD) (build: $(git rev-list --all --count))";
+
 go build
 
 pushd ./app
-npm run build
+REACT_APP_VERSION=$V npm run build
 popd
 
 rm -rf ./resources
