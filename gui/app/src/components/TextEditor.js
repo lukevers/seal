@@ -443,6 +443,8 @@ export default class TextEditor extends Component {
 
         return (
             <div className="te-wrapper" css={css`
+                overflow: auto;
+
                 h1 {
                     font-size: 2em;
                 }
@@ -485,6 +487,10 @@ export default class TextEditor extends Component {
 
                 code {
                     font-family: monospace;
+                }
+
+                img {
+                    max-width: 100%;
                 }
             `}>
                 {toolbar}
