@@ -19,6 +19,9 @@ export default class Login extends Component {
             password: '',
             code: '',
         },
+        settings: {
+            host: 'http://localhost:3333',
+        },
     }
 
     toggleForm(form) {
@@ -35,13 +38,7 @@ export default class Login extends Component {
     }
 
     async submit(form) {
-        const data = await Conn.load(
-            'settings',
-            JSON.stringify([{key: "url", value: ""}]),
-        );
-
-        // TODO: replace localhost with domain
-        const url = data.data[0].value || 'http://localhost:3333';
+        const url = this.state.settings.host;
 
         if (form === 'signup') {
             const resp = await fetch(
@@ -112,6 +109,16 @@ export default class Login extends Component {
                     <Button white onClick={(e) => this.toggleForm('login')}>Log In</Button>
                     <Button white onClick={(e) => this.toggleForm('signup')}>Sign Up</Button>
                 </span>
+                <span>
+                    <input
+                        name="host"
+                        value={this.state.settings.host}
+                        placeholder="Host"
+                        type="text"
+                        spellCheck="false"
+                        onChange={(event) => this.handleChange(event.target.value, 'settings', 'host')}
+                    />
+                </span>
             </div>
         );
 
@@ -142,6 +149,16 @@ export default class Login extends Component {
                     <span>
                         <Button white onClick={(e) => this.submit('login')}>Log In</Button>
                         <Button white onClick={(e) => this.toggleForm('signup')}>I don't have an account</Button>
+                    </span>
+                    <span>
+                        <input
+                            name="host"
+                            value={this.state.settings.host}
+                            placeholder="Host"
+                            type="text"
+                            spellCheck="false"
+                            onChange={(event) => this.handleChange(event.target.value, 'settings', 'host')}
+                        />
                     </span>
                 </div>
             );
@@ -180,6 +197,16 @@ export default class Login extends Component {
                     <span>
                         <Button white onClick={(e) => this.submit('signup')}>Create Account</Button>
                         <Button white onClick={(e) => this.toggleForm('login')}>I already have an account</Button>
+                    </span>
+                    <span>
+                        <input
+                            name="host"
+                            value={this.state.settings.host}
+                            placeholder="Host"
+                            type="text"
+                            spellCheck="false"
+                            onChange={(event) => this.handleChange(event.target.value, 'settings', 'host')}
+                        />
                     </span>
                 </div>
             );
@@ -238,6 +265,11 @@ export default class Login extends Component {
 
                     &[name="code"] {
                         width: calc(400px + 1em);
+                    }
+
+                    &[name="host"] {
+                        border: 0;
+                        text-align: center;
                     }
                 }
 
