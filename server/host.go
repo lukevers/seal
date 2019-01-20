@@ -104,6 +104,7 @@ func RenderHost(next http.Handler) http.Handler {
 					},
 				)
 
+				w.Header().Set("Content-Type", "text/html")
 				err = t.ExecuteTemplate(w, "basic-post", p)
 				if err != nil {
 					log.Fatal(err)

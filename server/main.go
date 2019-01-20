@@ -17,6 +17,7 @@ func main() {
 	r.Use(middleware.Logger)
 	r.Use(middleware.Recoverer)
 	r.Use(middleware.URLFormat)
+	r.Use(middleware.DefaultCompress)
 
 	r.Use(BoostAPI)
 	r.Use(MapHostToTeam)
