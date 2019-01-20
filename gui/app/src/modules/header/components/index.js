@@ -27,10 +27,11 @@ const HeaderItem = ({ children }) => (
 const HeaderLeft = () => (
     <div css={css`
         text-align: center;
+        background-color: ${themes.standard.primary};
 
         img {
             height: 50px;
-            padding: .5em calc(75px + .5em);
+            padding: .5em;
         }
     `}>
         <NavLink to="/">
@@ -91,7 +92,7 @@ const HeaderRight = ({ authenticate }) => (
 
 export default ({ authenticate }) => (
     <ul css={css`
-        background-color: ${themes.standard.darker.secondary};
+        background-color: ${themes.standard.secondary};
         color: ${themes.standard.gray};
         height: 100%;
         display: flex;

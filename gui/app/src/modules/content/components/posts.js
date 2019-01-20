@@ -150,14 +150,14 @@ class Content extends Component {
                         padding: .5em;
                         font-size: 1em;
                         line-height: 1em;
-                        border: 1px solid ${themes.standard.primary};
-                        background-color: ${themes.standard.primary};
+                        border: 1px solid ${themes.standard.secondary};
+                        background-color: ${themes.standard.secondary};
                         color: ${themes.standard.white};
                         cursor: pointer;
 
                         &:hover {
-                            background-color: ${themes.standard.darker.primary};
-                            border-color: ${themes.standard.darker.primary};
+                            background-color: ${themes.standard.primary};
+                            border-color: ${themes.standard.primary};
                         }
                     }
 

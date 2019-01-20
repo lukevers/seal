@@ -190,7 +190,7 @@ export default class Login extends Component {
             <div css={css`
                 height: 100%;
                 color: ${themes.standard.gray};
-                background-color: ${themes.standard.darker.secondary};
+                background-color: ${themes.standard.secondary};
                 height: 100%;
                 text-transform: uppercase;
                 letter-spacing: 1px;

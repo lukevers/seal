@@ -52,22 +52,15 @@ export default () => (
                 }
             }
         }
-
-        label {
-            padding-left: 1em;
-            cursor: pointer;
-        }
     `}>
         <NavLink to="/dashboard" activeClassName="active">
             <SidebarItem>
                 <FontAwesomeIcon icon={faChartPie} />
-                <label>Dashboard</label>
             </SidebarItem>
         </NavLink>
         <NavLink to="/posts" activeClassName="active">
             <SidebarItem>
                 <FontAwesomeIcon icon={faPen} />
-                <label>Posts</label>
             </SidebarItem>
         </NavLink>
     </ul>

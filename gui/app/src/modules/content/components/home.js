@@ -26,7 +26,7 @@ export default () => (
         h1 {
             padding-top: 3em;
             font-size: 1.5em;
-            color: ${themes.standard.darker.secondary};
+            color: ${themes.standard.primary};
         }
 
         h2 {

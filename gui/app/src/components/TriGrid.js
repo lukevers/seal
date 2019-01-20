@@ -5,7 +5,7 @@ const TriGridWrapper = ({ children }) => (
     <div css={css`
         display: grid;
         grid-gap: 0;
-        grid-template-columns: 200px auto;
+        grid-template-columns: 50px auto;
         grid-template-rows: 50px auto;
         grid-template-areas:
         "header header"
@@ -31,7 +31,7 @@ const TriGridSidebar = ({ children }) => (
     <div css={css`
         grid-area: sidebar;
         height: 100%;
-        width: 200px;
+        width: 50px;
     `}>
         {children}
     </div>

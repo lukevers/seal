@@ -10,12 +10,12 @@ const Button = ({ children, white, onClick }) => (
             padding: 1em;
 
             background-color: ${white ? themes.standard.white : themes.standard.primary};
-            color: ${white ? themes.standard.darker.secondary : themes.standard.white};
+            color: ${white ? themes.standard.secondary : themes.standard.white};
             cursor: pointer;
 
             &:hover {
-                background-color: ${white ? themes.standard.gray : themes.standard.darker.primary};
-                color: ${white ? themes.standard.darker.secondary : themes.standard.white};
+                background-color: ${white ? themes.standard.gray : themes.standard.primary};
+                color: ${white ? themes.standard.secondary : themes.standard.white};
             }
         `}
     >

@@ -91,14 +91,14 @@ class Content extends Component {
                 button {
                     border: 0;
                     padding: 1em;
-                    background-color: ${themes.standard.primary};
+                    background-color: ${themes.standard.secondary};
                     color: ${themes.standard.white};
                     cursor: pointer;
                     margin-right: auto;
                     margin-left: 10%;
 
                     &:hover {
-                        background-color: ${themes.standard.darker.primary};
+                        background-color: ${themes.standard.primary};
                     }
                 }
             `}>
