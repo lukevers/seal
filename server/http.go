@@ -1,7 +1,9 @@
 package main
 
 import (
+	"context"
 	"net/http"
+	"strings"
 
 	"github.com/go-chi/render"
 )
@@ -73,4 +75,11 @@ func ErrInternalRender(err error) render.Renderer {
 		StatusText:     "Internal server error.",
 		ErrorText:      err.Error(),
 	}
+}
+
+func BoostStatic(next http.Handler) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		ctx := context.WithValue(r.Context(), "static", strings.Index(r.URL.Path, "/s/") == 0)
+		next.ServeHTTP(w, r.WithContext(ctx))
+	})
 }

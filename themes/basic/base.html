@@ -4,11 +4,14 @@
     <head>
         <title>{{ template "title" . }}</title>
         <meta charset="utf-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">    
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link href="https://fonts.googleapis.com/css?family=Source+Code+Pro:200" rel="stylesheet">
+        <link rel="stylesheet" href="/s/basic/static/basic.css"/>
         {{ template "meta" . }}
     </head>
     <body>
         {{ template "content" . }}
+        <script src="/s/basic/static/basic.js"></script>
     </body>
 </html>
 {{- end }}

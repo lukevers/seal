@@ -20,6 +20,7 @@ func main() {
 	r.Use(middleware.DefaultCompress)
 
 	r.Use(BoostAPI)
+	r.Use(BoostStatic)
 	r.Use(MapHostToTeam)
 	r.Use(RenderHost)
 
@@ -51,6 +52,13 @@ func main() {
 		r.Use(AuthenticateRequest)
 
 		r.Get("/teams", MetaListTeams)
+	})
+
+	r.Route("/s/", func(r chi.Router) {
+		fs := http.StripPrefix("/s", http.FileServer(http.Dir("../themes/")))
+		r.Get("/*", http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+			fs.ServeHTTP(w, r)
+		}))
 	})
 
 	http.ListenAndServe(

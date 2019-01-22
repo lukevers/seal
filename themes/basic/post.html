@@ -11,10 +11,15 @@
 {{ define "content" -}}
     <div class="content">
         <div class="post post-meta">
-            <div id="post-meta-data">{{ .PublishedAt.Time }}</div>
+            <div id="post-title"><h1>{{ .Title.String }}</h1></div>
+            <div id="post-meta-date">{{ .PublishedAt.Time | datetime }}</div>
         </div>
         <div class="post post-html">
             {{ .HTML.String | html }}
+        </div>
+        <div class="fancy-hr-wrapper"><hr class="fancy"/></div>
+        <div class="post post-footer">
+            <a href="/">Home</a>
         </div>
     </div>
 {{- end }}

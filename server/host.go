@@ -7,6 +7,7 @@ import (
 	"log"
 	"net/http"
 	"sync"
+	"time"
 
 	"github.com/go-chi/render"
 	"github.com/lukevers/seal/server/models"
@@ -52,10 +53,13 @@ func initTeams(ctx context.Context, exe boil.ContextExecutor, team *models.Team)
 
 func MapHostToTeam(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		if r.Context().Value("api").(bool) {
+		if r.Context().Value("api").(bool) || r.Context().Value("static").(bool) {
 			next.ServeHTTP(w, r)
 			return
 		}
+
+		// For testing :)
+		r.Host = "lukevers.com"
 
 		if team, exists := HostToTeamMap.Load(r.Host); !exists {
 			render.Render(w, r, ErrInvalidRequest(errors.New("Host given not setup")))
@@ -69,7 +73,7 @@ func MapHostToTeam(next http.Handler) http.Handler {
 
 func RenderHost(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		if r.Context().Value("api").(bool) {
+		if r.Context().Value("api").(bool) || r.Context().Value("static").(bool) {
 			next.ServeHTTP(w, r)
 			return
 		}
@@ -92,21 +96,26 @@ func RenderHost(next http.Handler) http.Handler {
 					return
 				}
 
-				// TODO: pre-generate, optimize, etc
-				t, err := template.ParseGlob("../themes/**/*.html")
-				if err != nil {
-					log.Fatal(err)
-				}
-
+				// TODO: not any of this here
+				t := template.New("t")
 				t.Funcs(
 					template.FuncMap{
-						"html": func(text string) template.HTML { return template.HTML(text) },
+						"html":     func(text string) template.HTML { return template.HTML(text) },
+						"datetime": func(t time.Time) string { return t.Format("Monday, January 02 2006 15:04:05 MST") },
 					},
 				)
+
+				// TODO: pre-generate, optimize, etc
+				t, err := t.ParseGlob("../themes/**/*.html")
+				if err != nil {
+					// TODO: not fatal
+					log.Fatal(err)
+				}
 
 				w.Header().Set("Content-Type", "text/html")
 				err = t.ExecuteTemplate(w, "basic-post", p)
 				if err != nil {
+					// TODO: not fatal
 					log.Fatal(err)
 				}
 			}
