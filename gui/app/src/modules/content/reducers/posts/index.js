@@ -15,6 +15,8 @@ const getNewPost = () => {
         route: '/new-post',
         content: JSON.stringify((new Html()).deserialize('<p>Content</p>', {toJSON: true})),
         status: 'draft',
+        read_time: '5 minutes',
+        cover_image: '',
     };
 }
 

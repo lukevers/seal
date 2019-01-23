@@ -188,6 +188,7 @@ class Content extends Component {
                         .te-wrapper {
                             display: inline-block;
                             font-weight: bold;
+                            min-width: 100px;
                         }
                     `}>
                         <label>ROUTE:</label>
@@ -195,6 +196,56 @@ class Content extends Component {
                             value={post.route}
                             plaintext
                             onChange={(value) => this.handleChange(value, 'route')}
+                        />
+                    </div>
+
+                    <div css={css`
+                        color: ${themes.standard.secondary};
+                        margin-top: 1em;
+                        margin-bottom: .5em;
+                        font-size: .5em;
+
+                        label {
+                            display: inline-block;
+                            margin-right: 1em;
+                        }
+
+                        .te-wrapper {
+                            display: inline-block;
+                            font-weight: bold;
+                            min-width: 100px;
+                        }
+                    `}>
+                        <label>READ TIME:</label>
+                        <TextEditor
+                            value={post.read_time}
+                            plaintext
+                            onChange={(value) => this.handleChange(value, 'read_time')}
+                        />
+                    </div>
+
+                    <div css={css`
+                        color: ${themes.standard.secondary};
+                        margin-top: 1em;
+                        margin-bottom: .5em;
+                        font-size: .5em;
+
+                        label {
+                            display: inline-block;
+                            margin-right: 1em;
+                        }
+
+                        .te-wrapper {
+                            display: inline-block;
+                            font-weight: bold;
+                            min-width: 100px;
+                        }
+                    `}>
+                        <label>COVER IMAGE:</label>
+                        <TextEditor
+                            value={post.cover_image}
+                            plaintext
+                            onChange={(value) => this.handleChange(value, 'cover_image')}
                         />
                     </div>
 

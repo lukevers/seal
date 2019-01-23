@@ -206,6 +206,8 @@ func CreatePost(w http.ResponseWriter, r *http.Request) {
 		Content:     post.Content,
 		Markdown:    post.Markdown,
 		HTML:        post.HTML,
+		ReadTime:    post.ReadTime,
+		CoverImage:  post.CoverImage,
 		CreatedByID: user.ID,
 		UpdatedByID: user.ID,
 		OwnedByID:   post.OwnedByID,
