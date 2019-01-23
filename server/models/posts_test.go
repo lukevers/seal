@@ -1053,7 +1053,7 @@ func testPostsSelect(t *testing.T) {
 }
 
 var (
-	postDBTypes = map[string]string{`Content`: `mediumtext`, `CreatedAt`: `timestamp`, `CreatedByID`: `int`, `DeletedAt`: `timestamp`, `DeletedByID`: `int`, `HTML`: `mediumtext`, `ID`: `int`, `Markdown`: `mediumtext`, `OwnedByID`: `int`, `PublishedAt`: `timestamp`, `Route`: `varchar`, `Status`: `enum('draft','published','deleted')`, `Title`: `varchar`, `UpdatedAt`: `timestamp`, `UpdatedByID`: `int`}
+	postDBTypes = map[string]string{`Content`: `mediumtext`, `CoverImage`: `varchar`, `CreatedAt`: `timestamp`, `CreatedByID`: `int`, `DeletedAt`: `timestamp`, `DeletedByID`: `int`, `HTML`: `mediumtext`, `ID`: `int`, `Markdown`: `mediumtext`, `OwnedByID`: `int`, `PublishedAt`: `timestamp`, `ReadTime`: `varchar`, `Route`: `varchar`, `Status`: `enum('draft','published','deleted')`, `Title`: `varchar`, `UpdatedAt`: `timestamp`, `UpdatedByID`: `int`}
 	_           = bytes.MinRead
 )
 

@@ -21,22 +21,28 @@
     <div class="content">
         <div class="post post-meta">
             <div id="post-title"><h1>{{ .Title.String }}</h1></div>
-            <div id="post-meta-date" class="post-meta-item">
-                <span>Published At:</span>
-                {{ .PublishedAt.Time | datetime }}
-            </div>
-            <div id="post-meta-read-time" class="post-meta-item">
-                <span>Read Time:</span>
-                5 minutes
-            </div>
+            {{ if .PublishedAt.Valid }}
+                <div id="post-meta-date" class="post-meta-item">
+                    <span>Published At:</span>
+                    {{ .PublishedAt.Time | datetime }}
+                </div>
+            {{ end }}
+            {{ if .ReadTime.Valid }}
+                <div id="post-meta-read-time" class="post-meta-item">
+                    <span>Read Time:</span>
+                    {{ .ReadTime.String }}
+                </div>
+            {{ end }}
             <div id="post-meta-alternative-format" class="post-meta-item">
                 <span>Format Also Available In:</span>
                 <a href="{{ .Route }}.md">Markdown</a>
             </div>
         </div>
-        <div id="cover-image">
-            <img alt="Cover image" src="https://images.unsplash.com/photo-1548056559-9fd5df644731?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=900&q=60">
-        </div>
+        {{ if .CoverImage.Valid }}
+            <div id="cover-image">
+                <img alt="Cover image" src="{{ .CoverImage.String }}">
+            </div>
+        {{ end }}
         <div class="post post-html">
             {{ .HTML.String | html }}
         </div>

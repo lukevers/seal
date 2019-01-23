@@ -568,7 +568,7 @@ func testPostHistoriesSelect(t *testing.T) {
 }
 
 var (
-	postHistoryDBTypes = map[string]string{`Action`: `enum('insert','update','delete')`, `Content`: `mediumtext`, `CreatedAt`: `timestamp`, `CreatedByID`: `int`, `DeletedAt`: `timestamp`, `DeletedByID`: `int`, `HTML`: `mediumtext`, `ID`: `int`, `Markdown`: `mediumtext`, `OwnedByID`: `int`, `PublishedAt`: `timestamp`, `RevisedAt`: `timestamp`, `Revision`: `int`, `Route`: `varchar`, `Status`: `enum('draft','published','deleted')`, `Title`: `varchar`, `UpdatedAt`: `timestamp`, `UpdatedByID`: `int`}
+	postHistoryDBTypes = map[string]string{`Action`: `enum('insert','update','delete')`, `Content`: `mediumtext`, `CoverImage`: `varchar`, `CreatedAt`: `timestamp`, `CreatedByID`: `int`, `DeletedAt`: `timestamp`, `DeletedByID`: `int`, `HTML`: `mediumtext`, `ID`: `int`, `Markdown`: `mediumtext`, `OwnedByID`: `int`, `PublishedAt`: `timestamp`, `ReadTime`: `varchar`, `RevisedAt`: `timestamp`, `Revision`: `int`, `Route`: `varchar`, `Status`: `enum('draft','published','deleted')`, `Title`: `varchar`, `UpdatedAt`: `timestamp`, `UpdatedByID`: `int`}
 	_                  = bytes.MinRead
 )
 

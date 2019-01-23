@@ -29,6 +29,8 @@ type Post struct {
 	Content     null.String `boil:"content" json:"content,omitempty" toml:"content" yaml:"content,omitempty"`
 	Markdown    null.String `boil:"markdown" json:"markdown,omitempty" toml:"markdown" yaml:"markdown,omitempty"`
 	HTML        null.String `boil:"html" json:"html,omitempty" toml:"html" yaml:"html,omitempty"`
+	ReadTime    null.String `boil:"read_time" json:"read_time,omitempty" toml:"read_time" yaml:"read_time,omitempty"`
+	CoverImage  null.String `boil:"cover_image" json:"cover_image,omitempty" toml:"cover_image" yaml:"cover_image,omitempty"`
 	Status      string      `boil:"status" json:"status" toml:"status" yaml:"status"`
 	PublishedAt null.Time   `boil:"published_at" json:"published_at,omitempty" toml:"published_at" yaml:"published_at,omitempty"`
 	CreatedAt   time.Time   `boil:"created_at" json:"created_at" toml:"created_at" yaml:"created_at"`
@@ -50,6 +52,8 @@ var PostColumns = struct {
 	Content     string
 	Markdown    string
 	HTML        string
+	ReadTime    string
+	CoverImage  string
 	Status      string
 	PublishedAt string
 	CreatedAt   string
@@ -66,6 +70,8 @@ var PostColumns = struct {
 	Content:     "content",
 	Markdown:    "markdown",
 	HTML:        "html",
+	ReadTime:    "read_time",
+	CoverImage:  "cover_image",
 	Status:      "status",
 	PublishedAt: "published_at",
 	CreatedAt:   "created_at",
@@ -107,8 +113,8 @@ func (*postR) NewStruct() *postR {
 type postL struct{}
 
 var (
-	postColumns               = []string{"id", "title", "route", "content", "markdown", "html", "status", "published_at", "created_at", "updated_at", "deleted_at", "owned_by_id", "created_by_id", "updated_by_id", "deleted_by_id"}
-	postColumnsWithoutDefault = []string{"title", "route", "content", "markdown", "html", "published_at", "deleted_at", "owned_by_id", "created_by_id", "updated_by_id", "deleted_by_id"}
+	postColumns               = []string{"id", "title", "route", "content", "markdown", "html", "read_time", "cover_image", "status", "published_at", "created_at", "updated_at", "deleted_at", "owned_by_id", "created_by_id", "updated_by_id", "deleted_by_id"}
+	postColumnsWithoutDefault = []string{"title", "route", "content", "markdown", "html", "read_time", "cover_image", "published_at", "deleted_at", "owned_by_id", "created_by_id", "updated_by_id", "deleted_by_id"}
 	postColumnsWithDefault    = []string{"id", "status", "created_at", "updated_at"}
 	postPrimaryKeyColumns     = []string{"id"}
 )
