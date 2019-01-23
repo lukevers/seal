@@ -6,6 +6,7 @@ import (
 	"html/template"
 	"log"
 	"net/http"
+	"strings"
 	"sync"
 	"time"
 
@@ -83,7 +84,15 @@ func RenderHost(next http.Handler) http.Handler {
 			render.Render(w, r, ErrInternalRender(errors.New("Could not find team related to host")))
 			return
 		} else {
-			if post, pexists := posts.(*sync.Map).Load(r.URL.Path); !pexists {
+			route := r.URL.Path
+			format := "html"
+
+			if strings.HasSuffix(route, ".md") {
+				route = strings.TrimSuffix(route, ".md")
+				format = "md"
+			}
+
+			if post, pexists := posts.(*sync.Map).Load(route); !pexists {
 				// TODO: 404 page per team
 				render.Render(w, r, ErrMissingRender(errors.New("Missing")))
 				return
@@ -93,6 +102,11 @@ func RenderHost(next http.Handler) http.Handler {
 					// TODO: preview drafts for author
 					// TODO: 404 page per team
 					render.Render(w, r, ErrMissingRender(errors.New("Not published, aka missing")))
+					return
+				}
+
+				if format == "md" {
+					w.Write([]byte(p.Markdown.String))
 					return
 				}
 

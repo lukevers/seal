@@ -9,17 +9,45 @@
 {{ define "meta" -}}{{- end }}
 
 {{ define "content" -}}
+    <div class="header">
+        <span class="header-left">
+            <a href="/">Home</a>
+        </span>
+        <span class="header-right">
+            <a href="https://twitter.com/lukevers_" target="_blank">Twitter</a>
+            <a href="https://github.com/lukevers/" target="_blank">GitHub</a>
+        </span>
+    </div>
     <div class="content">
         <div class="post post-meta">
             <div id="post-title"><h1>{{ .Title.String }}</h1></div>
-            <div id="post-meta-date">{{ .PublishedAt.Time | datetime }}</div>
+            <div id="post-meta-date" class="post-meta-item">
+                <span>Published At:</span>
+                {{ .PublishedAt.Time | datetime }}
+            </div>
+            <div id="post-meta-read-time" class="post-meta-item">
+                <span>Read Time:</span>
+                5 minutes
+            </div>
+            <div id="post-meta-alternative-format" class="post-meta-item">
+                <span>Format Also Available In:</span>
+                <a href="{{ .Route }}.md">Markdown</a>
+            </div>
+        </div>
+        <div id="cover-image">
+            <img alt="Cover image" src="https://images.unsplash.com/photo-1548056559-9fd5df644731?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=900&q=60">
         </div>
         <div class="post post-html">
             {{ .HTML.String | html }}
         </div>
-        <div class="fancy-hr-wrapper"><hr class="fancy"/></div>
         <div class="post post-footer">
-            <a href="/">Home</a>
+            <h3>Subscribe</h3>
+            <p>Sign up for infrequent emails from me. I promise not to be annoying, sell your email, or anything else evil.</p>
+            <div class="input-group">
+                <input type="email" name="email" placeholder="Email"/>
+                <button type="submit">Subscribe</button>
+            </div>
+            <p>&hearts;</p>
         </div>
     </div>
 {{- end }}
