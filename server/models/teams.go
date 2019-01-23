@@ -53,15 +53,18 @@ var TeamColumns = struct {
 // TeamRels is where relationship names are stored.
 var TeamRels = struct {
 	OwnedByPosts string
+	Subscribers  string
 	TeamMembers  string
 }{
 	OwnedByPosts: "OwnedByPosts",
+	Subscribers:  "Subscribers",
 	TeamMembers:  "TeamMembers",
 }
 
 // teamR is where relationships are stored.
 type teamR struct {
 	OwnedByPosts PostSlice
+	Subscribers  SubscriberSlice
 	TeamMembers  TeamMemberSlice
 }
 
@@ -337,6 +340,27 @@ func (o *Team) OwnedByPosts(mods ...qm.QueryMod) postQuery {
 	return query
 }
 
+// Subscribers retrieves all the subscriber's Subscribers with an executor.
+func (o *Team) Subscribers(mods ...qm.QueryMod) subscriberQuery {
+	var queryMods []qm.QueryMod
+	if len(mods) != 0 {
+		queryMods = append(queryMods, mods...)
+	}
+
+	queryMods = append(queryMods,
+		qm.Where("`subscribers`.`team_id`=?", o.ID),
+	)
+
+	query := Subscribers(queryMods...)
+	queries.SetFrom(query.Query, "`subscribers`")
+
+	if len(queries.GetSelect(query.Query)) == 0 {
+		queries.SetSelect(query.Query, []string{"`subscribers`.*"})
+	}
+
+	return query
+}
+
 // TeamMembers retrieves all the team_member's TeamMembers with an executor.
 func (o *Team) TeamMembers(mods ...qm.QueryMod) teamMemberQuery {
 	var queryMods []qm.QueryMod
@@ -441,6 +465,97 @@ func (teamL) LoadOwnedByPosts(ctx context.Context, e boil.ContextExecutor, singu
 					foreign.R = &postR{}
 				}
 				foreign.R.OwnedBy = local
+				break
+			}
+		}
+	}
+
+	return nil
+}
+
+// LoadSubscribers allows an eager lookup of values, cached into the
+// loaded structs of the objects. This is for a 1-M or N-M relationship.
+func (teamL) LoadSubscribers(ctx context.Context, e boil.ContextExecutor, singular bool, maybeTeam interface{}, mods queries.Applicator) error {
+	var slice []*Team
+	var object *Team
+
+	if singular {
+		object = maybeTeam.(*Team)
+	} else {
+		slice = *maybeTeam.(*[]*Team)
+	}
+
+	args := make([]interface{}, 0, 1)
+	if singular {
+		if object.R == nil {
+			object.R = &teamR{}
+		}
+		args = append(args, object.ID)
+	} else {
+	Outer:
+		for _, obj := range slice {
+			if obj.R == nil {
+				obj.R = &teamR{}
+			}
+
+			for _, a := range args {
+				if queries.Equal(a, obj.ID) {
+					continue Outer
+				}
+			}
+
+			args = append(args, obj.ID)
+		}
+	}
+
+	query := NewQuery(qm.From(`subscribers`), qm.WhereIn(`team_id in ?`, args...))
+	if mods != nil {
+		mods.Apply(query)
+	}
+
+	results, err := query.QueryContext(ctx, e)
+	if err != nil {
+		return errors.Wrap(err, "failed to eager load subscribers")
+	}
+
+	var resultSlice []*Subscriber
+	if err = queries.Bind(results, &resultSlice); err != nil {
+		return errors.Wrap(err, "failed to bind eager loaded slice subscribers")
+	}
+
+	if err = results.Close(); err != nil {
+		return errors.Wrap(err, "failed to close results in eager load on subscribers")
+	}
+	if err = results.Err(); err != nil {
+		return errors.Wrap(err, "error occurred during iteration of eager loaded relations for subscribers")
+	}
+
+	if len(subscriberAfterSelectHooks) != 0 {
+		for _, obj := range resultSlice {
+			if err := obj.doAfterSelectHooks(ctx, e); err != nil {
+				return err
+			}
+		}
+	}
+	if singular {
+		object.R.Subscribers = resultSlice
+		for _, foreign := range resultSlice {
+			if foreign.R == nil {
+				foreign.R = &subscriberR{}
+			}
+			foreign.R.Team = object
+		}
+		return nil
+	}
+
+	for _, foreign := range resultSlice {
+		for _, local := range slice {
+			if queries.Equal(local.ID, foreign.TeamID) {
+				local.R.Subscribers = append(local.R.Subscribers, foreign)
+				if foreign.R == nil {
+					foreign.R = &subscriberR{}
+				}
+				foreign.R.Team = local
 				break
 			}
 		}
@@ -590,6 +705,129 @@ func (o *Team) AddOwnedByPosts(ctx context.Context, exec boil.ContextExecutor, i
 			rel.R.OwnedBy = o
 		}
 	}
+	return nil
+}
+
+// AddSubscribers adds the given related objects to the existing relationships
+// of the team, optionally inserting them as new records.
+// Appends related to o.R.Subscribers.
+// Sets related.R.Team appropriately.
+func (o *Team) AddSubscribers(ctx context.Context, exec boil.ContextExecutor, insert bool, related ...*Subscriber) error {
+	var err error
+	for _, rel := range related {
+		if insert {
+			queries.Assign(&rel.TeamID, o.ID)
+			if err = rel.Insert(ctx, exec, boil.Infer()); err != nil {
+				return errors.Wrap(err, "failed to insert into foreign table")
+			}
+		} else {
+			updateQuery := fmt.Sprintf(
+				"UPDATE `subscribers` SET %s WHERE %s",
+				strmangle.SetParamNames("`", "`", 0, []string{"team_id"}),
+				strmangle.WhereClause("`", "`", 0, subscriberPrimaryKeyColumns),
+			)
+			values := []interface{}{o.ID, rel.ID}
+
+			if boil.DebugMode {
+				fmt.Fprintln(boil.DebugWriter, updateQuery)
+				fmt.Fprintln(boil.DebugWriter, values)
+			}
+
+			if _, err = exec.ExecContext(ctx, updateQuery, values...); err != nil {
+				return errors.Wrap(err, "failed to update foreign table")
+			}
+
+			queries.Assign(&rel.TeamID, o.ID)
+		}
+	}
+
+	if o.R == nil {
+		o.R = &teamR{
+			Subscribers: related,
+		}
+	} else {
+		o.R.Subscribers = append(o.R.Subscribers, related...)
+	}
+
+	for _, rel := range related {
+		if rel.R == nil {
+			rel.R = &subscriberR{
+				Team: o,
+			}
+		} else {
+			rel.R.Team = o
+		}
+	}
+	return nil
+}
+
+// SetSubscribers removes all previously related items of the
+// team replacing them completely with the passed
+// in related items, optionally inserting them as new records.
+// Sets o.R.Team's Subscribers accordingly.
+// Replaces o.R.Subscribers with related.
+// Sets related.R.Team's Subscribers accordingly.
+func (o *Team) SetSubscribers(ctx context.Context, exec boil.ContextExecutor, insert bool, related ...*Subscriber) error {
+	query := "update `subscribers` set `team_id` = null where `team_id` = ?"
+	values := []interface{}{o.ID}
+	if boil.DebugMode {
+		fmt.Fprintln(boil.DebugWriter, query)
+		fmt.Fprintln(boil.DebugWriter, values)
+	}
+
+	_, err := exec.ExecContext(ctx, query, values...)
+	if err != nil {
+		return errors.Wrap(err, "failed to remove relationships before set")
+	}
+
+	if o.R != nil {
+		for _, rel := range o.R.Subscribers {
+			queries.SetScanner(&rel.TeamID, nil)
+			if rel.R == nil {
+				continue
+			}
+
+			rel.R.Team = nil
+		}
+
+		o.R.Subscribers = nil
+	}
+	return o.AddSubscribers(ctx, exec, insert, related...)
+}
+
+// RemoveSubscribers relationships from objects passed in.
+// Removes related items from R.Subscribers (uses pointer comparison, removal does not keep order)
+// Sets related.R.Team.
+func (o *Team) RemoveSubscribers(ctx context.Context, exec boil.ContextExecutor, related ...*Subscriber) error {
+	var err error
+	for _, rel := range related {
+		queries.SetScanner(&rel.TeamID, nil)
+		if rel.R != nil {
+			rel.R.Team = nil
+		}
+		if _, err = rel.Update(ctx, exec, boil.Whitelist("team_id")); err != nil {
+			return err
+		}
+	}
+	if o.R == nil {
+		return nil
+	}
+
+	for _, rel := range related {
+		for i, ri := range o.R.Subscribers {
+			if rel != ri {
+				continue
+			}
+
+			ln := len(o.R.Subscribers)
+			if ln > 1 && i < ln-1 {
+				o.R.Subscribers[i] = o.R.Subscribers[ln-1]
+			}
+			o.R.Subscribers = o.R.Subscribers[:ln-1]
+			break
+		}
+	}
+
 	return nil
 }
 

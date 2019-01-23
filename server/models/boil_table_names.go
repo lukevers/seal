@@ -6,6 +6,7 @@ package models
 var TableNames = struct {
 	PostHistory     string
 	Posts           string
+	Subscribers     string
 	TeamMembers     string
 	Teams           string
 	UserCreateCodes string
@@ -13,6 +14,7 @@ var TableNames = struct {
 }{
 	PostHistory:     "post_history",
 	Posts:           "posts",
+	Subscribers:     "subscribers",
 	TeamMembers:     "team_members",
 	Teams:           "teams",
 	UserCreateCodes: "user_create_codes",

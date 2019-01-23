@@ -21,6 +21,8 @@ func main() {
 
 	r.Use(BoostAPI)
 	r.Use(BoostStatic)
+	r.Use(BoostForms)
+
 	r.Use(MapHostToTeam)
 	r.Use(RenderHost)
 
@@ -52,6 +54,12 @@ func main() {
 		r.Use(AuthenticateRequest)
 
 		r.Get("/teams", MetaListTeams)
+	})
+
+	r.Route("/forms", func(r chi.Router) {
+		r.Use(render.SetContentType(render.ContentTypeJSON))
+
+		r.Post("/subscribe", SubscribeEmail)
 	})
 
 	r.Route("/s/", func(r chi.Router) {

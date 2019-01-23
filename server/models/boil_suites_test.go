@@ -14,6 +14,7 @@ import "testing"
 func TestParent(t *testing.T) {
 	t.Run("PostHistories", testPostHistories)
 	t.Run("Posts", testPosts)
+	t.Run("Subscribers", testSubscribers)
 	t.Run("TeamMembers", testTeamMembers)
 	t.Run("Teams", testTeams)
 	t.Run("UserCreateCodes", testUserCreateCodes)
@@ -23,6 +24,7 @@ func TestParent(t *testing.T) {
 func TestDelete(t *testing.T) {
 	t.Run("PostHistories", testPostHistoriesDelete)
 	t.Run("Posts", testPostsDelete)
+	t.Run("Subscribers", testSubscribersDelete)
 	t.Run("TeamMembers", testTeamMembersDelete)
 	t.Run("Teams", testTeamsDelete)
 	t.Run("UserCreateCodes", testUserCreateCodesDelete)
@@ -32,6 +34,7 @@ func TestDelete(t *testing.T) {
 func TestQueryDeleteAll(t *testing.T) {
 	t.Run("PostHistories", testPostHistoriesQueryDeleteAll)
 	t.Run("Posts", testPostsQueryDeleteAll)
+	t.Run("Subscribers", testSubscribersQueryDeleteAll)
 	t.Run("TeamMembers", testTeamMembersQueryDeleteAll)
 	t.Run("Teams", testTeamsQueryDeleteAll)
 	t.Run("UserCreateCodes", testUserCreateCodesQueryDeleteAll)
@@ -41,6 +44,7 @@ func TestQueryDeleteAll(t *testing.T) {
 func TestSliceDeleteAll(t *testing.T) {
 	t.Run("PostHistories", testPostHistoriesSliceDeleteAll)
 	t.Run("Posts", testPostsSliceDeleteAll)
+	t.Run("Subscribers", testSubscribersSliceDeleteAll)
 	t.Run("TeamMembers", testTeamMembersSliceDeleteAll)
 	t.Run("Teams", testTeamsSliceDeleteAll)
 	t.Run("UserCreateCodes", testUserCreateCodesSliceDeleteAll)
@@ -50,6 +54,7 @@ func TestSliceDeleteAll(t *testing.T) {
 func TestExists(t *testing.T) {
 	t.Run("PostHistories", testPostHistoriesExists)
 	t.Run("Posts", testPostsExists)
+	t.Run("Subscribers", testSubscribersExists)
 	t.Run("TeamMembers", testTeamMembersExists)
 	t.Run("Teams", testTeamsExists)
 	t.Run("UserCreateCodes", testUserCreateCodesExists)
@@ -59,6 +64,7 @@ func TestExists(t *testing.T) {
 func TestFind(t *testing.T) {
 	t.Run("PostHistories", testPostHistoriesFind)
 	t.Run("Posts", testPostsFind)
+	t.Run("Subscribers", testSubscribersFind)
 	t.Run("TeamMembers", testTeamMembersFind)
 	t.Run("Teams", testTeamsFind)
 	t.Run("UserCreateCodes", testUserCreateCodesFind)
@@ -68,6 +74,7 @@ func TestFind(t *testing.T) {
 func TestBind(t *testing.T) {
 	t.Run("PostHistories", testPostHistoriesBind)
 	t.Run("Posts", testPostsBind)
+	t.Run("Subscribers", testSubscribersBind)
 	t.Run("TeamMembers", testTeamMembersBind)
 	t.Run("Teams", testTeamsBind)
 	t.Run("UserCreateCodes", testUserCreateCodesBind)
@@ -77,6 +84,7 @@ func TestBind(t *testing.T) {
 func TestOne(t *testing.T) {
 	t.Run("PostHistories", testPostHistoriesOne)
 	t.Run("Posts", testPostsOne)
+	t.Run("Subscribers", testSubscribersOne)
 	t.Run("TeamMembers", testTeamMembersOne)
 	t.Run("Teams", testTeamsOne)
 	t.Run("UserCreateCodes", testUserCreateCodesOne)
@@ -86,6 +94,7 @@ func TestOne(t *testing.T) {
 func TestAll(t *testing.T) {
 	t.Run("PostHistories", testPostHistoriesAll)
 	t.Run("Posts", testPostsAll)
+	t.Run("Subscribers", testSubscribersAll)
 	t.Run("TeamMembers", testTeamMembersAll)
 	t.Run("Teams", testTeamsAll)
 	t.Run("UserCreateCodes", testUserCreateCodesAll)
@@ -95,6 +104,7 @@ func TestAll(t *testing.T) {
 func TestCount(t *testing.T) {
 	t.Run("PostHistories", testPostHistoriesCount)
 	t.Run("Posts", testPostsCount)
+	t.Run("Subscribers", testSubscribersCount)
 	t.Run("TeamMembers", testTeamMembersCount)
 	t.Run("Teams", testTeamsCount)
 	t.Run("UserCreateCodes", testUserCreateCodesCount)
@@ -104,6 +114,7 @@ func TestCount(t *testing.T) {
 func TestHooks(t *testing.T) {
 	t.Run("PostHistories", testPostHistoriesHooks)
 	t.Run("Posts", testPostsHooks)
+	t.Run("Subscribers", testSubscribersHooks)
 	t.Run("TeamMembers", testTeamMembersHooks)
 	t.Run("Teams", testTeamsHooks)
 	t.Run("UserCreateCodes", testUserCreateCodesHooks)
@@ -115,6 +126,8 @@ func TestInsert(t *testing.T) {
 	t.Run("PostHistories", testPostHistoriesInsertWhitelist)
 	t.Run("Posts", testPostsInsert)
 	t.Run("Posts", testPostsInsertWhitelist)
+	t.Run("Subscribers", testSubscribersInsert)
+	t.Run("Subscribers", testSubscribersInsertWhitelist)
 	t.Run("TeamMembers", testTeamMembersInsert)
 	t.Run("TeamMembers", testTeamMembersInsertWhitelist)
 	t.Run("Teams", testTeamsInsert)
@@ -132,6 +145,7 @@ func TestToOne(t *testing.T) {
 	t.Run("PostToUserUsingDeletedBy", testPostToOneUserUsingDeletedBy)
 	t.Run("PostToTeamUsingOwnedBy", testPostToOneTeamUsingOwnedBy)
 	t.Run("PostToUserUsingUpdatedBy", testPostToOneUserUsingUpdatedBy)
+	t.Run("SubscriberToTeamUsingTeam", testSubscriberToOneTeamUsingTeam)
 	t.Run("TeamMemberToTeamUsingTeam", testTeamMemberToOneTeamUsingTeam)
 	t.Run("TeamMemberToUserUsingUser", testTeamMemberToOneUserUsingUser)
 	t.Run("UserCreateCodeToUserUsingUser", testUserCreateCodeToOneUserUsingUser)
@@ -145,6 +159,7 @@ func TestOneToOne(t *testing.T) {}
 // or deadlocks can occur.
 func TestToMany(t *testing.T) {
 	t.Run("TeamToOwnedByPosts", testTeamToManyOwnedByPosts)
+	t.Run("TeamToSubscribers", testTeamToManySubscribers)
 	t.Run("TeamToTeamMembers", testTeamToManyTeamMembers)
 	t.Run("UserToCreatedByPosts", testUserToManyCreatedByPosts)
 	t.Run("UserToDeletedByPosts", testUserToManyDeletedByPosts)
@@ -160,6 +175,7 @@ func TestToOneSet(t *testing.T) {
 	t.Run("PostToUserUsingDeletedByPosts", testPostToOneSetOpUserUsingDeletedBy)
 	t.Run("PostToTeamUsingOwnedByPosts", testPostToOneSetOpTeamUsingOwnedBy)
 	t.Run("PostToUserUsingUpdatedByPosts", testPostToOneSetOpUserUsingUpdatedBy)
+	t.Run("SubscriberToTeamUsingSubscribers", testSubscriberToOneSetOpTeamUsingTeam)
 	t.Run("TeamMemberToTeamUsingTeamMembers", testTeamMemberToOneSetOpTeamUsingTeam)
 	t.Run("TeamMemberToUserUsingTeamMembers", testTeamMemberToOneSetOpUserUsingUser)
 	t.Run("UserCreateCodeToUserUsingUserCreateCodes", testUserCreateCodeToOneSetOpUserUsingUser)
@@ -169,6 +185,7 @@ func TestToOneSet(t *testing.T) {
 // or deadlocks can occur.
 func TestToOneRemove(t *testing.T) {
 	t.Run("PostToUserUsingDeletedByPosts", testPostToOneRemoveOpUserUsingDeletedBy)
+	t.Run("SubscriberToTeamUsingSubscribers", testSubscriberToOneRemoveOpTeamUsingTeam)
 	t.Run("UserCreateCodeToUserUsingUserCreateCodes", testUserCreateCodeToOneRemoveOpUserUsingUser)
 }
 
@@ -184,6 +201,7 @@ func TestOneToOneRemove(t *testing.T) {}
 // or deadlocks can occur.
 func TestToManyAdd(t *testing.T) {
 	t.Run("TeamToOwnedByPosts", testTeamToManyAddOpOwnedByPosts)
+	t.Run("TeamToSubscribers", testTeamToManyAddOpSubscribers)
 	t.Run("TeamToTeamMembers", testTeamToManyAddOpTeamMembers)
 	t.Run("UserToCreatedByPosts", testUserToManyAddOpCreatedByPosts)
 	t.Run("UserToDeletedByPosts", testUserToManyAddOpDeletedByPosts)
@@ -195,6 +213,7 @@ func TestToManyAdd(t *testing.T) {
 // TestToManySet tests cannot be run in parallel
 // or deadlocks can occur.
 func TestToManySet(t *testing.T) {
+	t.Run("TeamToSubscribers", testTeamToManySetOpSubscribers)
 	t.Run("UserToDeletedByPosts", testUserToManySetOpDeletedByPosts)
 	t.Run("UserToUserCreateCodes", testUserToManySetOpUserCreateCodes)
 }
@@ -202,6 +221,7 @@ func TestToManySet(t *testing.T) {
 // TestToManyRemove tests cannot be run in parallel
 // or deadlocks can occur.
 func TestToManyRemove(t *testing.T) {
+	t.Run("TeamToSubscribers", testTeamToManyRemoveOpSubscribers)
 	t.Run("UserToDeletedByPosts", testUserToManyRemoveOpDeletedByPosts)
 	t.Run("UserToUserCreateCodes", testUserToManyRemoveOpUserCreateCodes)
 }
@@ -209,6 +229,7 @@ func TestToManyRemove(t *testing.T) {
 func TestReload(t *testing.T) {
 	t.Run("PostHistories", testPostHistoriesReload)
 	t.Run("Posts", testPostsReload)
+	t.Run("Subscribers", testSubscribersReload)
 	t.Run("TeamMembers", testTeamMembersReload)
 	t.Run("Teams", testTeamsReload)
 	t.Run("UserCreateCodes", testUserCreateCodesReload)
@@ -218,6 +239,7 @@ func TestReload(t *testing.T) {
 func TestReloadAll(t *testing.T) {
 	t.Run("PostHistories", testPostHistoriesReloadAll)
 	t.Run("Posts", testPostsReloadAll)
+	t.Run("Subscribers", testSubscribersReloadAll)
 	t.Run("TeamMembers", testTeamMembersReloadAll)
 	t.Run("Teams", testTeamsReloadAll)
 	t.Run("UserCreateCodes", testUserCreateCodesReloadAll)
@@ -227,6 +249,7 @@ func TestReloadAll(t *testing.T) {
 func TestSelect(t *testing.T) {
 	t.Run("PostHistories", testPostHistoriesSelect)
 	t.Run("Posts", testPostsSelect)
+	t.Run("Subscribers", testSubscribersSelect)
 	t.Run("TeamMembers", testTeamMembersSelect)
 	t.Run("Teams", testTeamsSelect)
 	t.Run("UserCreateCodes", testUserCreateCodesSelect)
@@ -236,6 +259,7 @@ func TestSelect(t *testing.T) {
 func TestUpdate(t *testing.T) {
 	t.Run("PostHistories", testPostHistoriesUpdate)
 	t.Run("Posts", testPostsUpdate)
+	t.Run("Subscribers", testSubscribersUpdate)
 	t.Run("TeamMembers", testTeamMembersUpdate)
 	t.Run("Teams", testTeamsUpdate)
 	t.Run("UserCreateCodes", testUserCreateCodesUpdate)
@@ -245,6 +269,7 @@ func TestUpdate(t *testing.T) {
 func TestSliceUpdateAll(t *testing.T) {
 	t.Run("PostHistories", testPostHistoriesSliceUpdateAll)
 	t.Run("Posts", testPostsSliceUpdateAll)
+	t.Run("Subscribers", testSubscribersSliceUpdateAll)
 	t.Run("TeamMembers", testTeamMembersSliceUpdateAll)
 	t.Run("Teams", testTeamsSliceUpdateAll)
 	t.Run("UserCreateCodes", testUserCreateCodesSliceUpdateAll)

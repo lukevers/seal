@@ -74,7 +74,7 @@ func MapHostToTeam(next http.Handler) http.Handler {
 
 func RenderHost(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		if r.Context().Value("api").(bool) || r.Context().Value("static").(bool) {
+		if r.Context().Value("api").(bool) || r.Context().Value("static").(bool) || r.Context().Value("forms").(bool) {
 			next.ServeHTTP(w, r)
 			return
 		}

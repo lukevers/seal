@@ -92,11 +92,11 @@ img {
     max-width: 300px;
 }
 
-.input-group button:hover {
+.input-group button:hover:enabled {
     background-color: #716799;
 }
 
-.input-group button:active {
+.input-group button:active:enabled {
     background-color: #5A5475;
 }
 
@@ -162,6 +162,7 @@ img {
     padding: 1em;
     background-color: #F6F6F6;
     text-align: center;
+    position: relative;
 }
 
 .post-footer p {
