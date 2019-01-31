@@ -94,6 +94,7 @@ func ListPosts(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if err := r.ParseForm(); err != nil {
+		log.Println(err)
 		render.Render(w, r, ErrRender(err))
 		return
 	}
@@ -124,9 +125,11 @@ func ListPosts(w http.ResponseWriter, r *http.Request) {
 
 	posts, err := models.Posts(mods...).All(context.TODO(), db)
 	if err != nil {
+		log.Println(err)
 		render.Render(w, r, ErrRender(err))
 	} else {
 		if err := render.RenderList(w, r, NewPostListResponse(posts)); err != nil {
+			log.Println(err)
 			render.Render(w, r, ErrRender(err))
 			return
 		}
@@ -145,6 +148,7 @@ func UpdatePost(w http.ResponseWriter, r *http.Request) {
 	defer r.Body.Close()
 	body, err := ioutil.ReadAll(r.Body)
 	if err != nil {
+		log.Println(err)
 		render.Render(w, r, ErrRender(err))
 		return
 	}
@@ -152,6 +156,7 @@ func UpdatePost(w http.ResponseWriter, r *http.Request) {
 	var post models.Post
 	err = json.Unmarshal(body, &post)
 	if err != nil {
+		log.Println(err)
 		render.Render(w, r, ErrRender(err))
 		return
 	}
@@ -164,12 +169,14 @@ func UpdatePost(w http.ResponseWriter, r *http.Request) {
 		qm.Where("tm.status = ?", "active"),
 		qm.Where("posts.id = ?", post.ID),
 	).One(context.TODO(), db); err != nil || p == nil {
+		log.Println(err)
 		render.Render(w, r, ErrRender(errors.New("Could not find post user can edit")))
 		return
 	}
 
 	_, err = post.Update(context.TODO(), db, boil.Infer())
 	if err != nil {
+		log.Println(err)
 		render.Render(w, r, ErrRender(err))
 		return
 	}
@@ -189,6 +196,7 @@ func CreatePost(w http.ResponseWriter, r *http.Request) {
 	defer r.Body.Close()
 	body, err := ioutil.ReadAll(r.Body)
 	if err != nil {
+		log.Println(err)
 		render.Render(w, r, ErrRender(err))
 		return
 	}
@@ -196,6 +204,7 @@ func CreatePost(w http.ResponseWriter, r *http.Request) {
 	var post models.Post
 	err = json.Unmarshal(body, &post)
 	if err != nil {
+		log.Println(err)
 		render.Render(w, r, ErrRender(err))
 		return
 	}
@@ -217,6 +226,7 @@ func CreatePost(w http.ResponseWriter, r *http.Request) {
 
 	err = p.Insert(context.TODO(), db, boil.Infer())
 	if err != nil {
+		log.Println(err)
 		render.Render(w, r, ErrRender(err))
 		return
 	}
