@@ -8,7 +8,7 @@
         <link rel="stylesheet" href="/s/basic/static/basic.css?cache={{ cachehash }}"/>
         {{ block "meta" . }}{{ end }}
     </head>
-    <body>
+    <body data-cachehash="{{ cachehash }}">
         {{ block "header" . }}{{ end }}
         <div class="content">
             {{ block "content" . }}{{ end }}

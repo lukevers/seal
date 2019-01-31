@@ -12,9 +12,17 @@ function css(url) {
     document.getElementsByTagName('head')[0].appendChild(link);
 }
 
+// Get the cache hash
+var cachehash = document.getElementsByTagName('body')[0].dataset.cachehash;
+
 // Lazy load assets that aren't "needed" but help
 setTimeout(function() { css('https://fonts.googleapis.com/css?family=Source+Code+Pro:200'); }, 50);
-setTimeout(function() { script('/s/basic/static/prism.js'); }, 250);
+setTimeout(function() { script('/s/basic/static/prism.js?cache=' + cachehash); }, 250);
+
+// Convert <br/> to new lines before prism runs
+Array.prototype.slice.call(document.getElementsByClassName('code-block')).map(function (el) {
+    el.innerHTML = el.innerHTML.replace(/<br\s*[\/]?>/gi, "\n");
+});
 
 // Subscribing emails
 document.querySelector('#subscribe-form').addEventListener('submit', function(e) {
