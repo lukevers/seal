@@ -62,7 +62,7 @@ func MapHostToTeam(next http.Handler) http.Handler {
 		}
 
 		// For testing :)
-		r.Host = "lukevers.com"
+		// r.Host = "lukevers.com"
 
 		if team, exists := HostToTeamMap.Load(r.Host); !exists {
 			render.Render(w, r, ErrInvalidRequest(errors.New("Host given not setup")))
