@@ -5,7 +5,7 @@
         <title>{{ block "title" . }}{{ end }}</title>
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <link rel="stylesheet" href="/s/basic/static/basic.css"/>
+        <link rel="stylesheet" href="/s/basic/static/basic.css?cache={{ cachehash }}"/>
         {{ block "meta" . }}{{ end }}
     </head>
     <body>
@@ -15,7 +15,7 @@
         </div>
         {{ block "footer" . }}{{ end }}
 
-        <script src="/s/basic/static/basic.js"></script>
+        <script src="/s/basic/static/basic.js?cache={{ cachehash }}"></script>
     </body>
 </html>
 {{- end }}

@@ -1,0 +1,4 @@
+#!/bin/bash
+
+V="$(git rev-parse --short HEAD)";
+./server --host="127.0.0.1" --cachehash=$V
