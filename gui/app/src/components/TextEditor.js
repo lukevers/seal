@@ -2,7 +2,7 @@
 import { jsx, css } from '@emotion/core';
 import { Component } from 'react';
 import { Editor, getEventRange, getEventTransfer } from 'slate-react';
-import { Value } from 'slate';
+import { Value, Block } from 'slate';
 import Plain from 'slate-plain-serializer';
 import { isKeyHotkey } from 'is-hotkey';
 import { themes } from '../base/themes';
@@ -57,6 +57,24 @@ const Button = ({ children, active, onMouseDown }) => (
         {children}
     </span>
 );
+
+class LanguageChoices extends Component {
+    render () {
+        return (
+            <div css={css`
+                position: absolute;
+                top: 0;
+                right: 0;
+            `}>
+                <select value={this.props.choice ? this.props.choice : 'clike'} onChange={this.props.onChange}>
+                    <option value="sql">SQL</option>
+                    <option value="js">JavaScript</option>
+                    <option value="clike">C-Like</option>
+                </select>
+            </div>
+        );
+    }
+}
 
 export default class TextEditor extends Component {
     state = {
@@ -117,7 +135,28 @@ export default class TextEditor extends Component {
             case 'block-quote':
                 return <blockquote {...attributes}>{children}</blockquote>
             case 'pre-code':
-                return <pre {...attributes}><code>{children}</code></pre>
+                return (
+                    <div css={css`
+                        position: relative;
+                    `}>
+                        <LanguageChoices choice={node.data.get('language')} onChange={(e) => {
+                            editor.setNodeByKey(
+                                node.key,
+                                new Block({
+                                    data: node.data.set('language', e.target.value),
+                                    key: node.key,
+                                    object: 'block',
+                                    nodes: node.nodes,
+                                    type: node.type,
+                                })
+                            );
+                        }}/>
+
+                        <pre {...attributes} language={node.data.get('language')}>
+                            <code>{children}</code>
+                        </pre>
+                    </div>
+                );
             case 'bulleted-list':
                 return <ul {...attributes}>{children}</ul>
             case 'heading-one':

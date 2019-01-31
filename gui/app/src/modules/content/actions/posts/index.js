@@ -110,7 +110,8 @@ export function postSave(post, cb) {
                                 case 'image':
                                     return <img src={obj.data.get('src')} alt=""/>
                                 case 'pre-code':
-                                    return <pre><code className="language-sql">{children}</code></pre>
+                                    const language = obj.data.get('language');
+                                    return <pre><code className={`language-${language}`}>{children}</code></pre>
                                 default:
                                     break;
                             }
