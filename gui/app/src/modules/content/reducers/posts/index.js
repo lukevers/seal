@@ -18,6 +18,7 @@ const getNewPost = () => {
         read_time: '5 minutes',
         cover_image: '',
         template: 'post',
+        description: '',
     };
 }
 

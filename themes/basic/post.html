@@ -6,7 +6,23 @@
     {{ .Title.String }}
 {{- end }}
 
-{{ define "meta" -}}{{- end }}
+{{ define "meta" -}}
+    <link rel="canonical" href="https://lukevers.com{{ .Route }}" />
+    {{ if .Description.Valid }}<meta name="description" content="{{ .Description.String }}" />{{ end }}
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="{{ .Title.String }}" />
+    {{ if .Description.Valid }}<meta name="twitter:description" content="{{ .Description.String }}" />{{ end }}
+    <meta name="twitter:url" content="https://lukevers.com{{ .Route }}" />
+    {{ if .CoverImage.Valid }}<meta name="twitter:image:src" content="{{ .CoverImage.String }}" />{{ end }}
+    <meta property="og:site_name" content="Luke Evers" />
+    <meta property="og:type" content="article" />
+    <meta property="og:title" content="{{ .Title.String }}" />
+    {{ if .Description.Valid }}<meta property="og:description" content="{{ .Description.String }}" />{{ end }}
+    <meta property="og:url" content="https://lukevers.com{{ .Route }}" />
+    {{ if .CoverImage.Valid }}<meta name="og:image" content="{{ .CoverImage.String }}" />{{ end }}
+    <meta property="article:published_time" content="{{ .PublishedAt.Time | rfc3339 }}" />
+    <meta property="article:modified_time" content="{{ .UpdatedAt | rfc3339 }}" />
+{{- end }}
 
 {{ define "content" -}}
     <div class="post post-meta">

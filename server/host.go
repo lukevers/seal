@@ -119,6 +119,7 @@ func RenderHost(next http.Handler) http.Handler {
 					template.FuncMap{
 						"html":      func(text string) template.HTML { return template.HTML(text) },
 						"datetime":  func(t time.Time) string { return t.Format("Monday, January 02 2006 15:04:05 MST") },
+						"rfc3339":   func(t time.Time) string { return t.Format(time.RFC3339) },
 						"cachehash": func() string { return *flagCacheHash },
 						"list": func() interface{} {
 							posts, ok := TeamIDToPostsMap.Load(team.ID)

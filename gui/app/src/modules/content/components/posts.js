@@ -275,6 +275,31 @@ class Content extends Component {
                     </div>
 
                     <div css={css`
+                        color: ${themes.standard.secondary};
+                        margin-top: 1em;
+                        margin-bottom: .5em;
+                        font-size: .5em;
+
+                        label {
+                            display: inline-block;
+                            margin-right: 1em;
+                        }
+
+                        .te-wrapper {
+                            display: inline-block;
+                            font-weight: bold;
+                            min-width: 100px;
+                        }
+                    `}>
+                        <label>DESCRIPTION:</label>
+                        <TextEditor
+                            value={post.description}
+                            plaintext
+                            onChange={(value) => this.handleChange(value, 'description')}
+                        />
+                    </div>
+
+                    <div css={css`
                         font-size: .5em;
                         color: ${themes.standard.secondary};
                         margin-bottom: .5em;

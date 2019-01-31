@@ -54,7 +54,7 @@ const Button = ({ children, active, onMouseDown }) => (
 export default class TextEditor extends Component {
     state = {
         value: (this.props.plaintext ?
-            Plain.deserialize(this.props.value) :
+            Plain.deserialize(this.props.value == null ? '' : this.props.value) :
             Value.fromJSON(this.props.value)),
     };
 

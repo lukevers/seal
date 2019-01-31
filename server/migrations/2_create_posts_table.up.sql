@@ -6,6 +6,7 @@ CREATE TABLE `posts` (
     `content` mediumtext,
     `markdown` mediumtext,
     `html` mediumtext,
+    `description` varchar(255) DEFAULT NULL,
     `read_time` varchar(255) DEFAULT NULL,
     `cover_image` varchar(255) DEFAULT NULL,
     `status` ENUM('draft', 'published', 'deleted') NOT NULL DEFAULT 'draft',
