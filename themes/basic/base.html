@@ -2,14 +2,19 @@
 <!DOCTYPE html>
 <html>
     <head>
-        <title>{{ template "title" . }}</title>
+        <title>{{ block "title" . }}{{ end }}</title>
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <link rel="stylesheet" href="/s/basic/static/basic.css"/>
-        {{ template "meta" . }}
+        {{ block "meta" . }}{{ end }}
     </head>
     <body>
-        {{ template "content" . }}
+        {{ block "header" . }}{{ end }}
+        <div class="content">
+            {{ block "content" . }}{{ end }}
+        </div>
+        {{ block "footer" . }}{{ end }}
+
         <script src="/s/basic/static/basic.js"></script>
     </body>
 </html>

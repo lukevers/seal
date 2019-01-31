@@ -26,6 +26,7 @@ type Team struct {
 	ID        uint      `boil:"id" json:"id" toml:"id" yaml:"id"`
 	Name      string    `boil:"name" json:"name" toml:"name" yaml:"name"`
 	Domain    string    `boil:"domain" json:"domain" toml:"domain" yaml:"domain"`
+	Theme     string    `boil:"theme" json:"theme" toml:"theme" yaml:"theme"`
 	CreatedAt time.Time `boil:"created_at" json:"created_at" toml:"created_at" yaml:"created_at"`
 	UpdatedAt time.Time `boil:"updated_at" json:"updated_at" toml:"updated_at" yaml:"updated_at"`
 	DeletedAt null.Time `boil:"deleted_at" json:"deleted_at,omitempty" toml:"deleted_at" yaml:"deleted_at,omitempty"`
@@ -38,6 +39,7 @@ var TeamColumns = struct {
 	ID        string
 	Name      string
 	Domain    string
+	Theme     string
 	CreatedAt string
 	UpdatedAt string
 	DeletedAt string
@@ -45,6 +47,7 @@ var TeamColumns = struct {
 	ID:        "id",
 	Name:      "name",
 	Domain:    "domain",
+	Theme:     "theme",
 	CreatedAt: "created_at",
 	UpdatedAt: "updated_at",
 	DeletedAt: "deleted_at",
@@ -77,9 +80,9 @@ func (*teamR) NewStruct() *teamR {
 type teamL struct{}
 
 var (
-	teamColumns               = []string{"id", "name", "domain", "created_at", "updated_at", "deleted_at"}
+	teamColumns               = []string{"id", "name", "domain", "theme", "created_at", "updated_at", "deleted_at"}
 	teamColumnsWithoutDefault = []string{"name", "domain", "deleted_at"}
-	teamColumnsWithDefault    = []string{"id", "created_at", "updated_at"}
+	teamColumnsWithDefault    = []string{"id", "theme", "created_at", "updated_at"}
 	teamPrimaryKeyColumns     = []string{"id"}
 )
 

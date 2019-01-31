@@ -26,6 +26,7 @@ CREATE TABLE `teams` (
     `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
     `name` varchar(255) NOT NULL,
     `domain` varchar(255) NOT NULL UNIQUE,
+    `theme` varchar(32) NOT NULL DEFAULT 'basic',
     `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
     `updated_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     `deleted_at` timestamp NULL DEFAULT NULL,

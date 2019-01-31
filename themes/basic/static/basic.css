@@ -63,6 +63,10 @@ img {
 
 /* ===== UTILITIES ===== */
 
+.anchor-no-padding {
+    padding: 0;
+}
+
 .input-group {
     display: flex;
     justify-content: center;
@@ -135,6 +139,10 @@ img {
 
 .post-meta {
     padding: 2em 0;
+}
+
+.post-list.post-meta {
+    padding: 1em 0;
 }
 
 .post-meta h1 {

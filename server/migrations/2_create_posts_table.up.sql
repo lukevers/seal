@@ -2,6 +2,7 @@ CREATE TABLE `posts` (
     `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
     `title` varchar(255) DEFAULT NULL,
     `route` varchar(255) NOT NULL,
+    `template` varchar(32) NOT NULL,
     `content` mediumtext,
     `markdown` mediumtext,
     `html` mediumtext,

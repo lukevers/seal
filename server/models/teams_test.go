@@ -1203,7 +1203,7 @@ func testTeamsSelect(t *testing.T) {
 }
 
 var (
-	teamDBTypes = map[string]string{`CreatedAt`: `timestamp`, `DeletedAt`: `timestamp`, `Domain`: `varchar`, `ID`: `int`, `Name`: `varchar`, `UpdatedAt`: `timestamp`}
+	teamDBTypes = map[string]string{`CreatedAt`: `timestamp`, `DeletedAt`: `timestamp`, `Domain`: `varchar`, `ID`: `int`, `Name`: `varchar`, `Theme`: `varchar`, `UpdatedAt`: `timestamp`}
 	_           = bytes.MinRead
 )
 

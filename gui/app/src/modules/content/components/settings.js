@@ -54,54 +54,7 @@ class Content extends Component {
         const setting = this.getSettings();
 
         return (
-            <div css={css`
-                height: 100%;
-                display: flex;
-                align-items: center;
-                justify-content: center;
-                flex-direction: column;
-
-                .form-group {
-                    margin: .5em 0;
-                    border-bottom: 1px solid ${themes.standard.lightestgray};
-                    width: 80%;
-                    display: flex;
-
-                    label {
-                        padding: .5em 0;
-                        width: 75px;
-                        text-transform: uppercase;
-                        font-size: .5em;
-                        line-height: 2em;
-                        letter-spaxcing 1px;
-                    }
-
-                    input {
-                        padding: .5em 1em;
-                        border: 0;
-                        width: 100%;
-                        background: transparent;
-                    }
-
-                    input:focus{
-                        outline: none;
-                    }
-                }
-
-                button {
-                    border: 0;
-                    padding: 1em;
-                    background-color: ${themes.standard.secondary};
-                    color: ${themes.standard.white};
-                    cursor: pointer;
-                    margin-right: auto;
-                    margin-left: 10%;
-
-                    &:hover {
-                        background-color: ${themes.standard.primary};
-                    }
-                }
-            `}>
+            <div css={this.props.style}>
                 <div className="form-group">
                     <label>URL</label>
                     <input
@@ -139,7 +92,8 @@ class Content extends Component {
 
     teams = () => {
         const { teams, loaded } = this.props;
-        const teamId = parseInt(this.getSettings()['teamid'] || 0, 10);
+        let setting = this.getSettings();
+        const teamId = parseInt(setting['teamid'] || 0, 10);
 
         if (!loaded || teams === null) {
             return <div/>;
@@ -165,7 +119,7 @@ class Content extends Component {
         });
 
         return (
-            <div>
+            <div css={this.props.style}>
                 <DropDown
                     list={list}
                     onChange={(v, k) => this.handleChange(v.toString(), k, true)}
@@ -246,7 +200,54 @@ class Settings extends Component {
                     </ul>
                 </BiGridVerticalHeader>
                 <BiGridVerticalContent>
-                    <Content {...this.props} />
+                    <Content {...this.props} style={css`
+                        height: 100%;
+                        display: flex;
+                        align-items: center;
+                        justify-content: center;
+                        flex-direction: column;
+
+                        .form-group {
+                            margin: .5em 0;
+                            border-bottom: 1px solid ${themes.standard.lightestgray};
+                            width: 80%;
+                            display: flex;
+
+                            label {
+                                padding: .5em 0;
+                                width: 75px;
+                                text-transform: uppercase;
+                                font-size: .5em;
+                                line-height: 2em;
+                                letter-spaxcing 1px;
+                            }
+
+                            input {
+                                padding: .5em 1em;
+                                border: 0;
+                                width: 100%;
+                                background: transparent;
+                            }
+
+                            input:focus{
+                                outline: none;
+                            }
+                        }
+
+                        button {
+                            border: 0;
+                            padding: 1em;
+                            background-color: ${themes.standard.secondary};
+                            color: ${themes.standard.white};
+                            cursor: pointer;
+                            margin-right: auto;
+                            margin-left: 10%;
+
+                            &:hover {
+                                background-color: ${themes.standard.primary};
+                            }
+                        }
+                    `}/>
                 </BiGridVerticalContent>
             </BiGridVerticalWrapper>
         );

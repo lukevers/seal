@@ -250,6 +250,31 @@ class Content extends Component {
                     </div>
 
                     <div css={css`
+                        color: ${themes.standard.secondary};
+                        margin-top: 1em;
+                        margin-bottom: .5em;
+                        font-size: .5em;
+
+                        label {
+                            display: inline-block;
+                            margin-right: 1em;
+                        }
+
+                        .te-wrapper {
+                            display: inline-block;
+                            font-weight: bold;
+                            min-width: 100px;
+                        }
+                    `}>
+                        <label>TEMPLATE:</label>
+                        <TextEditor
+                            value={post.template}
+                            plaintext
+                            onChange={(value) => this.handleChange(value, 'template')}
+                        />
+                    </div>
+
+                    <div css={css`
                         font-size: .5em;
                         color: ${themes.standard.secondary};
                         margin-bottom: .5em;
@@ -298,6 +323,7 @@ class Content extends Component {
                         color: ${themes.standard.black};
                         padding: .5em;
                         border: 1px solid ${themes.standard.lightgray};
+                        line-height: 1.5em;
 
                         .te-editor {
                             padding: .5em;

@@ -203,6 +203,7 @@ func CreatePost(w http.ResponseWriter, r *http.Request) {
 	p := &models.Post{
 		Title:       post.Title,
 		Route:       post.Route,
+		Template:    post.Template,
 		Content:     post.Content,
 		Markdown:    post.Markdown,
 		HTML:        post.HTML,

@@ -1,0 +1,38 @@
+{{ define "basic-list" -}}
+    {{ template "basic-base" . }}
+{{- end }}
+
+{{ define "title" -}}
+    {{ .Title.String }}
+{{- end }}
+
+{{ define "meta" -}}{{- end }}
+
+{{ define "content" -}}
+    {{ range list }}
+        <div class="post post-list post-meta">
+            <div id="post-title-{{ .ID }}">
+                <a href="{{ .Route }}" class="anchor-no-padding">
+                    <h2>{{ .Title.String }}</h2>
+                </a>
+            </div>
+            {{ if .PublishedAt.Valid }}
+                <div id="post-meta-date-{{ .ID }}" class="post-meta-item">
+                    <span>Published At:</span>
+                    {{ .PublishedAt.Time | datetime }}
+                </div>
+            {{ end }}
+            {{ if .ReadTime.Valid }}
+                <div id="post-meta-read-time-{{ .ID }}" class="post-meta-item">
+                    <span>Read Time:</span>
+                    {{ .ReadTime.String }}
+                </div>
+            {{ end }}
+            <div id="post-meta-alternative-format-{{ .ID }}" class="post-meta-item">
+                <span>Format Available In:</span>
+                <a href="{{ .Route }}">HTML</a>
+                <a href="{{ .Route }}.md">Markdown</a>
+            </div>
+        </div>
+    {{ end }}
+{{- end }}

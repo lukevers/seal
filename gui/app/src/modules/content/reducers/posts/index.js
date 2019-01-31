@@ -17,6 +17,7 @@ const getNewPost = () => {
         status: 'draft',
         read_time: '5 minutes',
         cover_image: '',
+        template: 'post',
     };
 }
 

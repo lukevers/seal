@@ -3,9 +3,11 @@ package main
 import (
 	"context"
 	"errors"
+	"fmt"
 	"html/template"
 	"log"
 	"net/http"
+	"sort"
 	"strings"
 	"sync"
 	"time"
@@ -106,6 +108,7 @@ func RenderHost(next http.Handler) http.Handler {
 				}
 
 				if format == "md" {
+					w.Header().Set("Content-Type", "text/plain")
 					w.Write([]byte(p.Markdown.String))
 					return
 				}
@@ -116,21 +119,51 @@ func RenderHost(next http.Handler) http.Handler {
 					template.FuncMap{
 						"html":     func(text string) template.HTML { return template.HTML(text) },
 						"datetime": func(t time.Time) string { return t.Format("Monday, January 02 2006 15:04:05 MST") },
+						"list": func() interface{} {
+							posts, ok := TeamIDToPostsMap.Load(team.ID)
+							if !ok {
+								return nil
+							}
+
+							var p []*models.Post
+							posts.(*sync.Map).Range(func(k, v interface{}) bool {
+								t := v.(*models.Post)
+								if t.Status == "published" && t.Template == "post" {
+									p = append(p, t)
+								}
+
+								return true
+							})
+
+							sort.SliceStable(p, func(i, j int) bool {
+								return p[i].PublishedAt.Time.Unix() > p[j].PublishedAt.Time.Unix()
+							})
+
+							return p
+						},
 					},
 				)
 
 				// TODO: pre-generate, optimize, etc
-				t, err := t.ParseGlob("../themes/**/*.html")
+				t, err := t.ParseFiles(
+					fmt.Sprintf("../themes/%s/base.html", team.Theme),
+					fmt.Sprintf("../themes/%s/header.html", team.Theme),
+					fmt.Sprintf("../themes/%s/footer.html", team.Theme),
+					fmt.Sprintf("../themes/%s/%s.html", team.Theme, p.Template),
+				)
+
 				if err != nil {
-					// TODO: not fatal
-					log.Fatal(err)
+					log.Println(err)
+					render.Render(w, r, ErrInternalRender(err))
+					return
 				}
 
 				w.Header().Set("Content-Type", "text/html")
-				err = t.ExecuteTemplate(w, "basic-post", p)
+				err = t.ExecuteTemplate(w, fmt.Sprintf("%s-%s", team.Theme, p.Template), p)
 				if err != nil {
-					// TODO: not fatal
-					log.Fatal(err)
+					log.Println(err)
+					render.Render(w, r, ErrInternalRender(err))
+					return
 				}
 			}
 		}
