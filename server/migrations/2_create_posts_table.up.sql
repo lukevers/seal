@@ -7,7 +7,7 @@ CREATE TABLE `posts` (
     `markdown` mediumtext,
     `html` mediumtext,
     `read_time` varchar(255) DEFAULT NULL,
-    `cover_iamge` varchar(255) DEFAULT NULL,
+    `cover_image` varchar(255) DEFAULT NULL,
     `status` ENUM('draft', 'published', 'deleted') NOT NULL DEFAULT 'draft',
     `published_at` timestamp NULL DEFAULT NULL,
     `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
