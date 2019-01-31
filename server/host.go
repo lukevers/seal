@@ -88,10 +88,16 @@ func RenderHost(next http.Handler) http.Handler {
 		} else {
 			route := r.URL.Path
 			format := "html"
+			draft := false
 
 			if strings.HasSuffix(route, ".md") {
 				route = strings.TrimSuffix(route, ".md")
 				format = "md"
+			}
+
+			if strings.HasPrefix(route, "/_draft") {
+				route = strings.TrimPrefix(route, "/_draft")
+				draft = true
 			}
 
 			if post, pexists := posts.(*sync.Map).Load(route); !pexists {
@@ -101,10 +107,11 @@ func RenderHost(next http.Handler) http.Handler {
 			} else {
 				p := post.(*models.Post)
 				if p.Status != "published" {
-					// TODO: preview drafts for author
-					// TODO: 404 page per team
-					render.Render(w, r, ErrMissingRender(errors.New("Not published, aka missing")))
-					return
+					if !(p.Status == "draft" && draft) {
+						// TODO: 404 page per team
+						render.Render(w, r, ErrMissingRender(errors.New("Not published, aka missing")))
+						return
+					}
 				}
 
 				if format == "md" {
