@@ -17,7 +17,7 @@ type Setting struct {
 }
 
 func init() {
-	if *flagDebug {
+	if *flagDevelopment {
 		SettingsPrefix = "debug-"
 	} else {
 		SettingsPrefix = "prod-"

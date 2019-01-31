@@ -6,7 +6,7 @@ import (
 
 var (
 	flagDevelopment     = flag.Bool("development", false, "Development mode")
-	flagDebug           = flag.Bool("debug", false, "Debug mode")
+	flagDebug           = flag.Bool("debug", true, "Debug mode")
 	flagKeychainService = flag.String("keychain-service", "seal", "Service name to use in keychain for settings")
 )
 
