@@ -109,6 +109,8 @@ export function postSave(post, cb) {
                                     return <h6>{children}</h6>
                                 case 'image':
                                     return <img src={obj.data.get('src')} alt=""/>
+                                case 'pre-code':
+                                    return <pre><code className="language-sql">{children}</code></pre>
                                 default:
                                     break;
                             }

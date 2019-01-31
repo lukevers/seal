@@ -6,11 +6,18 @@ import { Value } from 'slate';
 import Plain from 'slate-plain-serializer';
 import { isKeyHotkey } from 'is-hotkey';
 import { themes } from '../base/themes';
+import SoftBreak from 'slate-soft-break';
 
 const isBoldHotkey = isKeyHotkey('mod+b');
 const isItalicHotkey = isKeyHotkey('mod+i');
 const isUnderlinedHotkey = isKeyHotkey('mod+u');
 const isCodeHotkey = isKeyHotkey('mod+`');
+
+const plugins = [
+    SoftBreak({
+        shift: true,
+    }),
+];
 
 const Vertical = () => (
     <div css={css`
@@ -109,6 +116,8 @@ export default class TextEditor extends Component {
         switch (node.type) {
             case 'block-quote':
                 return <blockquote {...attributes}>{children}</blockquote>
+            case 'pre-code':
+                return <pre {...attributes}><code>{children}</code></pre>
             case 'bulleted-list':
                 return <ul {...attributes}>{children}</ul>
             case 'heading-one':
@@ -378,6 +387,10 @@ export default class TextEditor extends Component {
             return next();
         }
 
+        if (startBlock.type === 'pre-code') {
+            return next();
+        }
+
         if (
             startBlock.type !== 'heading-one' &&
             startBlock.type !== 'heading-two' &&
@@ -418,6 +431,8 @@ export default class TextEditor extends Component {
                 return 'heading-five';
             case '######':
                 return 'heading-six';
+            case '```':
+                return 'pre-code';
             default:
                 return null;
         }
@@ -435,6 +450,7 @@ export default class TextEditor extends Component {
                 {this.renderBlockButton('heading-two', 'H2')}
                 {this.renderBlockButton('heading-three', 'H3')}
                 {this.renderBlockButton('block-quote', '“!“')}
+                {this.renderBlockButton('pre-code', '<\\>')}
                 <Vertical/>
                 {this.renderBlockButton('numbered-list', 'OL')}
                 {this.renderBlockButton('bulleted-list', 'UL')}
@@ -492,6 +508,11 @@ export default class TextEditor extends Component {
                 img {
                     max-width: 100%;
                 }
+
+                pre {
+                    background-color: ${themes.standard.lightgray};
+                    padding: 1em;
+                }
             `}>
                 {toolbar}
 
@@ -506,6 +527,7 @@ export default class TextEditor extends Component {
                         renderNode={this.renderNode}
                         renderMark={this.renderMark}
                         placeholder={this.props.placeholder}
+                        plugins={plugins}
                     />
                 </div>
             </div>
