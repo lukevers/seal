@@ -54,11 +54,18 @@ table thead th, table tr:nth-child(even) {
 
 h1, h2, h3, h4, h5, h6 {
     color: #333333;
+    text-transform: uppercase;
 }
 
 img {
     max-width: 100%;
     vertical-align: middle;
+}
+
+blockquote {
+    border-left: 3px solid #8077A8;
+    margin: 1em;
+    padding: 1em;
 }
 
 /* ===== UTILITIES ===== */
@@ -148,7 +155,6 @@ img {
 .post-meta h1 {
     margin-top: 0;
     margin-bottom: 1em;
-    text-transform: uppercase;
     line-height: 1.5em;
 }
 
@@ -163,6 +169,7 @@ img {
 
 .post-html {
     margin-bottom: 3em;
+    line-height: 1.75em;
 }
 
 .post-footer {
