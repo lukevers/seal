@@ -63,9 +63,9 @@ img {
 }
 
 blockquote {
-    border-left: 3px solid #8077A8;
+    border-left: 5px solid #8077A8;
     margin: 1em;
-    padding: 1em;
+    padding: .3em 1em;
 }
 
 /* ===== UTILITIES ===== */
