@@ -5,8 +5,10 @@ import { Editor, getEventRange, getEventTransfer } from 'slate-react';
 import { Value, Block } from 'slate';
 import Plain from 'slate-plain-serializer';
 import { isKeyHotkey } from 'is-hotkey';
+import isUrl from 'is-url';
 import { themes } from '../base/themes';
 import SoftBreak from 'slate-soft-break';
+import swal from 'sweetalert';
 
 const isBoldHotkey = isKeyHotkey('mod+b');
 const isItalicHotkey = isKeyHotkey('mod+i');
@@ -278,6 +280,8 @@ export default class TextEditor extends Component {
                 return <em {...attributes}>{children}</em>
             case 'underlined':
                 return <u {...attributes}>{children}</u>
+            case 'link':
+                return <a {...attributes} href={mark.data.get('href')}>{children}</a>
             default:
                 return next();
         }
@@ -341,6 +345,10 @@ export default class TextEditor extends Component {
     onClickMark = (event, type) => {
         event.preventDefault();
         this.editor.toggleMark(type);
+
+        if (type === 'link') {
+            this.onClickLink(event);
+        }
     }
 
     renderMarkButton = (type, char) => {
@@ -539,6 +547,83 @@ export default class TextEditor extends Component {
         next();
     }
 
+    hasLinks = () => {
+        const { value } = this.state;
+        return value.inlines.some(inline => inline.type === 'link');
+    }
+
+    onPaste = (event, editor, next) => {
+        if (editor.value.selection.isCollapsed) {
+            return next();
+        }
+
+        const transfer = getEventTransfer(event);
+        const { type, text } = transfer;
+
+        if (type !== 'text' && type !== 'html') {
+            return next();
+        }
+
+        if (!isUrl(text)) {
+            return next();
+        }
+
+        editor.command(this.wrapLink, text);
+    }
+
+    wrapLink = (editor, href) => {
+        editor.replaceMark(
+            'link',
+            {
+                type: 'link',
+                data: { href },
+            }
+        );
+
+        editor.moveToEnd();
+    }
+
+    onClickLink = async (event) => {
+        event.preventDefault();
+
+        const { editor } = this;
+        const { value } = editor;
+        const hasLinks = this.hasLinks();
+
+        if (hasLinks) {
+            // ..
+        } else if (value.selection.isExpanded) {
+            const href = window.prompt('Enter the URL of the link:');
+
+            if (href === null) {
+                return;
+            }
+
+            editor.command(this.wrapLink, href);
+        } else {
+            const href = await swal("Enter the URL of the link:", {
+                content: "input",
+            });
+
+            if (href === null) {
+                return;
+            }
+
+            const text = await swal("Enter the text for the link:", {
+                content: "input",
+            });
+
+            if (text === null) {
+                return;
+            }
+
+            editor
+                .insertText(text)
+                .moveFocusBackward(text.length)
+                .command(this.wrapLink, href);
+        }
+    }
+
     onBackspace = (event, editor, next) => {
         const { value } = editor;
         const { selection } = value;
@@ -639,6 +724,7 @@ export default class TextEditor extends Component {
                 {this.renderMarkButton('italic', 'I')}
                 {this.renderMarkButton('underlined', 'U')}
                 {this.renderMarkButton('code', '</>')}
+                {this.renderMarkButton('link', '<A>')}
                 <Vertical/>
                 {this.renderBlockButton('heading-one', 'H1')}
                 {this.renderBlockButton('heading-two', 'H2')}
@@ -716,6 +802,7 @@ export default class TextEditor extends Component {
                         onChange={this.onChange}
                         onKeyDown={this.onKeyDown}
                         onDrop={this.onDropOrPaste}
+                        onPaste={this.onPaste}
                         value={this.state.value}
                         schema={this.schema}
                         renderNode={this.renderNode}

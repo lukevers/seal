@@ -130,6 +130,8 @@ export function postSave(post, cb) {
                                     return <u>{children}</u>
                                 case 'code':
                                     return <code>{children}</code>
+                                case 'link':
+                                    return <a href={obj.data.get('href')}>{children}</a>
                                 default:
                                     break;
                             }

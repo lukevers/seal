@@ -9,6 +9,7 @@
     "connected-react-router": "^5.0.1",
     "emotion-theming": "^9.2.9",
     "immutable": "^4.0.0-rc.12",
+    "is-url": "^1.2.4",
     "moment": "^2.23.0",
     "react": "^16.6.0",
     "react-datetime": "^2.16.3",
@@ -23,7 +24,8 @@
     "slate-html-serializer": "^0.7.30",
     "slate-react": "^0.21.12",
     "slate-schema-violations": "^0.1.39",
-    "slate-soft-break": "^0.9.0"
+    "slate-soft-break": "^0.9.0",
+    "sweetalert": "^2.1.2"
   },
   "scripts": {
     "start": "react-scripts start",
