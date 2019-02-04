@@ -36,6 +36,11 @@ const Image = ({ src }) => (
 const Toolbar = ({ children }) => (
     <div className="te-toolbar" css={css`
         margin-bottom: 1em;
+        position: fixed;
+        background-color: #FFFFFF;
+        z-index: 1;
+        padding: .5em;
+        width: 100%;
 
         & > * {
             display: inline-block;
@@ -235,6 +240,7 @@ class LanguageChoices extends Component {
 
 export default class TextEditor extends Component {
     state = {
+        fullScreen: false,
         value: (this.props.plaintext ?
             Plain.deserialize(this.props.value == null ? '' : this.props.value) :
             Value.fromJSON(this.props.value)),
@@ -344,6 +350,16 @@ export default class TextEditor extends Component {
 
     onClickMark = (event, type) => {
         event.preventDefault();
+
+        if (type === 'full-screen') {
+            this.setState({
+                ...this.state,
+                fullScreen: !this.state.fullScreen,
+            });
+
+            return;
+        }
+
         this.editor.toggleMark(type);
 
         if (type === 'link') {
@@ -352,7 +368,7 @@ export default class TextEditor extends Component {
     }
 
     renderMarkButton = (type, char) => {
-        const isActive = this.hasMark(type);
+        const isActive = type === 'full-screen' ? this.state.fullScreen : this.hasMark(type);
 
         return (
             <Button
@@ -734,12 +750,29 @@ export default class TextEditor extends Component {
                 <Vertical/>
                 {this.renderBlockButton('numbered-list', 'OL')}
                 {this.renderBlockButton('bulleted-list', 'UL')}
+                <Vertical/>
+                {this.renderMarkButton('full-screen', 'FULL-SCREEN')}
             </Toolbar>
         ) : '';
 
+        const tefs = this.state.fullScreen ? 'te-full-screen' : '';
+
         return (
-            <div className="te-wrapper" css={css`
+            <div className={'te-wrapper ' + tefs} css={css`
                 overflow: auto;
+                display: flex;
+                flex-direction: column;
+
+                &.te-full-screen {
+                    position: fixed;
+                    z-index: 10;
+                    top: 0;
+                    left: 0;
+                    background: #FFFFFF;
+                    overflow: auto;
+                    width: 100%;
+                    height: 100%;
+                }
 
                 h1 {
                     font-size: 2em;

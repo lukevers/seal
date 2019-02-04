@@ -145,6 +145,9 @@ class Content extends Component {
             return (
                 <div css={css`
                     padding: 1em;
+                    display: flex;
+                    flex-direction: column;
+                    max-height: 100%;
 
                     button {
                         padding: .5em;
@@ -162,197 +165,200 @@ class Content extends Component {
                     }
 
                 `}>
-                    <div css={css`
-                        font-size: 1.5em;
-                        color: ${themes.standard.secondary};
-                        line-height: 1.25em;
-                    `}>
-                        <TextEditor
-                            value={post.title}
-                            plaintext
-                            onChange={(value) => this.handleChange(value, 'title')}
-                        />
-                    </div>
+                    <div>
+                        <div css={css`
+                            font-size: 1.5em;
+                            color: ${themes.standard.secondary};
+                            line-height: 1.25em;
+                        `}>
+                            <TextEditor
+                                value={post.title}
+                                plaintext
+                                onChange={(value) => this.handleChange(value, 'title')}
+                            />
+                        </div>
 
-                    <div css={css`
-                        color: ${themes.standard.secondary};
-                        margin-top: 1em;
-                        margin-bottom: .5em;
-                        font-size: .5em;
+                        <div css={css`
+                            color: ${themes.standard.secondary};
+                            margin-top: 1em;
+                            margin-bottom: .5em;
+                            font-size: .5em;
 
-                        label {
-                            display: inline-block;
-                            margin-right: 1em;
-                        }
-
-                        .te-wrapper {
-                            display: inline-block;
-                            font-weight: bold;
-                            min-width: 100px;
-                        }
-                    `}>
-                        <label>ROUTE:</label>
-                        <TextEditor
-                            value={post.route}
-                            plaintext
-                            onChange={(value) => this.handleChange(value, 'route')}
-                        />
-                    </div>
-
-                    <div css={css`
-                        color: ${themes.standard.secondary};
-                        margin-top: 1em;
-                        margin-bottom: .5em;
-                        font-size: .5em;
-
-                        label {
-                            display: inline-block;
-                            margin-right: 1em;
-                        }
-
-                        .te-wrapper {
-                            display: inline-block;
-                            font-weight: bold;
-                            min-width: 100px;
-                        }
-                    `}>
-                        <label>READ TIME:</label>
-                        <TextEditor
-                            value={post.read_time}
-                            plaintext
-                            onChange={(value) => this.handleChange(value, 'read_time')}
-                        />
-                    </div>
-
-                    <div css={css`
-                        color: ${themes.standard.secondary};
-                        margin-top: 1em;
-                        margin-bottom: .5em;
-                        font-size: .5em;
-
-                        label {
-                            display: inline-block;
-                            margin-right: 1em;
-                        }
-
-                        .te-wrapper {
-                            display: inline-block;
-                            font-weight: bold;
-                            min-width: 100px;
-                        }
-                    `}>
-                        <label>COVER IMAGE:</label>
-                        <TextEditor
-                            value={post.cover_image}
-                            plaintext
-                            onChange={(value) => this.handleChange(value, 'cover_image')}
-                        />
-                    </div>
-
-                    <div css={css`
-                        color: ${themes.standard.secondary};
-                        margin-top: 1em;
-                        margin-bottom: .5em;
-                        font-size: .5em;
-
-                        label {
-                            display: inline-block;
-                            margin-right: 1em;
-                        }
-
-                        .te-wrapper {
-                            display: inline-block;
-                            font-weight: bold;
-                            min-width: 100px;
-                        }
-                    `}>
-                        <label>TEMPLATE:</label>
-                        <TextEditor
-                            value={post.template}
-                            plaintext
-                            onChange={(value) => this.handleChange(value, 'template')}
-                        />
-                    </div>
-
-                    <div css={css`
-                        color: ${themes.standard.secondary};
-                        margin-top: 1em;
-                        margin-bottom: .5em;
-                        font-size: .5em;
-
-                        label {
-                            display: inline-block;
-                            margin-right: 1em;
-                        }
-
-                        .te-wrapper {
-                            display: inline-block;
-                            font-weight: bold;
-                            min-width: 100px;
-                        }
-                    `}>
-                        <label>DESCRIPTION:</label>
-                        <TextEditor
-                            value={post.description}
-                            plaintext
-                            onChange={(value) => this.handleChange(value, 'description')}
-                        />
-                    </div>
-
-                    <div css={css`
-                        font-size: .5em;
-                        color: ${themes.standard.secondary};
-                        margin-bottom: .5em;
-
-                        label {
-                            display: inline-block;
-                            margin-right: 1em;
-                        }
-
-                        .dt {
-                            display: inline-block;
-                        }
-
-                        input {
-                            border: 0;
-                            user-select: none;
-                            cursor: pointer;
-
-                            &:focus {
-                                outline: none;
+                            label {
+                                display: inline-block;
+                                margin-right: 1em;
                             }
-                        }
-                    `}>
-                        <label>PUBLISHED AT:</label>
-                        <div className="dt">
-                            <Datetime
-                                value={post.published_at ? moment(post.published_at).format('MM/DD/YYYY HH:mm a') : null}
-                                onChange={(e) => this.handleChange(e ? e.format('YYYY-MM-DDTHH:mm:ssZ') : null, 'published_at') }/>
+
+                            .te-wrapper {
+                                display: inline-block;
+                                font-weight: bold;
+                                min-width: 100px;
+                            }
+                        `}>
+                            <label>ROUTE:</label>
+                            <TextEditor
+                                value={post.route}
+                                plaintext
+                                onChange={(value) => this.handleChange(value, 'route')}
+                            />
+                        </div>
+
+                        <div css={css`
+                            color: ${themes.standard.secondary};
+                            margin-top: 1em;
+                            margin-bottom: .5em;
+                            font-size: .5em;
+
+                            label {
+                                display: inline-block;
+                                margin-right: 1em;
+                            }
+
+                            .te-wrapper {
+                                display: inline-block;
+                                font-weight: bold;
+                                min-width: 100px;
+                            }
+                        `}>
+                            <label>READ TIME:</label>
+                            <TextEditor
+                                value={post.read_time}
+                                plaintext
+                                onChange={(value) => this.handleChange(value, 'read_time')}
+                            />
+                        </div>
+
+                        <div css={css`
+                            color: ${themes.standard.secondary};
+                            margin-top: 1em;
+                            margin-bottom: .5em;
+                            font-size: .5em;
+
+                            label {
+                                display: inline-block;
+                                margin-right: 1em;
+                            }
+
+                            .te-wrapper {
+                                display: inline-block;
+                                font-weight: bold;
+                                min-width: 100px;
+                            }
+                        `}>
+                            <label>COVER IMAGE:</label>
+                            <TextEditor
+                                value={post.cover_image}
+                                plaintext
+                                onChange={(value) => this.handleChange(value, 'cover_image')}
+                            />
+                        </div>
+
+                        <div css={css`
+                            color: ${themes.standard.secondary};
+                            margin-top: 1em;
+                            margin-bottom: .5em;
+                            font-size: .5em;
+
+                            label {
+                                display: inline-block;
+                                margin-right: 1em;
+                            }
+
+                            .te-wrapper {
+                                display: inline-block;
+                                font-weight: bold;
+                                min-width: 100px;
+                            }
+                        `}>
+                            <label>TEMPLATE:</label>
+                            <TextEditor
+                                value={post.template}
+                                plaintext
+                                onChange={(value) => this.handleChange(value, 'template')}
+                            />
+                        </div>
+
+                        <div css={css`
+                            color: ${themes.standard.secondary};
+                            margin-top: 1em;
+                            margin-bottom: .5em;
+                            font-size: .5em;
+
+                            label {
+                                display: inline-block;
+                                margin-right: 1em;
+                            }
+
+                            .te-wrapper {
+                                display: inline-block;
+                                font-weight: bold;
+                                min-width: 100px;
+                            }
+                        `}>
+                            <label>DESCRIPTION:</label>
+                            <TextEditor
+                                value={post.description}
+                                plaintext
+                                onChange={(value) => this.handleChange(value, 'description')}
+                            />
+                        </div>
+
+                        <div css={css`
+                            font-size: .5em;
+                            color: ${themes.standard.secondary};
+                            margin-bottom: .5em;
+
+                            label {
+                                display: inline-block;
+                                margin-right: 1em;
+                            }
+
+                            .dt {
+                                display: inline-block;
+                            }
+
+                            input {
+                                border: 0;
+                                user-select: none;
+                                cursor: pointer;
+
+                                &:focus {
+                                    outline: none;
+                                }
+                            }
+                        `}>
+                            <label>PUBLISHED AT:</label>
+                            <div className="dt">
+                                <Datetime
+                                    value={post.published_at ? moment(post.published_at).format('MM/DD/YYYY HH:mm a') : null}
+                                    onChange={(e) => this.handleChange(e ? e.format('YYYY-MM-DDTHH:mm:ssZ') : null, 'published_at') }/>
+                            </div>
+                        </div>
+
+                        <div css={css`
+                            font-size: .75em;
+                            display: flex;
+                            align-items: center;
+                            margin-bottom: .5em;
+                        `}>
+                            <DropDown
+                                list={this.status}
+                                onChange={this.handleChange}
+                                title={post.status[0].toUpperCase() + post.status.slice(1)}/>
+                            <button onClick={this.savePost}>Save</button>
                         </div>
                     </div>
 
                     <div css={css`
-                        font-size: .75em;
-                        display: flex;
-                        align-items: center;
-                        margin-bottom: .5em;
-                    `}>
-                        <DropDown
-                            list={this.status}
-                            onChange={this.handleChange}
-                            title={post.status[0].toUpperCase() + post.status.slice(1)}/>
-                        <button onClick={this.savePost}>Save</button>
-                    </div>
-
-                    <div css={css`
                         color: ${themes.standard.black};
-                        padding: .5em;
                         border: 1px solid ${themes.standard.lightgray};
                         line-height: 1.5em;
+                        max-height: 100%;
+                        overflow: auto;
 
                         .te-editor {
-                            padding: .5em;
-                            padding-top: 0;
+                            padding: 1em;
+                            padding-top: 3em;
                         }
                     `}>
                         <TextEditor
