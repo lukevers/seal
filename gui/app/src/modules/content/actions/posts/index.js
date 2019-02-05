@@ -131,7 +131,7 @@ export function postSave(post, cb) {
                                 case 'code':
                                     return <code>{children}</code>
                                 case 'link':
-                                    return <a href={obj.data.get('href')}>{children}</a>
+                                    return <a href={obj.data.get('href')} target="_blank" rel="noopener noreferrer">{children}</a>
                                 default:
                                     break;
                             }
