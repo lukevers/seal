@@ -90,6 +90,8 @@ blockquote {
     max-width: 300px;
     font-size: 16px;
     flex-grow: 1;
+    border-radius: 0;
+    -webkit-appearance: none;
 }
 
 .input-group button {
