@@ -682,7 +682,10 @@ export default class TextEditor extends Component {
             return next();
         }
 
-        if (startBlock.type === 'pre-code') {
+        if (
+            startBlock.type === 'pre-code' ||
+            startBlock.type === 'block-quote'
+        ) {
             return next();
         }
 
@@ -692,8 +695,7 @@ export default class TextEditor extends Component {
             startBlock.type !== 'heading-three' &&
             startBlock.type !== 'heading-four' &&
             startBlock.type !== 'heading-five' &&
-            startBlock.type !== 'heading-six' &&
-            startBlock.type !== 'block-quote'
+            startBlock.type !== 'heading-six'
         ) {
             return next();
         }
