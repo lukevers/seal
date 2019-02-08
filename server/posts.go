@@ -46,8 +46,27 @@ func initPosts(ctx context.Context, exe boil.ContextExecutor, team *models.Team)
 	}
 
 	TeamIDToPostsMap = &newmap
-	log.Println("Successfully re-initialized team/post map")
 
+	// Reset templates for related team
+	if team != nil {
+		HostToTeamMap.Range(func(key, value interface{}) bool {
+			if team.Domain == key.(string) {
+				HostToTeamMap.Store(
+					team.Domain,
+					&TeamWrapper{
+						Team:      team,
+						Templates: &sync.Map{},
+					},
+				)
+
+				return false
+			}
+
+			return true
+		})
+	}
+
+	log.Println("Successfully re-initialized team/post map")
 	return nil
 }
 

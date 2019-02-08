@@ -21,6 +21,11 @@ import (
 // HostToTeamMap contains a cached mapping of domains to teams. If the domain is in the map, there is an active team associated with it.
 var HostToTeamMap *sync.Map
 
+type TeamWrapper struct {
+	Team      *models.Team
+	Templates *sync.Map
+}
+
 func init() {
 	if err := initTeams(context.TODO(), db, nil); err != nil {
 		log.Fatal("Could not load teams from database:", err)
@@ -42,9 +47,15 @@ func initTeams(ctx context.Context, exe boil.ContextExecutor, team *models.Team)
 		return err
 	}
 
-	var newmap sync.Map = sync.Map{}
+	var newmap sync.Map
 	for _, team := range teams {
-		newmap.Store(team.Domain, team)
+		newmap.Store(
+			team.Domain,
+			&TeamWrapper{
+				Team:      team,
+				Templates: &sync.Map{},
+			},
+		)
 	}
 
 	HostToTeamMap = &newmap
@@ -78,7 +89,8 @@ func RenderHost(next http.Handler) http.Handler {
 			return
 		}
 
-		team := r.Context().Value("team").(*models.Team)
+		teamWrapper := r.Context().Value("team").(*TeamWrapper)
+		team := teamWrapper.Team
 		if posts, exists := TeamIDToPostsMap.Load(team.ID); !exists {
 			render.Render(w, r, ErrInternalRender(errors.New("Could not find team related to host")))
 			return
@@ -117,55 +129,60 @@ func RenderHost(next http.Handler) http.Handler {
 					return
 				}
 
-				// TODO: not any of this here
-				t := template.New("t")
-				t.Funcs(
-					template.FuncMap{
-						"html":      func(text string) template.HTML { return template.HTML(text) },
-						"datetime":  func(t time.Time) string { return t.Format("Monday, January 02 2006 15:04:05 MST") },
-						"rfc3339":   func(t time.Time) string { return t.Format(time.RFC3339) },
-						"cachehash": func() string { return *flagCacheHash },
-						"list": func() interface{} {
-							posts, ok := TeamIDToPostsMap.Load(team.ID)
-							if !ok {
-								return nil
-							}
-
-							var p []*models.Post
-							posts.(*sync.Map).Range(func(k, v interface{}) bool {
-								t := v.(*models.Post)
-								if t.Status == "published" && t.Template == "post" {
-									p = append(p, t)
+				var t *template.Template
+				tmp, exists := teamWrapper.Templates.Load(p.Template)
+				if !exists {
+					var err error
+					t, err = template.New(p.Template).Funcs(
+						template.FuncMap{
+							"html":      func(text string) template.HTML { return template.HTML(text) },
+							"datetime":  func(t time.Time) string { return t.Format("Monday, January 02 2006 15:04:05 MST") },
+							"rfc3339":   func(t time.Time) string { return t.Format(time.RFC3339) },
+							"cachehash": func() string { return *flagCacheHash },
+							"list": func() interface{} {
+								posts, ok := TeamIDToPostsMap.Load(team.ID)
+								if !ok {
+									return nil
 								}
 
-								return true
-							})
+								var p []*models.Post
+								posts.(*sync.Map).Range(func(k, v interface{}) bool {
+									t := v.(*models.Post)
+									if t.Status == "published" && t.Template == "post" {
+										p = append(p, t)
+									}
 
-							sort.SliceStable(p, func(i, j int) bool {
-								return p[i].PublishedAt.Time.Unix() > p[j].PublishedAt.Time.Unix()
-							})
+									return true
+								})
 
-							return p
+								sort.SliceStable(p, func(i, j int) bool {
+									return p[i].PublishedAt.Time.Unix() > p[j].PublishedAt.Time.Unix()
+								})
+
+								return p
+							},
 						},
-					},
-				)
+					).ParseFiles(
+						fmt.Sprintf("../themes/%s/base.html", team.Theme),
+						fmt.Sprintf("../themes/%s/header.html", team.Theme),
+						fmt.Sprintf("../themes/%s/footer.html", team.Theme),
+						fmt.Sprintf("../themes/%s/%s.html", team.Theme, p.Template),
+					)
 
-				// TODO: pre-generate, optimize, etc
-				t, err := t.ParseFiles(
-					fmt.Sprintf("../themes/%s/base.html", team.Theme),
-					fmt.Sprintf("../themes/%s/header.html", team.Theme),
-					fmt.Sprintf("../themes/%s/footer.html", team.Theme),
-					fmt.Sprintf("../themes/%s/%s.html", team.Theme, p.Template),
-				)
+					if err != nil {
+						log.Println(err)
+						render.Render(w, r, ErrInternalRender(err))
+						return
+					}
 
-				if err != nil {
-					log.Println(err)
-					render.Render(w, r, ErrInternalRender(err))
-					return
+					teamWrapper.Templates.Store(p.Template, t)
+					log.Println(fmt.Sprintf("Successfully re-initialized template \"%s\" for \"%s\"", p.Template, team.Domain))
+				} else {
+					t = tmp.(*template.Template)
 				}
 
 				w.Header().Set("Content-Type", "text/html")
-				err = t.ExecuteTemplate(w, fmt.Sprintf("%s-%s", team.Theme, p.Template), p)
+				err := t.ExecuteTemplate(w, fmt.Sprintf("%s-%s", team.Theme, p.Template), p)
 				if err != nil {
 					log.Println(err)
 					render.Render(w, r, ErrInternalRender(err))
