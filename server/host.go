@@ -8,6 +8,7 @@ import (
 	"log"
 	"net/http"
 	"sort"
+	"strconv"
 	"strings"
 	"sync"
 	"time"
@@ -110,15 +111,13 @@ func RenderHost(next http.Handler) http.Handler {
 			}
 
 			if post, pexists := posts.(*sync.Map).Load(route); !pexists {
-				// TODO: 404 page per team
-				render.Render(w, r, ErrMissingRender(errors.New("Missing")))
+				RenderHostStatusCode(w, r, "404", team)
 				return
 			} else {
 				p := post.(*models.Post)
 				if p.Status != "published" {
 					if !(p.Status == "draft" && draft) {
-						// TODO: 404 page per team
-						render.Render(w, r, ErrMissingRender(errors.New("Not published, aka missing")))
+						RenderHostStatusCode(w, r, "404", team)
 						return
 					}
 				}
@@ -161,6 +160,7 @@ func RenderHost(next http.Handler) http.Handler {
 
 								return p
 							},
+							"tracking": func() string { return team.TrackingHTML.String },
 						},
 					).ParseFiles(
 						fmt.Sprintf("../themes/%s/base.html", team.Theme),
@@ -171,7 +171,7 @@ func RenderHost(next http.Handler) http.Handler {
 
 					if err != nil {
 						log.Println(err)
-						render.Render(w, r, ErrInternalRender(err))
+						RenderHostStatusCode(w, r, "500", team)
 						return
 					}
 
@@ -185,10 +185,61 @@ func RenderHost(next http.Handler) http.Handler {
 				err := t.ExecuteTemplate(w, fmt.Sprintf("%s-%s", team.Theme, p.Template), p)
 				if err != nil {
 					log.Println(err)
-					render.Render(w, r, ErrInternalRender(err))
+					RenderHostStatusCode(w, r, "500", team)
 					return
 				}
 			}
 		}
 	})
+}
+
+func RenderHostStatusCode(w http.ResponseWriter, r *http.Request, status string, team *models.Team) {
+	t, err := template.New(status).Funcs(
+		template.FuncMap{
+			"html":      func(text string) template.HTML { return template.HTML(text) },
+			"datetime":  func(t time.Time) string { return t.Format("Monday, January 02 2006 15:04:05 MST") },
+			"rfc3339":   func(t time.Time) string { return t.Format(time.RFC3339) },
+			"cachehash": func() string { return *flagCacheHash },
+			"tracking":  func() string { return team.TrackingHTML.String },
+		},
+	).ParseFiles(
+		fmt.Sprintf("../themes/%s/base.html", team.Theme),
+		fmt.Sprintf("../themes/%s/header.html", team.Theme),
+		fmt.Sprintf("../themes/%s/footer.html", team.Theme),
+		fmt.Sprintf("../themes/%s/%s.html", team.Theme, status),
+	)
+
+	if err != nil {
+		log.Println(err)
+		render.Render(w, r, ErrInternalRender(err))
+		return
+	}
+
+	code, err := strconv.Atoi(status)
+	if err != nil {
+		if status == "500" {
+			render.Render(w, r, ErrInternalRender(err))
+		} else {
+			RenderHostStatusCode(w, r, "500", team)
+		}
+
+		return
+	}
+
+	w.Header().Set("Content-Type", "text/html")
+	w.WriteHeader(code)
+	err = t.ExecuteTemplate(w, fmt.Sprintf("%s-%s", team.Theme, status), nil)
+	if err != nil {
+		log.Println(err)
+
+		// If we error herre and it's already trying to handle the 500, give up
+		// and use the other renderer.
+		if status == "500" {
+			render.Render(w, r, ErrInternalRender(err))
+		} else {
+			RenderHostStatusCode(w, r, "500", team)
+		}
+
+		return
+	}
 }

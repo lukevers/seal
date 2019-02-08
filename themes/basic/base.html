@@ -16,6 +16,7 @@
         {{ block "footer" . }}{{ end }}
 
         <script src="/s/basic/static/basic.js?cache={{ cachehash }}"></script>
+        {{ tracking | html }}
     </body>
 </html>
 {{- end }}

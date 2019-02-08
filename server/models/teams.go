@@ -23,34 +23,37 @@ import (
 
 // Team is an object representing the database table.
 type Team struct {
-	ID        uint      `boil:"id" json:"id" toml:"id" yaml:"id"`
-	Name      string    `boil:"name" json:"name" toml:"name" yaml:"name"`
-	Domain    string    `boil:"domain" json:"domain" toml:"domain" yaml:"domain"`
-	Theme     string    `boil:"theme" json:"theme" toml:"theme" yaml:"theme"`
-	CreatedAt time.Time `boil:"created_at" json:"created_at" toml:"created_at" yaml:"created_at"`
-	UpdatedAt time.Time `boil:"updated_at" json:"updated_at" toml:"updated_at" yaml:"updated_at"`
-	DeletedAt null.Time `boil:"deleted_at" json:"deleted_at,omitempty" toml:"deleted_at" yaml:"deleted_at,omitempty"`
+	ID           uint        `boil:"id" json:"id" toml:"id" yaml:"id"`
+	Name         string      `boil:"name" json:"name" toml:"name" yaml:"name"`
+	Domain       string      `boil:"domain" json:"domain" toml:"domain" yaml:"domain"`
+	Theme        string      `boil:"theme" json:"theme" toml:"theme" yaml:"theme"`
+	TrackingHTML null.String `boil:"tracking_html" json:"tracking_html,omitempty" toml:"tracking_html" yaml:"tracking_html,omitempty"`
+	CreatedAt    time.Time   `boil:"created_at" json:"created_at" toml:"created_at" yaml:"created_at"`
+	UpdatedAt    time.Time   `boil:"updated_at" json:"updated_at" toml:"updated_at" yaml:"updated_at"`
+	DeletedAt    null.Time   `boil:"deleted_at" json:"deleted_at,omitempty" toml:"deleted_at" yaml:"deleted_at,omitempty"`
 
 	R *teamR `boil:"-" json:"-" toml:"-" yaml:"-"`
 	L teamL  `boil:"-" json:"-" toml:"-" yaml:"-"`
 }
 
 var TeamColumns = struct {
-	ID        string
-	Name      string
-	Domain    string
-	Theme     string
-	CreatedAt string
-	UpdatedAt string
-	DeletedAt string
+	ID           string
+	Name         string
+	Domain       string
+	Theme        string
+	TrackingHTML string
+	CreatedAt    string
+	UpdatedAt    string
+	DeletedAt    string
 }{
-	ID:        "id",
-	Name:      "name",
-	Domain:    "domain",
-	Theme:     "theme",
-	CreatedAt: "created_at",
-	UpdatedAt: "updated_at",
-	DeletedAt: "deleted_at",
+	ID:           "id",
+	Name:         "name",
+	Domain:       "domain",
+	Theme:        "theme",
+	TrackingHTML: "tracking_html",
+	CreatedAt:    "created_at",
+	UpdatedAt:    "updated_at",
+	DeletedAt:    "deleted_at",
 }
 
 // TeamRels is where relationship names are stored.
@@ -80,8 +83,8 @@ func (*teamR) NewStruct() *teamR {
 type teamL struct{}
 
 var (
-	teamColumns               = []string{"id", "name", "domain", "theme", "created_at", "updated_at", "deleted_at"}
-	teamColumnsWithoutDefault = []string{"name", "domain", "deleted_at"}
+	teamColumns               = []string{"id", "name", "domain", "theme", "tracking_html", "created_at", "updated_at", "deleted_at"}
+	teamColumnsWithoutDefault = []string{"name", "domain", "tracking_html", "deleted_at"}
 	teamColumnsWithDefault    = []string{"id", "theme", "created_at", "updated_at"}
 	teamPrimaryKeyColumns     = []string{"id"}
 )

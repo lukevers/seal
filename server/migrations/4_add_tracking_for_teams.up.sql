@@ -1,0 +1,1 @@
+ALTER TABLE `teams` ADD COLUMN `tracking_html` TEXT AFTER `theme`;
