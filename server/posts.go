@@ -39,32 +39,13 @@ func initPosts(ctx context.Context, exe boil.ContextExecutor, team *models.Team)
 		return err
 	}
 
-	var newmap sync.Map = sync.Map{}
+	var newmap sync.Map
 	for _, post := range posts {
 		innerMap, _ := newmap.LoadOrStore(post.OwnedByID, &sync.Map{})
 		innerMap.(*sync.Map).Store(post.Route, post)
 	}
 
 	TeamIDToPostsMap = &newmap
-
-	// Reset templates for related team
-	if team != nil {
-		HostToTeamMap.Range(func(key, value interface{}) bool {
-			if team.Domain == key.(string) {
-				HostToTeamMap.Store(
-					team.Domain,
-					&TeamWrapper{
-						Team:      team,
-						Templates: &sync.Map{},
-					},
-				)
-
-				return false
-			}
-
-			return true
-		})
-	}
 
 	log.Println("Successfully re-initialized team/post map")
 	return nil
@@ -75,6 +56,26 @@ func initPost(ctx context.Context, exe boil.ContextExecutor, post *models.Post) 
 	if post == nil {
 		return initPosts(ctx, exe, nil)
 	}
+
+	// Reset templates for related team
+	HostToTeamMap.Range(func(key, value interface{}) bool {
+		teamWrapper := value.(*TeamWrapper)
+		team := teamWrapper.Team
+
+		if post.OwnedByID == team.ID {
+			HostToTeamMap.Store(
+				team.Domain,
+				&TeamWrapper{
+					Team:      team,
+					Templates: &sync.Map{},
+				},
+			)
+
+			return false
+		}
+
+		return true
+	})
 
 	// For now, let's re-init everything. TODO: improve
 	return initPosts(ctx, exe, nil)
@@ -124,7 +125,7 @@ func ListPosts(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	var mods []qm.QueryMod = []qm.QueryMod{
+	var mods = []qm.QueryMod{
 		qm.InnerJoin("teams as t on t.id = posts.owned_by_id"),
 		qm.InnerJoin("team_members as tm on tm.team_id = t.id"),
 		qm.InnerJoin("users as u on u.id = tm.user_id"),
