@@ -30,7 +30,8 @@ type AnalyticsPageviewUseragent struct {
 	BrowserEngine        null.String `boil:"browser_engine" json:"browser_engine,omitempty" toml:"browser_engine" yaml:"browser_engine,omitempty"`
 	BrowserEngineVersion null.String `boil:"browser_engine_version" json:"browser_engine_version,omitempty" toml:"browser_engine_version" yaml:"browser_engine_version,omitempty"`
 	Localization         null.String `boil:"localization" json:"localization,omitempty" toml:"localization" yaml:"localization,omitempty"`
-	Mobile               null.Bool   `boil:"mobile" json:"mobile,omitempty" toml:"mobile" yaml:"mobile,omitempty"`
+	IsMobile             null.Bool   `boil:"is_mobile" json:"is_mobile,omitempty" toml:"is_mobile" yaml:"is_mobile,omitempty"`
+	IsBot                null.Bool   `boil:"is_bot" json:"is_bot,omitempty" toml:"is_bot" yaml:"is_bot,omitempty"`
 	OsName               null.String `boil:"os_name" json:"os_name,omitempty" toml:"os_name" yaml:"os_name,omitempty"`
 	OsVersion            null.String `boil:"os_version" json:"os_version,omitempty" toml:"os_version" yaml:"os_version,omitempty"`
 	Platform             null.String `boil:"platform" json:"platform,omitempty" toml:"platform" yaml:"platform,omitempty"`
@@ -48,7 +49,8 @@ var AnalyticsPageviewUseragentColumns = struct {
 	BrowserEngine        string
 	BrowserEngineVersion string
 	Localization         string
-	Mobile               string
+	IsMobile             string
+	IsBot                string
 	OsName               string
 	OsVersion            string
 	Platform             string
@@ -61,7 +63,8 @@ var AnalyticsPageviewUseragentColumns = struct {
 	BrowserEngine:        "browser_engine",
 	BrowserEngineVersion: "browser_engine_version",
 	Localization:         "localization",
-	Mobile:               "mobile",
+	IsMobile:             "is_mobile",
+	IsBot:                "is_bot",
 	OsName:               "os_name",
 	OsVersion:            "os_version",
 	Platform:             "platform",
@@ -89,8 +92,8 @@ func (*analyticsPageviewUseragentR) NewStruct() *analyticsPageviewUseragentR {
 type analyticsPageviewUseragentL struct{}
 
 var (
-	analyticsPageviewUseragentColumns               = []string{"id", "pageview_id", "browser_name", "browser_version", "browser_engine", "browser_engine_version", "localization", "mobile", "os_name", "os_version", "platform", "raw"}
-	analyticsPageviewUseragentColumnsWithoutDefault = []string{"pageview_id", "browser_name", "browser_version", "browser_engine", "browser_engine_version", "localization", "mobile", "os_name", "os_version", "platform", "raw"}
+	analyticsPageviewUseragentColumns               = []string{"id", "pageview_id", "browser_name", "browser_version", "browser_engine", "browser_engine_version", "localization", "is_mobile", "is_bot", "os_name", "os_version", "platform", "raw"}
+	analyticsPageviewUseragentColumnsWithoutDefault = []string{"pageview_id", "browser_name", "browser_version", "browser_engine", "browser_engine_version", "localization", "is_mobile", "is_bot", "os_name", "os_version", "platform", "raw"}
 	analyticsPageviewUseragentColumnsWithDefault    = []string{"id"}
 	analyticsPageviewUseragentPrimaryKeyColumns     = []string{"id"}
 )

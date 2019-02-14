@@ -677,7 +677,7 @@ func testAnalyticsPageviewUseragentsSelect(t *testing.T) {
 }
 
 var (
-	analyticsPageviewUseragentDBTypes = map[string]string{`BrowserEngine`: `varchar`, `BrowserEngineVersion`: `varchar`, `BrowserName`: `varchar`, `BrowserVersion`: `varchar`, `ID`: `bigint`, `Localization`: `varchar`, `Mobile`: `tinyint`, `OsName`: `varchar`, `OsVersion`: `varchar`, `PageviewID`: `bigint`, `Platform`: `varchar`, `Raw`: `text`}
+	analyticsPageviewUseragentDBTypes = map[string]string{`BrowserEngine`: `varchar`, `BrowserEngineVersion`: `varchar`, `BrowserName`: `varchar`, `BrowserVersion`: `varchar`, `ID`: `bigint`, `IsBot`: `tinyint`, `IsMobile`: `tinyint`, `Localization`: `varchar`, `OsName`: `varchar`, `OsVersion`: `varchar`, `PageviewID`: `bigint`, `Platform`: `varchar`, `Raw`: `text`}
 	_                                 = bytes.MinRead
 )
 
