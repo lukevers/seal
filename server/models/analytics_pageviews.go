@@ -14,7 +14,6 @@ import (
 	"time"
 
 	"github.com/pkg/errors"
-	"github.com/volatiletech/null"
 	"github.com/volatiletech/sqlboiler/boil"
 	"github.com/volatiletech/sqlboiler/queries"
 	"github.com/volatiletech/sqlboiler/queries/qm"
@@ -23,17 +22,16 @@ import (
 
 // AnalyticsPageview is an object representing the database table.
 type AnalyticsPageview struct {
-	ID            uint64      `boil:"id" json:"id" toml:"id" yaml:"id"`
-	Host          string      `boil:"host" json:"host" toml:"host" yaml:"host"`
-	Path          string      `boil:"path" json:"path" toml:"path" yaml:"path"`
-	Method        string      `boil:"method" json:"method" toml:"method" yaml:"method"`
-	Query         string      `boil:"query" json:"query" toml:"query" yaml:"query"`
-	RemoteAddress string      `boil:"remote_address" json:"remote_address" toml:"remote_address" yaml:"remote_address"`
-	UserAgent     null.String `boil:"user_agent" json:"user_agent,omitempty" toml:"user_agent" yaml:"user_agent,omitempty"`
-	Status        int         `boil:"status" json:"status" toml:"status" yaml:"status"`
-	IsNew         bool        `boil:"is_new" json:"is_new" toml:"is_new" yaml:"is_new"`
-	InitialRid    string      `boil:"initial_rid" json:"initial_rid" toml:"initial_rid" yaml:"initial_rid"`
-	ViewedAt      time.Time   `boil:"viewed_at" json:"viewed_at" toml:"viewed_at" yaml:"viewed_at"`
+	ID            uint64    `boil:"id" json:"id" toml:"id" yaml:"id"`
+	Host          string    `boil:"host" json:"host" toml:"host" yaml:"host"`
+	Path          string    `boil:"path" json:"path" toml:"path" yaml:"path"`
+	Method        string    `boil:"method" json:"method" toml:"method" yaml:"method"`
+	Query         string    `boil:"query" json:"query" toml:"query" yaml:"query"`
+	RemoteAddress string    `boil:"remote_address" json:"remote_address" toml:"remote_address" yaml:"remote_address"`
+	Status        int       `boil:"status" json:"status" toml:"status" yaml:"status"`
+	IsNew         bool      `boil:"is_new" json:"is_new" toml:"is_new" yaml:"is_new"`
+	InitialRid    string    `boil:"initial_rid" json:"initial_rid" toml:"initial_rid" yaml:"initial_rid"`
+	ViewedAt      time.Time `boil:"viewed_at" json:"viewed_at" toml:"viewed_at" yaml:"viewed_at"`
 
 	R *analyticsPageviewR `boil:"-" json:"-" toml:"-" yaml:"-"`
 	L analyticsPageviewL  `boil:"-" json:"-" toml:"-" yaml:"-"`
@@ -46,7 +44,6 @@ var AnalyticsPageviewColumns = struct {
 	Method        string
 	Query         string
 	RemoteAddress string
-	UserAgent     string
 	Status        string
 	IsNew         string
 	InitialRid    string
@@ -58,7 +55,6 @@ var AnalyticsPageviewColumns = struct {
 	Method:        "method",
 	Query:         "query",
 	RemoteAddress: "remote_address",
-	UserAgent:     "user_agent",
 	Status:        "status",
 	IsNew:         "is_new",
 	InitialRid:    "initial_rid",
@@ -89,8 +85,8 @@ func (*analyticsPageviewR) NewStruct() *analyticsPageviewR {
 type analyticsPageviewL struct{}
 
 var (
-	analyticsPageviewColumns               = []string{"id", "host", "path", "method", "query", "remote_address", "user_agent", "status", "is_new", "initial_rid", "viewed_at"}
-	analyticsPageviewColumnsWithoutDefault = []string{"host", "path", "method", "query", "remote_address", "user_agent", "status", "is_new", "initial_rid"}
+	analyticsPageviewColumns               = []string{"id", "host", "path", "method", "query", "remote_address", "status", "is_new", "initial_rid", "viewed_at"}
+	analyticsPageviewColumnsWithoutDefault = []string{"host", "path", "method", "query", "remote_address", "status", "is_new", "initial_rid"}
 	analyticsPageviewColumnsWithDefault    = []string{"id", "viewed_at"}
 	analyticsPageviewPrimaryKeyColumns     = []string{"id"}
 )

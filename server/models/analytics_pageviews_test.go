@@ -875,7 +875,7 @@ func testAnalyticsPageviewsSelect(t *testing.T) {
 }
 
 var (
-	analyticsPageviewDBTypes = map[string]string{`Host`: `varchar`, `ID`: `bigint`, `InitialRid`: `varchar`, `IsNew`: `tinyint`, `Method`: `varchar`, `Path`: `varchar`, `Query`: `varchar`, `RemoteAddress`: `varchar`, `Status`: `int`, `UserAgent`: `text`, `ViewedAt`: `timestamp`}
+	analyticsPageviewDBTypes = map[string]string{`Host`: `varchar`, `ID`: `bigint`, `InitialRid`: `varchar`, `IsNew`: `tinyint`, `Method`: `varchar`, `Path`: `varchar`, `Query`: `varchar`, `RemoteAddress`: `varchar`, `Status`: `int`, `ViewedAt`: `timestamp`}
 	_                        = bytes.MinRead
 )
 

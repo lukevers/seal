@@ -61,7 +61,6 @@ func collect(w middleware.WrapResponseWriter, r *http.Request) {
 		Method:        r.Method,
 		Query:         r.URL.RawQuery,
 		RemoteAddress: r.RemoteAddr,
-		UserAgent:     null.StringFrom(r.UserAgent()),
 		Status:        w.Status(),
 		IsNew:         new,
 		InitialRid:    rid,

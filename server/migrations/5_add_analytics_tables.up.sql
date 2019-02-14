@@ -5,7 +5,6 @@ CREATE TABLE `analytics_pageviews` (
     `method` varchar(16) NOT NULL,
     `query` varchar(255) NOT NULL,
     `remote_address` varchar(255) NOT NULL,
-    `user_agent` TEXT,
     `status` int(10) NOT NULL,
     `is_new` tinyint(1) NOT NULL,
     `initial_rid` varchar(32) NOT NULL,
