@@ -53,7 +53,7 @@ func AuthenticateRequest(next http.Handler) http.Handler {
 			return
 		}
 
-		err = bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(parts[1]))
+		err = bcrypt.CompareHashAndPassword([]byte(user.Password.String), []byte(parts[1]))
 		if err != nil {
 			render.Render(w, r, ErrRender(errors.New("Invalid credentials")))
 			return

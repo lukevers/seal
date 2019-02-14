@@ -47,7 +47,7 @@ func SubscribeEmail(w http.ResponseWriter, r *http.Request) {
 
 	subscriber := models.Subscriber{
 		Email:    form.Email,
-		TeamID:   null.UintFrom(r.Context().Value("team").(*models.Team).ID),
+		TeamID:   null.UintFrom(r.Context().Value("team").(*TeamWrapper).Team.ID),
 		Referrer: null.StringFrom(r.Referer()),
 	}
 

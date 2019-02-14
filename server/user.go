@@ -75,7 +75,7 @@ func UserCreate(w http.ResponseWriter, r *http.Request) {
 
 	user := models.User{
 		Email:    form.Email,
-		Password: string(pass),
+		Password: null.StringFrom(string(pass)),
 	}
 
 	err = user.Insert(context.TODO(), db, boil.Infer())
@@ -129,7 +129,7 @@ func UserAuthenticate(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	err = bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(form.Password))
+	err = bcrypt.CompareHashAndPassword([]byte(user.Password.String), []byte(form.Password))
 	if err != nil {
 		render.Render(w, r, ErrRender(errors.New("Could not authenticate user")))
 		return

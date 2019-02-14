@@ -6,6 +6,12 @@ package models
 import "testing"
 
 func TestUpsert(t *testing.T) {
+	t.Run("AnalyticsPageviewReferers", testAnalyticsPageviewReferersUpsert)
+
+	t.Run("AnalyticsPageviewUseragents", testAnalyticsPageviewUseragentsUpsert)
+
+	t.Run("AnalyticsPageviews", testAnalyticsPageviewsUpsert)
+
 	t.Run("PostHistories", testPostHistoriesUpsert)
 
 	t.Run("Posts", testPostsUpsert)

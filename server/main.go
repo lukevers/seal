@@ -17,7 +17,6 @@ func main() {
 	r.Use(middleware.RealIP)
 	r.Use(middleware.Logger)
 	r.Use(middleware.Recoverer)
-	r.Use(middleware.URLFormat)
 	r.Use(middleware.DefaultCompress)
 
 	r.Use(BoostAPI)
@@ -25,6 +24,7 @@ func main() {
 	r.Use(BoostForms)
 
 	r.Use(MapHostToTeam)
+	r.Use(Track)
 	r.Use(RenderHost)
 
 	r.Route("/api/user", func(r chi.Router) {

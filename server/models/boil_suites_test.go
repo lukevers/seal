@@ -12,6 +12,9 @@ import "testing"
 // It does NOT run each operation group in parallel.
 // Separating the tests thusly grants avoidance of Postgres deadlocks.
 func TestParent(t *testing.T) {
+	t.Run("AnalyticsPageviewReferers", testAnalyticsPageviewReferers)
+	t.Run("AnalyticsPageviewUseragents", testAnalyticsPageviewUseragents)
+	t.Run("AnalyticsPageviews", testAnalyticsPageviews)
 	t.Run("PostHistories", testPostHistories)
 	t.Run("Posts", testPosts)
 	t.Run("Subscribers", testSubscribers)
@@ -22,6 +25,9 @@ func TestParent(t *testing.T) {
 }
 
 func TestDelete(t *testing.T) {
+	t.Run("AnalyticsPageviewReferers", testAnalyticsPageviewReferersDelete)
+	t.Run("AnalyticsPageviewUseragents", testAnalyticsPageviewUseragentsDelete)
+	t.Run("AnalyticsPageviews", testAnalyticsPageviewsDelete)
 	t.Run("PostHistories", testPostHistoriesDelete)
 	t.Run("Posts", testPostsDelete)
 	t.Run("Subscribers", testSubscribersDelete)
@@ -32,6 +38,9 @@ func TestDelete(t *testing.T) {
 }
 
 func TestQueryDeleteAll(t *testing.T) {
+	t.Run("AnalyticsPageviewReferers", testAnalyticsPageviewReferersQueryDeleteAll)
+	t.Run("AnalyticsPageviewUseragents", testAnalyticsPageviewUseragentsQueryDeleteAll)
+	t.Run("AnalyticsPageviews", testAnalyticsPageviewsQueryDeleteAll)
 	t.Run("PostHistories", testPostHistoriesQueryDeleteAll)
 	t.Run("Posts", testPostsQueryDeleteAll)
 	t.Run("Subscribers", testSubscribersQueryDeleteAll)
@@ -42,6 +51,9 @@ func TestQueryDeleteAll(t *testing.T) {
 }
 
 func TestSliceDeleteAll(t *testing.T) {
+	t.Run("AnalyticsPageviewReferers", testAnalyticsPageviewReferersSliceDeleteAll)
+	t.Run("AnalyticsPageviewUseragents", testAnalyticsPageviewUseragentsSliceDeleteAll)
+	t.Run("AnalyticsPageviews", testAnalyticsPageviewsSliceDeleteAll)
 	t.Run("PostHistories", testPostHistoriesSliceDeleteAll)
 	t.Run("Posts", testPostsSliceDeleteAll)
 	t.Run("Subscribers", testSubscribersSliceDeleteAll)
@@ -52,6 +64,9 @@ func TestSliceDeleteAll(t *testing.T) {
 }
 
 func TestExists(t *testing.T) {
+	t.Run("AnalyticsPageviewReferers", testAnalyticsPageviewReferersExists)
+	t.Run("AnalyticsPageviewUseragents", testAnalyticsPageviewUseragentsExists)
+	t.Run("AnalyticsPageviews", testAnalyticsPageviewsExists)
 	t.Run("PostHistories", testPostHistoriesExists)
 	t.Run("Posts", testPostsExists)
 	t.Run("Subscribers", testSubscribersExists)
@@ -62,6 +77,9 @@ func TestExists(t *testing.T) {
 }
 
 func TestFind(t *testing.T) {
+	t.Run("AnalyticsPageviewReferers", testAnalyticsPageviewReferersFind)
+	t.Run("AnalyticsPageviewUseragents", testAnalyticsPageviewUseragentsFind)
+	t.Run("AnalyticsPageviews", testAnalyticsPageviewsFind)
 	t.Run("PostHistories", testPostHistoriesFind)
 	t.Run("Posts", testPostsFind)
 	t.Run("Subscribers", testSubscribersFind)
@@ -72,6 +90,9 @@ func TestFind(t *testing.T) {
 }
 
 func TestBind(t *testing.T) {
+	t.Run("AnalyticsPageviewReferers", testAnalyticsPageviewReferersBind)
+	t.Run("AnalyticsPageviewUseragents", testAnalyticsPageviewUseragentsBind)
+	t.Run("AnalyticsPageviews", testAnalyticsPageviewsBind)
 	t.Run("PostHistories", testPostHistoriesBind)
 	t.Run("Posts", testPostsBind)
 	t.Run("Subscribers", testSubscribersBind)
@@ -82,6 +103,9 @@ func TestBind(t *testing.T) {
 }
 
 func TestOne(t *testing.T) {
+	t.Run("AnalyticsPageviewReferers", testAnalyticsPageviewReferersOne)
+	t.Run("AnalyticsPageviewUseragents", testAnalyticsPageviewUseragentsOne)
+	t.Run("AnalyticsPageviews", testAnalyticsPageviewsOne)
 	t.Run("PostHistories", testPostHistoriesOne)
 	t.Run("Posts", testPostsOne)
 	t.Run("Subscribers", testSubscribersOne)
@@ -92,6 +116,9 @@ func TestOne(t *testing.T) {
 }
 
 func TestAll(t *testing.T) {
+	t.Run("AnalyticsPageviewReferers", testAnalyticsPageviewReferersAll)
+	t.Run("AnalyticsPageviewUseragents", testAnalyticsPageviewUseragentsAll)
+	t.Run("AnalyticsPageviews", testAnalyticsPageviewsAll)
 	t.Run("PostHistories", testPostHistoriesAll)
 	t.Run("Posts", testPostsAll)
 	t.Run("Subscribers", testSubscribersAll)
@@ -102,6 +129,9 @@ func TestAll(t *testing.T) {
 }
 
 func TestCount(t *testing.T) {
+	t.Run("AnalyticsPageviewReferers", testAnalyticsPageviewReferersCount)
+	t.Run("AnalyticsPageviewUseragents", testAnalyticsPageviewUseragentsCount)
+	t.Run("AnalyticsPageviews", testAnalyticsPageviewsCount)
 	t.Run("PostHistories", testPostHistoriesCount)
 	t.Run("Posts", testPostsCount)
 	t.Run("Subscribers", testSubscribersCount)
@@ -112,6 +142,9 @@ func TestCount(t *testing.T) {
 }
 
 func TestHooks(t *testing.T) {
+	t.Run("AnalyticsPageviewReferers", testAnalyticsPageviewReferersHooks)
+	t.Run("AnalyticsPageviewUseragents", testAnalyticsPageviewUseragentsHooks)
+	t.Run("AnalyticsPageviews", testAnalyticsPageviewsHooks)
 	t.Run("PostHistories", testPostHistoriesHooks)
 	t.Run("Posts", testPostsHooks)
 	t.Run("Subscribers", testSubscribersHooks)
@@ -122,6 +155,12 @@ func TestHooks(t *testing.T) {
 }
 
 func TestInsert(t *testing.T) {
+	t.Run("AnalyticsPageviewReferers", testAnalyticsPageviewReferersInsert)
+	t.Run("AnalyticsPageviewReferers", testAnalyticsPageviewReferersInsertWhitelist)
+	t.Run("AnalyticsPageviewUseragents", testAnalyticsPageviewUseragentsInsert)
+	t.Run("AnalyticsPageviewUseragents", testAnalyticsPageviewUseragentsInsertWhitelist)
+	t.Run("AnalyticsPageviews", testAnalyticsPageviewsInsert)
+	t.Run("AnalyticsPageviews", testAnalyticsPageviewsInsertWhitelist)
 	t.Run("PostHistories", testPostHistoriesInsert)
 	t.Run("PostHistories", testPostHistoriesInsertWhitelist)
 	t.Run("Posts", testPostsInsert)
@@ -141,6 +180,8 @@ func TestInsert(t *testing.T) {
 // TestToOne tests cannot be run in parallel
 // or deadlocks can occur.
 func TestToOne(t *testing.T) {
+	t.Run("AnalyticsPageviewRefererToAnalyticsPageviewUsingPageview", testAnalyticsPageviewRefererToOneAnalyticsPageviewUsingPageview)
+	t.Run("AnalyticsPageviewUseragentToAnalyticsPageviewUsingPageview", testAnalyticsPageviewUseragentToOneAnalyticsPageviewUsingPageview)
 	t.Run("PostToUserUsingCreatedBy", testPostToOneUserUsingCreatedBy)
 	t.Run("PostToUserUsingDeletedBy", testPostToOneUserUsingDeletedBy)
 	t.Run("PostToTeamUsingOwnedBy", testPostToOneTeamUsingOwnedBy)
@@ -158,6 +199,8 @@ func TestOneToOne(t *testing.T) {}
 // TestToMany tests cannot be run in parallel
 // or deadlocks can occur.
 func TestToMany(t *testing.T) {
+	t.Run("AnalyticsPageviewToPageviewAnalyticsPageviewReferers", testAnalyticsPageviewToManyPageviewAnalyticsPageviewReferers)
+	t.Run("AnalyticsPageviewToPageviewAnalyticsPageviewUseragents", testAnalyticsPageviewToManyPageviewAnalyticsPageviewUseragents)
 	t.Run("TeamToOwnedByPosts", testTeamToManyOwnedByPosts)
 	t.Run("TeamToSubscribers", testTeamToManySubscribers)
 	t.Run("TeamToTeamMembers", testTeamToManyTeamMembers)
@@ -171,6 +214,8 @@ func TestToMany(t *testing.T) {
 // TestToOneSet tests cannot be run in parallel
 // or deadlocks can occur.
 func TestToOneSet(t *testing.T) {
+	t.Run("AnalyticsPageviewRefererToAnalyticsPageviewUsingPageviewAnalyticsPageviewReferers", testAnalyticsPageviewRefererToOneSetOpAnalyticsPageviewUsingPageview)
+	t.Run("AnalyticsPageviewUseragentToAnalyticsPageviewUsingPageviewAnalyticsPageviewUseragents", testAnalyticsPageviewUseragentToOneSetOpAnalyticsPageviewUsingPageview)
 	t.Run("PostToUserUsingCreatedByPosts", testPostToOneSetOpUserUsingCreatedBy)
 	t.Run("PostToUserUsingDeletedByPosts", testPostToOneSetOpUserUsingDeletedBy)
 	t.Run("PostToTeamUsingOwnedByPosts", testPostToOneSetOpTeamUsingOwnedBy)
@@ -200,6 +245,8 @@ func TestOneToOneRemove(t *testing.T) {}
 // TestToManyAdd tests cannot be run in parallel
 // or deadlocks can occur.
 func TestToManyAdd(t *testing.T) {
+	t.Run("AnalyticsPageviewToPageviewAnalyticsPageviewReferers", testAnalyticsPageviewToManyAddOpPageviewAnalyticsPageviewReferers)
+	t.Run("AnalyticsPageviewToPageviewAnalyticsPageviewUseragents", testAnalyticsPageviewToManyAddOpPageviewAnalyticsPageviewUseragents)
 	t.Run("TeamToOwnedByPosts", testTeamToManyAddOpOwnedByPosts)
 	t.Run("TeamToSubscribers", testTeamToManyAddOpSubscribers)
 	t.Run("TeamToTeamMembers", testTeamToManyAddOpTeamMembers)
@@ -227,6 +274,9 @@ func TestToManyRemove(t *testing.T) {
 }
 
 func TestReload(t *testing.T) {
+	t.Run("AnalyticsPageviewReferers", testAnalyticsPageviewReferersReload)
+	t.Run("AnalyticsPageviewUseragents", testAnalyticsPageviewUseragentsReload)
+	t.Run("AnalyticsPageviews", testAnalyticsPageviewsReload)
 	t.Run("PostHistories", testPostHistoriesReload)
 	t.Run("Posts", testPostsReload)
 	t.Run("Subscribers", testSubscribersReload)
@@ -237,6 +287,9 @@ func TestReload(t *testing.T) {
 }
 
 func TestReloadAll(t *testing.T) {
+	t.Run("AnalyticsPageviewReferers", testAnalyticsPageviewReferersReloadAll)
+	t.Run("AnalyticsPageviewUseragents", testAnalyticsPageviewUseragentsReloadAll)
+	t.Run("AnalyticsPageviews", testAnalyticsPageviewsReloadAll)
 	t.Run("PostHistories", testPostHistoriesReloadAll)
 	t.Run("Posts", testPostsReloadAll)
 	t.Run("Subscribers", testSubscribersReloadAll)
@@ -247,6 +300,9 @@ func TestReloadAll(t *testing.T) {
 }
 
 func TestSelect(t *testing.T) {
+	t.Run("AnalyticsPageviewReferers", testAnalyticsPageviewReferersSelect)
+	t.Run("AnalyticsPageviewUseragents", testAnalyticsPageviewUseragentsSelect)
+	t.Run("AnalyticsPageviews", testAnalyticsPageviewsSelect)
 	t.Run("PostHistories", testPostHistoriesSelect)
 	t.Run("Posts", testPostsSelect)
 	t.Run("Subscribers", testSubscribersSelect)
@@ -257,6 +313,9 @@ func TestSelect(t *testing.T) {
 }
 
 func TestUpdate(t *testing.T) {
+	t.Run("AnalyticsPageviewReferers", testAnalyticsPageviewReferersUpdate)
+	t.Run("AnalyticsPageviewUseragents", testAnalyticsPageviewUseragentsUpdate)
+	t.Run("AnalyticsPageviews", testAnalyticsPageviewsUpdate)
 	t.Run("PostHistories", testPostHistoriesUpdate)
 	t.Run("Posts", testPostsUpdate)
 	t.Run("Subscribers", testSubscribersUpdate)
@@ -267,6 +326,9 @@ func TestUpdate(t *testing.T) {
 }
 
 func TestSliceUpdateAll(t *testing.T) {
+	t.Run("AnalyticsPageviewReferers", testAnalyticsPageviewReferersSliceUpdateAll)
+	t.Run("AnalyticsPageviewUseragents", testAnalyticsPageviewUseragentsSliceUpdateAll)
+	t.Run("AnalyticsPageviews", testAnalyticsPageviewsSliceUpdateAll)
 	t.Run("PostHistories", testPostHistoriesSliceUpdateAll)
 	t.Run("Posts", testPostsSliceUpdateAll)
 	t.Run("Subscribers", testSubscribersSliceUpdateAll)
