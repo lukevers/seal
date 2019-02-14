@@ -5,6 +5,7 @@ import (
 	"log"
 	"net/http"
 	"net/url"
+	"strings"
 
 	"github.com/go-chi/chi/middleware"
 	"github.com/gorilla/sessions"
@@ -133,6 +134,10 @@ func shouldCollect(w middleware.WrapResponseWriter, r *http.Request) bool {
 	}
 
 	if r.URL.Path == "/favicon.ico" {
+		return false
+	}
+
+	if strings.Index(r.URL.Path, "/apple-touch-icon") == 0 {
 		return false
 	}
 
