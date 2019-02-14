@@ -25,22 +25,25 @@ Array.prototype.slice.call(document.getElementsByClassName('code-block')).map(fu
 });
 
 // Subscribing emails
-document.querySelector('#subscribe-form').addEventListener('submit', function(e) {
-    e.preventDefault();
+var form = document.querySelector('#subscribe-form');
+if (form) {
+    form.addEventListener('submit', function(e) {
+        e.preventDefault();
 
-    document.querySelector('#subscribe-email-submit').disabled = true;
+        document.querySelector('#subscribe-email-submit').disabled = true;
 
-    var req = new XMLHttpRequest();
-    req.addEventListener('load', function() {
-        document.querySelector('#subscribe-footer-title').innerHTML = "Thank you!";
-        document.querySelector('#subscribe-footer-description').remove();
-        document.querySelector('#subscribe-form').remove();
+        var req = new XMLHttpRequest();
+        req.addEventListener('load', function() {
+            document.querySelector('#subscribe-footer-title').innerHTML = "Thank you!";
+            document.querySelector('#subscribe-footer-description').remove();
+            document.querySelector('#subscribe-form').remove();
+        });
+
+        document.querySelector('#subscribe-email-submit').remove();
+
+        req.open('POST', '/forms/subscribe');
+        req.send(JSON.stringify({
+            email: document.querySelector('#subscribe-email').value,
+        }));
     });
-
-    document.querySelector('#subscribe-email-submit').remove();
-
-    req.open('POST', '/forms/subscribe');
-    req.send(JSON.stringify({
-        email: document.querySelector('#subscribe-email').value,
-    }));
-});
+}
