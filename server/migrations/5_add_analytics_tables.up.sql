@@ -1,6 +1,5 @@
 CREATE TABLE `analytics_pageviews` (
     `id` bigint(10) unsigned NOT NULL AUTO_INCREMENT,
-    `scheme` varchar(16) NOT NULL,
     `host` varchar(255) NOT NULL,
     `path` varchar(255) NOT NULL,
     `method` varchar(16) NOT NULL,

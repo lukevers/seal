@@ -56,7 +56,6 @@ func collect(w middleware.WrapResponseWriter, r *http.Request) {
 	}
 
 	pv := &models.AnalyticsPageview{
-		Scheme:        getScheme(r),
 		Host:          r.Host,
 		Path:          r.URL.Path,
 		Method:        r.Method,
@@ -122,21 +121,6 @@ func collect(w middleware.WrapResponseWriter, r *http.Request) {
 			log.Println(err)
 		}
 	}
-}
-
-func getScheme(r *http.Request) (scheme string) {
-	scheme = r.URL.Scheme
-	if scheme != "" {
-		return
-	}
-
-	if r.TLS == nil {
-		scheme = "http"
-	} else {
-		scheme = "https"
-	}
-
-	return
 }
 
 func shouldCollect(w middleware.WrapResponseWriter, r *http.Request) bool {

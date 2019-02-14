@@ -24,7 +24,6 @@ import (
 // AnalyticsPageview is an object representing the database table.
 type AnalyticsPageview struct {
 	ID            uint64      `boil:"id" json:"id" toml:"id" yaml:"id"`
-	Scheme        string      `boil:"scheme" json:"scheme" toml:"scheme" yaml:"scheme"`
 	Host          string      `boil:"host" json:"host" toml:"host" yaml:"host"`
 	Path          string      `boil:"path" json:"path" toml:"path" yaml:"path"`
 	Method        string      `boil:"method" json:"method" toml:"method" yaml:"method"`
@@ -42,7 +41,6 @@ type AnalyticsPageview struct {
 
 var AnalyticsPageviewColumns = struct {
 	ID            string
-	Scheme        string
 	Host          string
 	Path          string
 	Method        string
@@ -55,7 +53,6 @@ var AnalyticsPageviewColumns = struct {
 	ViewedAt      string
 }{
 	ID:            "id",
-	Scheme:        "scheme",
 	Host:          "host",
 	Path:          "path",
 	Method:        "method",
@@ -92,8 +89,8 @@ func (*analyticsPageviewR) NewStruct() *analyticsPageviewR {
 type analyticsPageviewL struct{}
 
 var (
-	analyticsPageviewColumns               = []string{"id", "scheme", "host", "path", "method", "query", "remote_address", "user_agent", "status", "is_new", "initial_rid", "viewed_at"}
-	analyticsPageviewColumnsWithoutDefault = []string{"scheme", "host", "path", "method", "query", "remote_address", "user_agent", "status", "is_new", "initial_rid"}
+	analyticsPageviewColumns               = []string{"id", "host", "path", "method", "query", "remote_address", "user_agent", "status", "is_new", "initial_rid", "viewed_at"}
+	analyticsPageviewColumnsWithoutDefault = []string{"host", "path", "method", "query", "remote_address", "user_agent", "status", "is_new", "initial_rid"}
 	analyticsPageviewColumnsWithDefault    = []string{"id", "viewed_at"}
 	analyticsPageviewPrimaryKeyColumns     = []string{"id"}
 )
