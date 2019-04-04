@@ -37,6 +37,16 @@ class Media extends Component {
         textField.remove();
     }
 
+    url = () => {
+        return this.props.settings.map((k) => {
+            if (k.key === 'url') {
+                return k.value;
+            }
+
+            return null;
+        }).filter(Boolean)[0];
+    }
+
     upload = () => {
         console.log(this.state.files);
     }
@@ -125,7 +135,7 @@ class Media extends Component {
                         }
                     `}>
                         {items ? items.map(media => (
-                            <div css={css`
+                            <div key={media.id} css={css`
                                 display: inline-block;
                                 position: relative;
 
@@ -137,7 +147,7 @@ class Media extends Component {
                             `}>
                                 <img
                                     onClick={e => this.copyToClipboard(e.target.src)}
-                                    src={`http://localhost:3333/s/__media/${media.file}`}
+                                    src={`${this.url()}/s/__media/${media.file}`}
                                     width="100" height="100"
                                     alt={media.file}/>
                                 <p>Click to copy URL</p>
@@ -154,6 +164,7 @@ const mapStateToProps = state => ({
     loaded: state.posts.loaded,
     error: state.posts.error,
     items: state.media.items,
+    settings: state.settings.items,
 });
 
 export default connect(mapStateToProps)(Media);

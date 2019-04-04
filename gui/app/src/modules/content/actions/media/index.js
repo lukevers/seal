@@ -29,7 +29,6 @@ function getTeamId(state) {
 
 function fetchMedia() {
     return async (dispatch, getState) => {
-        console.log('fetch!!!');
         await dispatch(fetchSettingsIfNeeded());
         dispatch(requestMedia());
         const data = await Conn.load('media', `team=${getTeamId(getState())}`);
