@@ -15,11 +15,11 @@ class Media extends Component {
         super();
 
         this.onDrop = (files) => {
-            this.setState({files})
+            this.setState({files});
         };
 
         this.state = {
-            files: []
+            files: [],
         };
     }
 
