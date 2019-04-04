@@ -28,6 +28,15 @@ class Media extends Component {
         dispatch(fetchMediaIfNeeded());
     }
 
+    copyToClipboard = (text) => {
+        let textField = document.createElement('textarea');
+        textField.innerText = text;
+        document.body.appendChild(textField);
+        textField.select();
+        document.execCommand('copy');
+        textField.remove();
+    }
+
     upload = () => {
         console.log(this.state.files);
     }
@@ -93,10 +102,46 @@ class Media extends Component {
 
                         img {
                             padding: .25em;
+
+                            &:hover {
+                                -webkit-filter: brightness(.5);
+                                filter: brightness(.5);
+                                cursor: pointer;
+                            }
+                        }
+
+                        p {
+                            visibility: hidden;
+                            position: absolute;
+                            top: 50%;
+                            transform: translateY(-50%);
+                            color: #FFF;
+                            width: 100px;
+                            text-align: center;
+                            z-index: 99px;
+                            padding: .25em;
+                            line-height: 1.5em;
+                            pointer-events: none;
                         }
                     `}>
                         {items ? items.map(media => (
-                            <img src={`http://localhost:3333/s/__media/${media.file}`} width="100" height="100" alt={media.file}/>
+                            <div css={css`
+                                display: inline-block;
+                                position: relative;
+
+                                &:hover {
+                                    p {
+                                        visibility: visible;
+                                    }
+                                }
+                            `}>
+                                <img
+                                    onClick={e => this.copyToClipboard(e.target.src)}
+                                    src={`http://localhost:3333/s/__media/${media.file}`}
+                                    width="100" height="100"
+                                    alt={media.file}/>
+                                <p>Click to copy URL</p>
+                            </div>
                         )) : ''}
                     </div>
                 </div>
