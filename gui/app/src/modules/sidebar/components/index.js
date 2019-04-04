@@ -6,6 +6,7 @@ import { NavLink } from "react-router-dom";
 import {
     faChartPie,
     faPen,
+    faImages,
 } from '@fortawesome/free-solid-svg-icons';
 
 import { themes } from '../../../base/themes';
@@ -61,6 +62,11 @@ export default () => (
         <NavLink to="/posts" activeClassName="active">
             <SidebarItem>
                 <FontAwesomeIcon icon={faPen} />
+            </SidebarItem>
+        </NavLink>
+        <NavLink to="/media" activeClassName="active">
+            <SidebarItem>
+                <FontAwesomeIcon icon={faImages} />
             </SidebarItem>
         </NavLink>
     </ul>

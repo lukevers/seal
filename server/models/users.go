@@ -52,12 +52,14 @@ var UserColumns = struct {
 
 // UserRels is where relationship names are stored.
 var UserRels = struct {
+	Media           string
 	CreatedByPosts  string
 	DeletedByPosts  string
 	UpdatedByPosts  string
 	TeamMembers     string
 	UserCreateCodes string
 }{
+	Media:           "Media",
 	CreatedByPosts:  "CreatedByPosts",
 	DeletedByPosts:  "DeletedByPosts",
 	UpdatedByPosts:  "UpdatedByPosts",
@@ -67,6 +69,7 @@ var UserRels = struct {
 
 // userR is where relationships are stored.
 type userR struct {
+	Media           MediumSlice
 	CreatedByPosts  PostSlice
 	DeletedByPosts  PostSlice
 	UpdatedByPosts  PostSlice
@@ -325,6 +328,27 @@ func (q userQuery) Exists(ctx context.Context, exec boil.ContextExecutor) (bool,
 	return count > 0, nil
 }
 
+// Media retrieves all the medium's Media with an executor.
+func (o *User) Media(mods ...qm.QueryMod) mediumQuery {
+	var queryMods []qm.QueryMod
+	if len(mods) != 0 {
+		queryMods = append(queryMods, mods...)
+	}
+
+	queryMods = append(queryMods,
+		qm.Where("`media`.`user_id`=?", o.ID),
+	)
+
+	query := Media(queryMods...)
+	queries.SetFrom(query.Query, "`media`")
+
+	if len(queries.GetSelect(query.Query)) == 0 {
+		queries.SetSelect(query.Query, []string{"`media`.*"})
+	}
+
+	return query
+}
+
 // CreatedByPosts retrieves all the post's Posts with an executor via created_by_id column.
 func (o *User) CreatedByPosts(mods ...qm.QueryMod) postQuery {
 	var queryMods []qm.QueryMod
@@ -428,6 +452,97 @@ func (o *User) UserCreateCodes(mods ...qm.QueryMod) userCreateCodeQuery {
 	}
 
 	return query
+}
+
+// LoadMedia allows an eager lookup of values, cached into the
+// loaded structs of the objects. This is for a 1-M or N-M relationship.
+func (userL) LoadMedia(ctx context.Context, e boil.ContextExecutor, singular bool, maybeUser interface{}, mods queries.Applicator) error {
+	var slice []*User
+	var object *User
+
+	if singular {
+		object = maybeUser.(*User)
+	} else {
+		slice = *maybeUser.(*[]*User)
+	}
+
+	args := make([]interface{}, 0, 1)
+	if singular {
+		if object.R == nil {
+			object.R = &userR{}
+		}
+		args = append(args, object.ID)
+	} else {
+	Outer:
+		for _, obj := range slice {
+			if obj.R == nil {
+				obj.R = &userR{}
+			}
+
+			for _, a := range args {
+				if a == obj.ID {
+					continue Outer
+				}
+			}
+
+			args = append(args, obj.ID)
+		}
+	}
+
+	query := NewQuery(qm.From(`media`), qm.WhereIn(`user_id in ?`, args...))
+	if mods != nil {
+		mods.Apply(query)
+	}
+
+	results, err := query.QueryContext(ctx, e)
+	if err != nil {
+		return errors.Wrap(err, "failed to eager load media")
+	}
+
+	var resultSlice []*Medium
+	if err = queries.Bind(results, &resultSlice); err != nil {
+		return errors.Wrap(err, "failed to bind eager loaded slice media")
+	}
+
+	if err = results.Close(); err != nil {
+		return errors.Wrap(err, "failed to close results in eager load on media")
+	}
+	if err = results.Err(); err != nil {
+		return errors.Wrap(err, "error occurred during iteration of eager loaded relations for media")
+	}
+
+	if len(mediumAfterSelectHooks) != 0 {
+		for _, obj := range resultSlice {
+			if err := obj.doAfterSelectHooks(ctx, e); err != nil {
+				return err
+			}
+		}
+	}
+	if singular {
+		object.R.Media = resultSlice
+		for _, foreign := range resultSlice {
+			if foreign.R == nil {
+				foreign.R = &mediumR{}
+			}
+			foreign.R.User = object
+		}
+		return nil
+	}
+
+	for _, foreign := range resultSlice {
+		for _, local := range slice {
+			if local.ID == foreign.UserID {
+				local.R.Media = append(local.R.Media, foreign)
+				if foreign.R == nil {
+					foreign.R = &mediumR{}
+				}
+				foreign.R.User = local
+				break
+			}
+		}
+	}
+
+	return nil
 }
 
 // LoadCreatedByPosts allows an eager lookup of values, cached into the
@@ -882,6 +997,59 @@ func (userL) LoadUserCreateCodes(ctx context.Context, e boil.ContextExecutor, si
 		}
 	}
 
+	return nil
+}
+
+// AddMedia adds the given related objects to the existing relationships
+// of the user, optionally inserting them as new records.
+// Appends related to o.R.Media.
+// Sets related.R.User appropriately.
+func (o *User) AddMedia(ctx context.Context, exec boil.ContextExecutor, insert bool, related ...*Medium) error {
+	var err error
+	for _, rel := range related {
+		if insert {
+			rel.UserID = o.ID
+			if err = rel.Insert(ctx, exec, boil.Infer()); err != nil {
+				return errors.Wrap(err, "failed to insert into foreign table")
+			}
+		} else {
+			updateQuery := fmt.Sprintf(
+				"UPDATE `media` SET %s WHERE %s",
+				strmangle.SetParamNames("`", "`", 0, []string{"user_id"}),
+				strmangle.WhereClause("`", "`", 0, mediumPrimaryKeyColumns),
+			)
+			values := []interface{}{o.ID, rel.ID}
+
+			if boil.DebugMode {
+				fmt.Fprintln(boil.DebugWriter, updateQuery)
+				fmt.Fprintln(boil.DebugWriter, values)
+			}
+
+			if _, err = exec.ExecContext(ctx, updateQuery, values...); err != nil {
+				return errors.Wrap(err, "failed to update foreign table")
+			}
+
+			rel.UserID = o.ID
+		}
+	}
+
+	if o.R == nil {
+		o.R = &userR{
+			Media: related,
+		}
+	} else {
+		o.R.Media = append(o.R.Media, related...)
+	}
+
+	for _, rel := range related {
+		if rel.R == nil {
+			rel.R = &mediumR{
+				User: o,
+			}
+		} else {
+			rel.R.User = o
+		}
+	}
 	return nil
 }
 

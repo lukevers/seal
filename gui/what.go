@@ -7,4 +7,5 @@ const (
 	WhatPosts    = "posts"
 	WhatSettings = "settings"
 	WhatTeams    = "teams"
+	WhatMedia    = "media"
 )

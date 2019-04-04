@@ -136,6 +136,8 @@ func handleMessageLoad(message RequestMessage) {
 		data, err = fetchSettings(how.(string))
 	case WhatTeams:
 		data, err = fetchTeams(how.(string))
+	case WhatMedia:
+		data, err = fetchMedia(how.(string))
 	default:
 		err = errors.New("the given `what` is not supported")
 	}

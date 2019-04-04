@@ -12,6 +12,8 @@ func TestUpsert(t *testing.T) {
 
 	t.Run("AnalyticsPageviews", testAnalyticsPageviewsUpsert)
 
+	t.Run("Media", testMediaUpsert)
+
 	t.Run("PostHistories", testPostHistoriesUpsert)
 
 	t.Run("Posts", testPostsUpsert)

@@ -36,12 +36,12 @@ const BiGridHorizontalContent = ({ children }) => (
     </div>
 );
 
-const BiGridVerticalWrapper = ({ children }) => (
+const BiGridVerticalWrapper = ({ children, headerSize = '50px' }) => (
     <div css={css`
         display: grid;
         grid-gap: 0;
         grid-template-columns: auto;
-        grid-template-rows: 50px auto;
+        grid-template-rows: ${headerSize} auto;
         grid-template-areas:
         "header"
         "content";

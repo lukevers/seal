@@ -50,6 +50,14 @@ func main() {
 		r.Post("/", CreatePost)
 	})
 
+	r.Route("/api/media", func(r chi.Router) {
+		r.Use(render.SetContentType(render.ContentTypeJSON))
+		r.Use(AuthenticateRequest)
+
+		r.Get("/", ListMedia)
+		r.Post("/", CreateMedia)
+	})
+
 	r.Route("/api/meta", func(r chi.Router) {
 		r.Use(render.SetContentType(render.ContentTypeJSON))
 		r.Use(AuthenticateRequest)

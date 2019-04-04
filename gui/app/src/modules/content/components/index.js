@@ -6,6 +6,7 @@ import Home from './home';
 import Dashboard from './dashboard';
 import Posts from './posts';
 import Settings from './settings';
+import Media from './media';
 
 export default () => (
     <div css={css`
@@ -16,5 +17,6 @@ export default () => (
         <Route path="/dashboard" component={Dashboard} />
         <Route path="/posts" component={Posts} />
         <Route path="/settings" component={Settings} />
+        <Route path="/media" component={Media} />
     </div>
 );

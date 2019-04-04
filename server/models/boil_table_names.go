@@ -7,6 +7,7 @@ var TableNames = struct {
 	AnalyticsPageviewReferers   string
 	AnalyticsPageviewUseragents string
 	AnalyticsPageviews          string
+	Media                       string
 	PostHistory                 string
 	Posts                       string
 	Subscribers                 string
@@ -18,6 +19,7 @@ var TableNames = struct {
 	AnalyticsPageviewReferers:   "analytics_pageview_referers",
 	AnalyticsPageviewUseragents: "analytics_pageview_useragents",
 	AnalyticsPageviews:          "analytics_pageviews",
+	Media:                       "media",
 	PostHistory:                 "post_history",
 	Posts:                       "posts",
 	Subscribers:                 "subscribers",
