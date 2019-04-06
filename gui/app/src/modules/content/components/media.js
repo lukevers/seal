@@ -8,6 +8,7 @@ import { Button } from '../../../components/Button';
 
 import {
     fetchMediaIfNeeded,
+    uploadMedia,
 } from '../actions/media/';
 
 class Media extends Component {
@@ -37,9 +38,9 @@ class Media extends Component {
         textField.remove();
     }
 
-    url = () => {
+    getSetting = (setting) => {
         return this.props.settings.map((k) => {
-            if (k.key === 'url') {
+            if (k.key === setting) {
                 return k.value;
             }
 
@@ -48,7 +49,16 @@ class Media extends Component {
     }
 
     upload = () => {
-        console.log(this.state.files);
+        const { dispatch } = this.props;
+
+        this.state.files.forEach(file => {
+            const reader = new FileReader();
+            reader.readAsDataURL(file);
+            reader.onloadend = () => {
+                var base64result = reader.result.split(',')[1];
+                dispatch(uploadMedia(file.name, base64result));
+            };
+        });
     }
 
     render() {
@@ -147,7 +157,7 @@ class Media extends Component {
                             `}>
                                 <img
                                     onClick={e => this.copyToClipboard(e.target.src)}
-                                    src={`${this.url()}/s/__media/${media.file}`}
+                                    src={`${this.getSetting('url')}/s/__media/${this.getSetting('teamid')}/${media.file}`}
                                     width="100" height="100"
                                     alt={media.file}/>
                                 <p>Click to copy URL</p>

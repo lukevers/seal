@@ -2,12 +2,18 @@ package main
 
 import (
 	"context"
+	"encoding/base64"
+	"encoding/json"
 	"errors"
+	"fmt"
+	"io/ioutil"
 	"log"
 	"net/http"
+	"os"
 
 	"github.com/go-chi/render"
 	"github.com/lukevers/seal/server/models"
+	"github.com/volatiletech/sqlboiler/boil"
 	"github.com/volatiletech/sqlboiler/queries/qm"
 )
 
@@ -78,51 +84,78 @@ func ListMedia(w http.ResponseWriter, r *http.Request) {
 
 // CreateMedia creates a new media.
 func CreateMedia(w http.ResponseWriter, r *http.Request) {
-	// ctx := r.Context()
-	// user, ok := ctx.Value("user").(*models.User)
-	// if !ok {
-	// 	render.Render(w, r, ErrRender(errors.New("Could not revive context")))
-	// 	return
-	// }
+	ctx := r.Context()
+	user, ok := ctx.Value("user").(*models.User)
+	if !ok {
+		render.Render(w, r, ErrRender(errors.New("Could not revive context")))
+		return
+	}
 
-	// defer r.Body.Close()
-	// body, err := ioutil.ReadAll(r.Body)
-	// if err != nil {
-	// 	log.Println(err)
-	// 	render.Render(w, r, ErrRender(err))
-	// 	return
-	// }
+	defer r.Body.Close()
+	body, err := ioutil.ReadAll(r.Body)
+	if err != nil {
+		log.Println(err)
+		render.Render(w, r, ErrRender(err))
+		return
+	}
 
-	// var post models.Post
-	// err = json.Unmarshal(body, &post)
-	// if err != nil {
-	// 	log.Println(err)
-	// 	render.Render(w, r, ErrRender(err))
-	// 	return
-	// }
+	type mediaWrapper struct {
+		models.Medium
+		Content string `json:"content"`
+	}
 
-	// p := &models.Media{
-	// 	Title:       post.Title,
-	// 	Description: post.Description,
-	// 	Route:       post.Route,
-	// 	Template:    post.Template,
-	// 	Content:     post.Content,
-	// 	Markdown:    post.Markdown,
-	// 	HTML:        post.HTML,
-	// 	ReadTime:    post.ReadTime,
-	// 	CoverImage:  post.CoverImage,
-	// 	CreatedByID: user.ID,
-	// 	UpdatedByID: user.ID,
-	// 	OwnedByID:   post.OwnedByID,
-	// 	PublishedAt: post.PublishedAt,
-	// }
+	var media mediaWrapper
+	err = json.Unmarshal(body, &media)
+	if err != nil {
+		log.Println(err)
+		render.Render(w, r, ErrRender(err))
+		return
+	}
 
-	// err = p.Insert(context.TODO(), db, boil.Infer())
-	// if err != nil {
-	// 	log.Println(err)
-	// 	render.Render(w, r, ErrRender(err))
-	// 	return
-	// }
+	content, err := base64.StdEncoding.DecodeString(media.Content)
+	if err != nil {
+		log.Println(err)
+		render.Render(w, r, ErrRender(err))
+		return
+	}
 
-	// render.Render(w, r, &SuccessResponse{})
+	m := &models.Medium{
+		File:   media.File,
+		TeamID: media.TeamID,
+		UserID: user.ID,
+	}
+
+	err = m.Insert(context.TODO(), db, boil.Infer())
+	if err != nil {
+		log.Println(err)
+		render.Render(w, r, ErrRender(err))
+		return
+	}
+
+	path := fmt.Sprintf(
+		"../themes/__media/%d",
+		m.TeamID,
+	)
+
+	if _, err = os.Stat(path); os.IsNotExist(err) {
+		os.Mkdir(path, os.ModePerm)
+	}
+
+	err = ioutil.WriteFile(
+		fmt.Sprintf(
+			"%s/%s",
+			path,
+			m.File,
+		),
+		content,
+		os.ModePerm,
+	)
+
+	if err != nil {
+		log.Println(err)
+		render.Render(w, r, ErrRender(err))
+		return
+	}
+
+	render.Render(w, r, &SuccessResponse{})
 }

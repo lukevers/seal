@@ -188,6 +188,12 @@ func handleMessageSync(message RequestMessage, new bool) {
 		}
 	case WhatSettings:
 		data, err = updateSettings(how.(string))
+	case WhatMedia:
+		if new {
+			data, err = createMedia(how.(string))
+		} else {
+			err = errors.New("updating media is not supported")
+		}
 	default:
 		err = errors.New("the given `what` is not supported")
 	}

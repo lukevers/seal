@@ -6,6 +6,7 @@ import {
 
 export const REQUEST_MEDIA = 'MEDIA_REQUEST_MEDIA';
 export const RECEIVE_MEDIA = 'MEDIA_RECEIVE_MEDIA';
+export const CREATE_MEDIA = 'MEDIA_CREATE_MEDIA';
 
 function requestMedia() {
     return {
@@ -42,5 +43,20 @@ export function fetchMediaIfNeeded(force = false) {
         if (force || !media.loaded || media.items.length < 1) {
             return dispatch(fetchMedia());
         }
+    }
+}
+
+export function uploadMedia(mediaName, media) {
+    return async (dispatch, getState) => {
+        await dispatch(fetchSettingsIfNeeded());
+        const data = await Conn.post('media', {
+            team_id: getTeamId(getState()),
+            file: mediaName,
+            content: media,
+        });
+
+        console.log(data);
+
+        dispatch(fetchMediaIfNeeded(true));
     }
 }
