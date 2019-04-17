@@ -480,6 +480,10 @@ export default class TextEditor extends Component {
             return next();
         }
 
+        if (/\.(jpg|png)$/.test(text)) {
+            return this.insertImage(editor, text, editor.target);
+        }
+
         if (!isUrl(text)) {
             return next();
         }
