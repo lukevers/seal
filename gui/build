@@ -14,4 +14,4 @@ rm -rf ./resources
 cp -r ./app/build ./resources
 cp ./app/src/base/logo.png ./resources/logo.png
 
-macpack build
+$GOPATH/bin/macpack build
